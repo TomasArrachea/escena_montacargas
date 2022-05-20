@@ -35,7 +35,7 @@ class Piso {
     }
 }
 
-class Rectangulo {
+class Cubo {
     constructor(ancho, alto, largo){
         this.ancho = ancho;
         this.largo = largo;
