@@ -10,14 +10,12 @@ class Objeto3D {
 
     actualizarMatrizModelado() {
         //usar rotacion, escala y posicion para actualizar la matriz
-        var m = mat4.create();
-        mat4.translate(m,m,this.posicion)
-        mat4.rotate(m,m,this.rotacion[0], [1,0,0]);
-        mat4.rotate(m,m,this.rotacion[1], [0,1,0]);
-        mat4.rotate(m,m,this.rotacion[2], [1,0,2]);
-        mat4.scale(m, this.escala)
-
-        this.matrizModelado = m
+        mat4.identity(this.matrizModelado)
+        mat4.translate(this.matrizModelado,this.matrizModelado,this.posicion)
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [1,0,2]);
+        mat4.scale(this.matrizModelado,this.matrizModelado,this.escala)
     }
 
     dibujar(matrizPadre) {
@@ -117,7 +115,7 @@ class Cabina extends Objeto3D {
 class Elevador extends Objeto3D {
     constructor() {
         // completar
-        this.setGeometria(generarSuperficie(new Cubo(ancho, largo, alto)))
+        this.setGeometria(Cubo.generarSuperficie(ancho, largo, alto))
     }
 }
 
@@ -125,27 +123,27 @@ class Estanteria extends Objeto3D {
     constructor() {
         ancho_estanteria, largo_estanteria, alto_estanteria;
         ancho_columna, largo_columna, alto_columna;
-        this.setGeometria(generarSuperficie(new Cubo(ancho_estanteria, largo_estanteria, alto_estanteria))) // estanteria 1
-        this.agregarHijo(new Cubo(ancho_estanteria, largo_estanteria, alto_estanteria)) // estanteria 2
-        this.agregarHijo(new Cubo(ancho_estanteria, largo_estanteria, alto_estanteria)) // estanteria 3
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 11
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 12
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 21
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 22
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 31
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 32
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 41
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 42
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 51
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 52
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 61
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 62
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 71
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 72
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 81
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 82
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 91
-        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 92
+        this.setGeometria(Cubo.generarSuperficie(ancho_estanteria, largo_estanteria, alto_estanteria)) // estanteria 1
+        this.agregarHijo(Cubo.generarSuperficie(ancho_estanteria, largo_estanteria, alto_estanteria)) // estanteria 2
+        this.agregarHijo(Cubo.generarSuperficie(ancho_estanteria, largo_estanteria, alto_estanteria)) // estanteria 3
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 11
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 12
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 21
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 22
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 31
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 32
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 41
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 42
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 51
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 52
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 61
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 62
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 71
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 72
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 81
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 82
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 91
+        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 92
     }
 }
 
