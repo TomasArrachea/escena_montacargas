@@ -1,22 +1,3 @@
-class SupGalpon {
-    constructor(ancho, largo, alto){
-        this.ancho = ancho;
-        this.largo = largo;
-        this.alto = alto;
-    }
-    
-    getPos(u, v) {
-        if (u < ancho/4)
-        var x = (u-0.5)*ancho;
-        var z = (v-0.5)*largo;
-        return [x,0,z]
-    }
-
-    getNormal(u, v) {
-        return [0,0,1]
-    }
-}
-
 class Piso {
     constructor(ancho, largo){
         this.ancho = ancho;
@@ -117,5 +98,27 @@ class Cubo {
             normalBuffer,
             indexBuffer
         }
+    }
+}
+
+
+class Cilindro {
+    constructor(radio, largo){
+        this.radio = radio;
+        this.largo = largo;
+    }
+
+    getPos(u, v) {
+        var y = (largo/2) * v/Math.PI;
+        var x = radio * Math.sin(u);
+        var z = radio * Math.cos(u);
+        return [x,y,z];
+    }
+
+    getNormal(u, v) {
+        // En x,z la normal es igual al vector de posicion normalizado.
+        var pos = this.getPos(u,v);
+        var modulo = Math.sqrt(pos[0]**2 + pos[1]**2)
+        return [pos[0]/modulo, pos[1]/modulo, 0];
     }
 }
