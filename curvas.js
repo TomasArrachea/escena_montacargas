@@ -321,6 +321,7 @@ function generarA2() {
     return curva.puntos;
 }
 
+
 function generarCurvaRueda() {
     var curva = new Curva();
     var inicio = [0,0]
@@ -357,3 +358,83 @@ function generarCurvaRueda() {
     return curva.puntos;
 }
 
+
+function generarCurvaGalpon() {
+    var curva = new Curva()
+    var centro = [0,0]
+    var cte_circunferencia = 0.55
+    var alto = 100
+    var ancho = 400    
+    var radio = (alto+ancho)/4
+
+    // pared izquierda
+    curva.agregarSegmento(
+        [centro[0]-ancho/2, centro[1]],
+        [centro[0]-ancho/2, centro[1]+alto],
+    );
+
+    // techo
+    curva.agregarCurvaCubica(
+        [centro[0]-ancho/2, centro[1]+alto],
+        [centro[0]-ancho/2+radio*cte_circunferencia, centro[1]+alto+radio*cte_circunferencia],
+        [centro[0]+ancho/2-radio*cte_circunferencia, centro[1]+alto+radio*cte_circunferencia],
+        [centro[0]+ancho/2, centro[1]+alto],
+    );
+
+    // pared derecha
+    curva.agregarSegmento(
+        [centro[0]+ancho/2, centro[1]+alto],
+        [centro[0]+ancho/2, centro[1]],
+    );
+    return curva.puntos;
+}
+
+
+function generarCurvaChasis() {
+    var curva = new Curva()
+    var centro = [0,0]
+    var largo = 130
+    var ancho = 100
+    var cola = ancho*0.3
+    
+    // dibujar lado derecho
+    curva.agregarSegmento(
+        [centro[0]+ancho/2, centro[1]-largo/2],
+        [centro[0]+ancho/2, centro[1]+largo/2]
+    );
+
+    // parte de arriba
+    curva.agregarSegmento(
+        [centro[0]+ancho/2, centro[1]+largo/2],
+        [centro[0]+ancho/2-cola, centro[1]+largo/2+cola],
+    );
+    curva.agregarSegmento(
+        [centro[0]+ancho/2-cola, centro[1]+largo/2+cola],
+        [centro[0]-ancho/2+cola, centro[1]+largo/2+cola],
+    );
+    curva.agregarSegmento(
+        [centro[0]-ancho/2+cola, centro[1]+largo/2+cola],
+        [centro[0]-ancho/2, centro[1]+largo/2],
+    );
+
+    // lado izquierdo
+    curva.agregarSegmento(
+        [centro[0]-ancho/2, centro[1]-largo/2],
+        [centro[0]-ancho/2, centro[1]+largo/2]
+    );
+
+    // parte de arriba
+    curva.agregarSegmento(
+        [centro[0]-ancho/2+cola, centro[1]-largo/2-cola],
+        [centro[0]-ancho/2, centro[1]-largo/2],
+    );
+    curva.agregarSegmento(
+        [centro[0]+ancho/2-cola, centro[1]-largo/2-cola],
+        [centro[0]-ancho/2+cola, centro[1]-largo/2-cola],
+    );
+    curva.agregarSegmento(
+        [centro[0]+ancho/2, centro[1]-largo/2],
+        [centro[0]+ancho/2-cola, centro[1]-largo/2-cola],
+    );
+    return curva.puntos;
+}
