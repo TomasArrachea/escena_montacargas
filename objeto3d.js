@@ -24,7 +24,6 @@ class Objeto3D {
         mat4.multiply(m, matrizPadre ,this.matrizModelado)
 
         if (this.vertexBuffer && this.indexBuffer) {
-            // si el objeto tiene geometria asociada dibujar la malla de triangulos con webgl
             drawScene(this.vertexBuffer, this.indexBuffer, this.normalBuffer) // TODO la funcion usa buffers como variables globales, agregar parametros
             // agregar como parametro tambien las filas y columnas
         }
