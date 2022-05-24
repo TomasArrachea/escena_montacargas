@@ -24,9 +24,9 @@ class Objeto3D {
         mat4.multiply(m, matrizPadre ,this.matrizModelado)
 
         if (this.vertexBuffer && this.indexBuffer) {
-            // si el objeto tiene geometria asociada
-            // dibujar la malla de triangulos con webgl
+            // si el objeto tiene geometria asociada dibujar la malla de triangulos con webgl
             drawScene(this.vertexBuffer, this.indexBuffer, this.normalBuffer) // TODO la funcion usa buffers como variables globales, agregar parametros
+            // agregar como parametro tambien las filas y columnas
         }
 
         for (var i = 0; i < this.hijos.length; i++) {
@@ -74,7 +74,7 @@ class Objeto3D {
 class Galpon extends Objeto3D {
     constructor() {
         // generar y cargar buffers del galpon.
-        this.setGeometria(generarSuperficie(new SupGalpon(ancho, largo, alto)))
+        this.setGeometria(generarSuperficie(new SupGalpon(ancho, largo, alto), filas, columnas))
     }
 }
 
@@ -96,7 +96,7 @@ class Carrito extends Objeto3D {
 
 class Rueda extends Objeto3D {
     constructor() {
-        this.setGeometria(generarSuperficie(new SupRueda(radio, ancho, profundo)))
+        this.setGeometria(generarSuperficie(new SupRueda(radio)))
     }
 }
 
@@ -114,36 +114,41 @@ class Cabina extends Objeto3D {
 
 class Elevador extends Objeto3D {
     constructor() {
-        // completar
         this.setGeometria(Cubo.generarSuperficie(ancho, largo, alto))
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 1
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 1
+        this.agregarHijo(new Cubo(ancho_transversal, largo_transversal, alto_transversal)) // transversal 3
+        this.agregarHijo(new Cubo(ancho_transversal, largo_transversal, alto_transversal)) // transversal 3
+        this.agregarHijo(new Cubo(ancho_pala, largo_pala, alto_pala)) // pala
     }
 }
 
 class Estanteria extends Objeto3D {
     constructor() {
-        ancho_estanteria, largo_estanteria, alto_estanteria;
+        ancho_estanteria, largo_estanteria, alto_estanteria; //definir parametros
         ancho_columna, largo_columna, alto_columna;
+        // armar un objeto 3d para cada estante y estanteria
         this.setGeometria(Cubo.generarSuperficie(ancho_estanteria, largo_estanteria, alto_estanteria)) // estanteria 1
-        this.agregarHijo(Cubo.generarSuperficie(ancho_estanteria, largo_estanteria, alto_estanteria)) // estanteria 2
-        this.agregarHijo(Cubo.generarSuperficie(ancho_estanteria, largo_estanteria, alto_estanteria)) // estanteria 3
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 11
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 12
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 21
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 22
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 31
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 32
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 41
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 42
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 51
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 52
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 61
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 62
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 71
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 72
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 81
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 82
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 91
-        this.agregarHijo(Cubo.generarSuperficie(ancho_columna, largo_columna, alto_columna)) // columna 92
+        this.agregarHijo(new Cubo(ancho_estanteria, largo_estanteria, alto_estanteria)) // estanteria 2
+        this.agregarHijo(new Cubo(ancho_estanteria, largo_estanteria, alto_estanteria)) // estanteria 3
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 11
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 12
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 21
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 22
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 31
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 32
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 41
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 42
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 51
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 52
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 61
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 62
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 71
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 72
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 81
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 82
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 91
+        this.agregarHijo(new Cubo(ancho_columna, largo_columna, alto_columna)) // columna 92
     }
 }
 
@@ -178,8 +183,8 @@ function generarImpresion(){
 }
 
 function generarSuperficie(superficie,filas,columnas){
-    // funcion que reemplaza a setupBuffers
-    // revisar el llenado del index buffer, copiar la implementacion de setupBuffers?
+    // funcion que reemplaza a setupBuffers. Devuelve los buffers, no hace falta bindearlos a webgl.
+    // revisar el algoritmo del index buffer, copiar la implementacion de setupBuffers?
     positionBuffer = [];
     normalBuffer = [];
 
@@ -203,7 +208,6 @@ function generarSuperficie(superficie,filas,columnas){
         }
     }
 
-    // Buffer de indices de los triángulos
     indexBuffer=[];  
     columnas += 1
     filas += 1
@@ -212,36 +216,15 @@ function generarSuperficie(superficie,filas,columnas){
             indexBuffer.push(j + columnas*i);
             indexBuffer.push(j + columnas*(i+1));
         }
-        // Al final de la columna degenera los triangulos (menos en la ultima fila)
         if (i < filas - 2) {
             indexBuffer.push(columnas-1 + columnas*(i+1));
             indexBuffer.push(columnas + columnas*i);
         }   
     }
     
-    // Creación e Inicialización de los buffers
-
-    webgl_position_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, webgl_position_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positionBuffer), gl.STATIC_DRAW);
-    webgl_position_buffer.itemSize = 3;
-    webgl_position_buffer.numItems = positionBuffer.length / 3;
-
-    webgl_normal_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, webgl_normal_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalBuffer), gl.STATIC_DRAW);
-    webgl_normal_buffer.itemSize = 3;
-    webgl_normal_buffer.numItems = normalBuffer.length / 3;
-
-    webgl_index_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, webgl_index_buffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexBuffer), gl.STATIC_DRAW);
-    webgl_index_buffer.itemSize = 1;
-    webgl_index_buffer.numItems = indexBuffer.length;
-
     return {
-        webgl_position_buffer,
-        webgl_normal_buffer,
-        webgl_index_buffer
+        positionBuffer,
+        normalBuffer,
+        indexBuffer
     }
 }
