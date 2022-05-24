@@ -62,7 +62,7 @@ class Curva {
 
 function generarB1() {
     var puntos = [ [0,0], [0,100], [86,50], [0, 0] ]; // triangulo con un vertice en 0,0
-    var curva = new Curva()
+    var curva = new Curva();
     for (var i = 0; i < puntos.length-1; i++) {
 	    curva.agregarSegmento(puntos[i], puntos[i+1]);
 	}
@@ -71,9 +71,9 @@ function generarB1() {
 
 
 function generarB2() {
-    var curva = new Curva()
-    var centro = [0,0]
-    var radio = 100
+    var curva = new Curva();
+    var centro = [0,0];
+    var radio = 100;
 
     for (var a = 0; a < 2*Math.PI; a = a + 2*Math.PI / 7) {
         var ax = radio*Math.cos(a);
@@ -93,13 +93,13 @@ function generarB2() {
 
 
 function generarB3() {
-    curva = new Curva()
-    var centro = [0,0]
-    var lado = 100
-    var cte_circunferencia = 0.70
-    var lado_cajon = 27
+    curva = new Curva();
+    var centro = [0,0];
+    var lado = 100;
+    var cte_circunferencia = 0.70;
+    var lado_cajon = 27;
 
-    var radio_equina = lado/2 - lado_cajon/2
+    var radio_equina = lado/2 - lado_cajon/2;
     // cajon derecho
     curva.agregarSegmento(
         [centro[0]+lado/2, centro[1]-lado_cajon/2],
@@ -192,11 +192,11 @@ function generarB3() {
 
 
 function generarB4() {
-    var centro = [0,0]
-    var altura = 130
-    var ancho = 100
-    var cte_circunferencia = 0.5519
-    var curva = new Curva()    
+    var centro = [0,0];
+    var altura = 130;
+    var ancho = 100;
+    var cte_circunferencia = 0.5519;
+    var curva = new Curva()    ;
 
     // dibujar lado derecho
     curva.agregarCurvaCubica(
@@ -246,8 +246,8 @@ function generarB4() {
 
 
 function generarA1() {
-    var inicio = [0,0]
-    var curva = Curva()
+    var inicio = [0,0];
+    var curva = Curva();
 
     // segmento horizontal
     curva.agregarSegmento(
@@ -295,7 +295,7 @@ function generarA1() {
 
 
 function generarA2() {
-    var inicio = [0,0]
+    var inicio = [0,0];
     var curva = new Curva();
 
     curva.agregarCurvaCubica(
@@ -324,12 +324,12 @@ function generarA2() {
 
 function generarCurvaRueda() {
     var curva = new Curva();
-    var inicio = [0,0]
-    var radio = 120
-    var desnivel_tapa = radio/8
-    var ancho_goma = radio/4
-    var ancho_desnivel = radio/6
-    var ancho = ancho_desnivel+ancho_goma
+    var inicio = [0,0];
+    var radio = 120;
+    var desnivel_tapa = radio/8;
+    var ancho_goma = radio/4;
+    var ancho_desnivel = radio/6;
+    var ancho = ancho_desnivel+ancho_goma;
     // tapa inferior
     curva.agregarSegmento(
         inicio,
@@ -360,12 +360,12 @@ function generarCurvaRueda() {
 
 
 function generarCurvaGalpon() {
-    var curva = new Curva()
-    var centro = [0,0]
-    var cte_circunferencia = 0.55
-    var alto = 100
-    var ancho = 400    
-    var radio = (alto+ancho)/4
+    var curva = new Curva();
+    var centro = [0,0];
+    var cte_circunferencia = 0.55;
+    var alto = 100;
+    var ancho = 400;
+    var radio = (alto+ancho)/4;
 
     // pared izquierda
     curva.agregarSegmento(
@@ -391,11 +391,11 @@ function generarCurvaGalpon() {
 
 
 function generarCurvaChasis() {
-    var curva = new Curva()
-    var centro = [0,0]
-    var largo = 130
-    var ancho = 100
-    var cola = ancho*0.3
+    var curva = new Curva();
+    var centro = [0,0];
+    var largo = 130;
+    var ancho = 100;
+    var cola = ancho*0.3;
     
     // dibujar lado derecho
     curva.agregarSegmento(
@@ -437,4 +437,30 @@ function generarCurvaChasis() {
         [centro[0]+ancho/2-cola, centro[1]-largo/2-cola],
     );
     return curva.puntos;
+}
+
+
+function generarTrapecio() {
+    var curva = new Curva();
+    var centro = [0,0];
+    var largo = 130;
+    var base1 = 100;
+    var base2 = 200;
+
+    curva.agregarSegmento(
+        [centro[0]-base1/2, centro[1]+largo/2],
+        [centro[0]-base1/2, centro[1]-largo/2]
+    );
+    curva.agregarSegmento(
+        [centro[0]-base1/2, centro[1]-largo/2],
+        [centro[0]+base2/2, centro[1]-largo/2]
+    );
+    curva.agregarSegmento(
+        [centro[0]+base2/2, centro[1]-largo/2],
+        [centro[0]+base1/2, centro[1]+largo/2]
+    );
+    curva.agregarSegmento(
+        [centro[0]+base1/2, centro[1]+largo/2],
+        [centro[0]-base1/2, centro[1]+largo/2]
+    );
 }
