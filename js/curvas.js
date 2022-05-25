@@ -20,15 +20,15 @@ class Curva {
     
     #curvaCuadratica(u, p0, p1, p2) {
         var punto = new Object();
-        punto.x = B0cuadr(u) * p0[0] + B1cuadr(u) * p1[0] + B2cuadr(u) * p2[0];
-        punto.y = B0cuadr(u) * p0[1] + B1cuadr(u) * p1[1] + B2cuadr(u) * p2[1];
+        punto.x = this.B0cuadr(u) * p0[0] + this.B1cuadr(u) * p1[0] + this.B2cuadr(u) * p2[0];
+        punto.y = this.B0cuadr(u) * p0[1] + this.B1cuadr(u) * p1[1] + this.B2cuadr(u) * p2[1];
         return punto;
     }
 
     #curvaCubica(u, p0, p1, p2, p3) {
         var punto = new Object();
-        punto.x = B0cub(u) * p0[0] + B1cub(u) * p1[0] + B2cub(u) * p2[0] + B3cub(u) * p3[0];
-        punto.y = B0cub(u) * p0[1] + B1cub(u) * p1[1] + B2cub(u) * p2[1] + B3cub(u) * p3[1];
+        punto.x = this.B0cub(u) * p0[0] + this.B1cub(u) * p1[0] + this.B2cub(u) * p2[0] + this.B3cub(u) * p3[0];
+        punto.y = this.B0cub(u) * p0[1] + this.B1cub(u) * p1[1] + this.B2cub(u) * p2[1] + this.B3cub(u) * p3[1];
         return punto;
     }
 
@@ -464,3 +464,5 @@ function generarTrapecio() {
         [centro[0]-base1/2, centro[1]+largo/2]
     );
 }
+
+export {generarA1, generarA2, generarB1, generarB2, generarB3, generarB4, generarCurvaChasis, generarCurvaGalpon, generarCurvaRueda, generarTrapecio};
