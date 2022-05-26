@@ -3,19 +3,21 @@ import {SupBarrido, SupRevolucion} from './supBarrido.js';
 import {generarA1, generarA2, generarB1, generarB2, generarB3, generarB4, generarCurvaChasis, generarCurvaGalpon, generarCurvaRueda, generarTrapecio} from './curvas.js'
 import {mat4, vec3} from 'https://cdn.skypack.dev/gl-matrix';
 
-var filas = 100;
-var columnas = 100;
+var filas = 10;
+var columnas = 10;
 
 class Objeto3D {
-    vertexBuffer=null;
-    indexBuffer=null;
-    normalBuffer=null;
-    matrizModelado=mat4.create();
-    posicion=vec3.create();
-    rotacion=vec3.create();
-    escala=vec3.create();
-    hijos=[];
-    strip=true;
+    constructor() {
+        this.vertexBuffer=null;
+        this.indexBuffer=null;
+        this.normalBuffer=null;
+        this.matrizModelado=mat4.create();
+        this.posicion=vec3.create();
+        this.rotacion=vec3.create();
+        this.escala=vec3.create();
+        this.hijos=[];
+        this.strip=true;
+    }
 
     actualizarMatrizModelado() {
         //usar rotacion, escala y posicion para actualizar la matriz
@@ -23,30 +25,45 @@ class Objeto3D {
         mat4.translate(this.matrizModelado,this.matrizModelado,this.posicion);
         mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
         mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
-        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [1,0,2]);
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [0,0,1]);
         mat4.scale(this.matrizModelado,this.matrizModelado,this.escala);
     }
 
-    dibujar(matrizPadre) {
+    actualizarMatrizNormales(viewMatrix) {
+        // Actualiza la matriz de normales del vertex shader usando la matriz de modelado y la matriz de la camara
+        var normalMatrix = mat4.create();
+        mat4.multiply(normalMatrix, viewMatrix, this.matrizModelado);
+        mat4.invert(normalMatrix, normalMatrix);
+        mat4.transpose(normalMatrix, normalMatrix);
+        window.gl.uniformMatrix4fv(window.gl.getUniformLocation(window.glProgram, "normalMatrix"), false, normalMatrix);
+    }
+
+    dibujar(matrizPadre, viewMatrix) {
         var m = mat4.create();
         this.actualizarMatrizModelado();
         mat4.multiply(m, matrizPadre, this.matrizModelado);
+        // this.actualizarMatrizNormales(viewMatrix); FIX FALLA EL MULTIPLY
 
         if (this.vertexBuffer && this.indexBuffer) {
-            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-            gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+            let vertexPositionAttribute = gl.getAttribLocation(glProgram, "aVertexPosition");
+            gl.enableVertexAttribArray(vertexPositionAttribute);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+            gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+    
+            let vertexNormalAttribute = gl.getAttribLocation(glProgram, "aVertexNormal");
+            gl.enableVertexAttribArray(vertexNormalAttribute);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+            gl.vertexAttribPointer(vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+                
+            window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+            // window.gl.uniform1i(shaderProgram.useLightingUniform,(lighting=="true")); // revisar esta linea, iluminacion?
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-            gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
-            
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-            gl.uniform1i(shaderProgram.useLightingUniform,(lighting=="true")); // revisar esta linea, iluminacion?
-
-            if (strip){
-                gl.drawElements(gl.TRIANGLE_STRIP, indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+            if (this.strip){
+                window.gl.drawElements(window.gl.TRIANGLE_STRIP, this.indexBuffer.numItems, window.gl.UNSIGNED_SHORT, 0);
             } else {
-                gl.drawElements(gl.LINE_STRIP, indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+                window.gl.drawElements(window.gl.LINE_STRIP, this.indexBuffer.numItems, window.gl.UNSIGNED_SHORT, 0);
             }
+            console.log('SE DIBUJO: ' +  this.constructor.name)
         }
 
         for (var i = 0; i < this.hijos.length; i++) {
@@ -56,11 +73,30 @@ class Objeto3D {
 
     setGeometria(buffers, strip=true) {
         this.strip = strip;
-        this.vertexBuffer = buffers.webgl_position_buffer;
-        this.indexBuffer = buffers.webgl_index_buffer;
-        this.normalBuffer = buffers.webgl_normal_buffer;
-    }
+
+        // generar buffers de webgl
+        this.vertexBuffer = window.gl.createBuffer();
+        window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.vertexBuffer);
+        window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(buffers.positionBuffer), window.gl.STATIC_DRAW);
+        this.vertexBuffer.itemSize = 3;
+        this.vertexBuffer.numItems = buffers.positionBuffer.length / 3;
     
+        this.normalBuffer = window.gl.createBuffer();
+        window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.normalBuffer);
+        window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(buffers.normalBuffer), window.gl.STATIC_DRAW);
+        this.normalBuffer.itemSize = 3;
+        this.normalBuffer.numItems = buffers.normalBuffer.length / 3;
+    
+        this.indexBuffer = window.gl.createBuffer();
+        window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        window.gl.bufferData(window.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(buffers.indexBuffer), window.gl.STATIC_DRAW);
+        this.indexBuffer.itemSize = 1;
+        this.indexBuffer.numItems = buffers.indexBuffer.length;
+
+        console.log('setGeometria ' + this.constructor.name + ' buffer ' + buffers.positionBuffer[0])
+
+    }
+
     agregarHijo(h) {
         this.hijos.push(h);
     }
@@ -107,8 +143,11 @@ class Piso extends Objeto3D {
     }
 }
 
-class Carrito extends Objeto3D {
-    constructor() {
+const DISTANCIA_RECOJER = 1;
+const DISTANCIA_DEPOSITAR = 1;
+
+class Carro extends Objeto3D {
+    constructor(estanteria) {
         super();
         this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaChasis(), 20, 0)));
 
@@ -120,6 +159,53 @@ class Carrito extends Objeto3D {
         this.agregarHijo(new Asiento());
         this.agregarHijo(new Cabina());
         this.agregarHijo(new Elevador());
+
+        this.velGiro = 0;
+        this.velX = 0;
+        this.velY = 0;
+        this.carga = null;
+        this.impresora = this.impresora;
+        this.estanteria = estanteria;
+    }
+
+    setVelGiro(v){
+        this.velGiro = v;
+    }
+
+    setVelX(v) {
+        this.velX = v;
+    }
+
+    setVelY(v) {
+        this.velY = v;
+    }
+
+    toggleRecojer() {
+        if (carga == null) {
+            if (vec3.distance(this.posicion, this.impresora.posicion) <= DISTANCIA_RECOJER) {
+                carga = this.impresora.recojerImpresion();
+                this.agregarHijo(carga);
+            }
+        } else {
+            if (vec3.distance(this.posicion, this.estanteria.posicion) <= DISTANCIA_DEPOSITAR) {
+                this.estanteria.agregarObjeto(carga, this.posicion); // la estanteria elige en que estante se deposita
+                carga = null;
+                this.quitarHijo();
+            }
+        }
+    }
+
+    actualizarMatrizModelado() {
+        // Actualiza la posicion antes de generar la matriz de modelado
+        this.rotacion[1] = this.velGiro;
+        vec3.add(this.posicion, this.posicion, [this.velX, 0, 0]);
+
+        mat4.identity(this.matrizModelado);
+        mat4.translate(this.matrizModelado,this.matrizModelado,this.posicion);
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [0,0,1]);
+        mat4.scale(this.matrizModelado,this.matrizModelado,this.escala);
     }
 }
 
@@ -196,6 +282,13 @@ class Impresora extends Objeto3D {
         this.agregarHijo(new Barra());
         this.agregarHijo(new Cabezal());
     }
+
+    agregarObjeto(objeto, posicion) {
+        // seleccionar el estante mas cercano a la posicion
+        // setear posicion del objeto a la posicion del estante.
+        this.agregarHijo(objeto);
+
+    }
 }
 
 class Cubo extends Objeto3D {
@@ -228,13 +321,26 @@ class Escena extends Objeto3D {
     constructor() {
         super();
         // objeto vacio
-
+        var estanteria = new Estanteria();
+        var impresora = new Impresora();
+        this.agregarHijo(new Carro(estanteria, impresora));
+        this.agregarHijo(impresora);
+        this.agregarHijo(estanteria);
         this.agregarHijo(new Piso());
         this.agregarHijo(new Galpon());
-        this.agregarHijo(new Carrito());
-        this.agregarHijo(new Estanteria());
-        this.agregarHijo(new Impresora());
-        }
+    }
+
+    getCarro() {
+        return this.hijos[0];
+    }
+
+    getImpresora() {
+        return this.hijos[1];
+    }
+
+    getEstanteria() {
+        return this.hijos[2];
+    }
 }
 
 function generarImpresion(tipoSuperficie, curva, torsion){
@@ -243,10 +349,11 @@ function generarImpresion(tipoSuperficie, curva, torsion){
         // - Forma 2D revolución: “A1”,”A2”,”A3” o “A4”
         // - Forma 2D barrido: “B1”,”B2”,”B3”o ”B4”
         // - Angulo de torsión barrido: ángulo
+
+    // funcion del objeto Impresora?
 }
 
 function generarSuperficie(superficie,filas,columnas){
-    // funcion que reemplaza a setupBuffers. Devuelve los buffers, no hace falta bindearlos a webgl.
     // revisar el algoritmo del index buffer, copiar la implementacion de setupBuffers?
     var positionBuffer = [];
     var indexBuffer = [];  
