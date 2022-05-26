@@ -90,7 +90,7 @@ class SupCubo {
             16,17,18,18,17,19,
             20,21,22,22,21,23
         ];
-    
+
         return {
             positionBuffer,
             normalBuffer,
@@ -107,7 +107,8 @@ class Cilindro {
     }
 
     getPos(u, v) {
-        var y = (this.largo/2) * v/Math.PI;
+        u = u * 2 * Math.PI
+        var y = this.altura/2 * (v - 1/2);
         var x = this.radio * Math.sin(u);
         var z = this.radio * Math.cos(u);
         return [x,y,z];
