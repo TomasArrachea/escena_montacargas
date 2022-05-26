@@ -6,10 +6,10 @@ function initMenu(escena) {
 		angulo: 0,
 		generarImpresion: function() {
 			let impresora = escena.getImpresora();
-			if (tipoSuperficie == 'barrido') {
-				impresora.generarImpresion(tipoSuperficie, forma2dBarrido, angulo/2*Math.PI);
+			if (this.tipoSuperficie == 'barrido') {
+				impresora.generarImpresion(this.tipoSuperficie, this.forma2dBarrido, this.angulo/2*Math.PI);
 			} else {
-				impresora.generarImpresion(tipoSuperficie, forma2dRevolucion, angulo/2*Math.PI);
+				impresora.generarImpresion(this.tipoSuperficie, this.forma2dRevolucion, this.angulo/2*Math.PI);
 			}
 		}		
 	};
