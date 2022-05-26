@@ -118,7 +118,7 @@ let mouseUpListener = () => {
     mouseClick = false;
   }
 
-let mouseWheelListener = (event) => {
+let mouseWheelListener = (event, camara) => {
     camara.zoom(event.deltaY * FACTOR_ZOOM_MOUSE);
 }
 
