@@ -7,7 +7,7 @@
             canvas{ background-color: white; }
 			textarea{ background-color: black;}
         </style>
-        <script src="js/dat.gui/dat.gui.js"></script>
+        <script src="js/dat.gui/dat.gui.min.js"></script>
         <script src="js/glmatrix/gl-matrix.js"></script>
     </head>
     <body>
@@ -62,24 +62,26 @@
         
         <script type="module">
             import {Escena} from '/js/objeto3d.js'
+            import {mouseWheelListener, mouseMoveListener, mouseUpListener, mouseDownListener, keyUpListener, keyDownListener} from '/js/handle_comandos.js'
+            import {initMenu} from '/js/gui.js'
+            import {Camara} from '/js/camara.js'
+
             var mat4=glMatrix.mat4;
             var vec3=glMatrix.vec3;
 
-            var gl = null,
-            canvas = null,
+            var canvas = null,
 
-            glProgram = null,
             fragmentShader = null,
             vertexShader = null;
                 
             var escena = null;
+            var camara = null;
 
             var modelMatrix = mat4.create();
             var viewMatrix = mat4.create();
             var projMatrix = mat4.create();
             var normalMatrix = mat4.create();
-            var rotate_angle = -1.57078;
-            
+            var camaraMatrix = mat4.create();
 
          
             function initWebGL(){
@@ -87,42 +89,53 @@
                 canvas = document.getElementById("my-canvas");  
 
                 try{
-                    gl = canvas.getContext("webgl");      
+                    window.gl = canvas.getContext("webgl");      
 
                 }catch(e){
                     alert(  "Error: Your browser does not appear to support WebGL.");
                 }
 
-                if(gl) {
+                if(window.gl) {
 
                     setupWebGL();
                     initShaders();
                     escena = new Escena();
+                    camara = new Camara(escena.getCarro(), 0, 0);
                     setupVertexShaderMatrix();
-                    tick();   
+                    initMenu(escena);
+                    setupListeners();
+
+
+                    drawScene();
+                    // tick();   
 
                 }else{    
                     alert(  "Error: Your browser does not appear to support WebGL.");
                 }
 
             }
-           
+
+            function setupListeners() {
+                document.addEventListener('keydown', function(event){keyDownListener(event, escena, camara)});
+                document.addEventListener('keyup', function(event){keyUpListener(event, escena)});
+                document.addEventListener('mousedown', mouseDownListener);
+                document.addEventListener('mousemove', function(event){mouseMoveListener(event, camara)});
+                document.addEventListener('mouseup', mouseUpListener);
+                document.addEventListener('wheel', function(event){mouseWheelListener(event, camara)});
+            }          
 
             function setupWebGL(){
-                gl.enable(gl.DEPTH_TEST);
+                window.gl.enable(window.gl.DEPTH_TEST);
                 //set the clear color
-                gl.clearColor(0.1, 0.1, 0.2, 1.0);     
-                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);     
+                window.gl.clearColor(0.1, 0.1, 0.2, 1.0);     
+                window.gl.clear(window.gl.COLOR_BUFFER_BIT | window.gl.DEPTH_BUFFER_BIT);     
     
-                gl.viewport(0, 0, canvas.width, canvas.height);
+                window.gl.viewport(0, 0, canvas.width, canvas.height);
 
                 // Matrix de Proyeccion Perspectiva
-
                 mat4.perspective(projMatrix,45, canvas.width / canvas.height, 0.1, 100.0);
-                
-                mat4.identity(modelMatrix);
-                mat4.rotate(modelMatrix,modelMatrix, -1.57078, [1.0, 0.0, 0.0]);
 
+                // Matriz de vista
                 mat4.identity(viewMatrix);
                 mat4.translate(viewMatrix,viewMatrix, [0.0, 0.0, -5.0]);
             }
@@ -134,92 +147,65 @@
                     vs_source = document.getElementById('shader-vs').innerHTML;
 
                 //compile shaders    
-                vertexShader = makeShader(vs_source, gl.VERTEX_SHADER);
-                fragmentShader = makeShader(fs_source, gl.FRAGMENT_SHADER);
+                vertexShader = makeShader(vs_source, window.gl.VERTEX_SHADER);
+                fragmentShader = makeShader(fs_source, window.gl.FRAGMENT_SHADER);
                 
                 //create program
-                glProgram = gl.createProgram();
+                window.glProgram = window.gl.createProgram();
                 
                 //attach and link shaders to the program
-                gl.attachShader(glProgram, vertexShader);
-                gl.attachShader(glProgram, fragmentShader);
-                gl.linkProgram(glProgram);
+                window.gl.attachShader(window.glProgram, vertexShader);
+                window.gl.attachShader(window.glProgram, fragmentShader);
+                window.gl.linkProgram(window.glProgram);
 
-                if (!gl.getProgramParameter(glProgram, gl.LINK_STATUS)) {
+                if (!window.gl.getProgramParameter(window.glProgram, window.gl.LINK_STATUS)) {
                     alert("Unable to initialize the shader program.");
                 }
                 
                 //use program
-                gl.useProgram(glProgram);
+                window.gl.useProgram(window.glProgram);
             }
             
             function makeShader(src, type){
                 //compile the vertex shader
-                var shader = gl.createShader(type);
-                gl.shaderSource(shader, src);
-                gl.compileShader(shader);
+                var shader = window.gl.createShader(type);
+                window.gl.shaderSource(shader, src);
+                window.gl.compileShader(shader);
 
-                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                    console.log("Error compiling shader: " + gl.getShaderInfoLog(shader));
+                if (!window.gl.getShaderParameter(shader, window.gl.COMPILE_STATUS)) {
+                    console.log("Error compiling shader: " + window.gl.getShaderInfoLog(shader));
                 }
                 return shader;
             }
             
             function setupVertexShaderMatrix(){
-                var modelMatrixUniform = gl.getUniformLocation(glProgram, "modelMatrix");
-                var viewMatrixUniform  = gl.getUniformLocation(glProgram, "viewMatrix");
-                var projMatrixUniform  = gl.getUniformLocation(glProgram, "projMatrix");
-                var normalMatrixUniform  = gl.getUniformLocation(glProgram, "normalMatrix");
+                var modelMatrixUniform = window.gl.getUniformLocation(window.glProgram, "modelMatrix");
+                var viewMatrixUniform  = window.gl.getUniformLocation(window.glProgram, "viewMatrix");
+                var projMatrixUniform  = window.gl.getUniformLocation(window.glProgram, "projMatrix");
+                var normalMatrixUniform  = window.gl.getUniformLocation(window.glProgram, "normalMatrix");
 
-                gl.uniformMatrix4fv(modelMatrixUniform, false, modelMatrix);
-                gl.uniformMatrix4fv(viewMatrixUniform, false, viewMatrix);
-                gl.uniformMatrix4fv(projMatrixUniform, false, projMatrix);
-                gl.uniformMatrix4fv(normalMatrixUniform, false, normalMatrix);
+                window.gl.uniformMatrix4fv(modelMatrixUniform, false, modelMatrix);
+                window.gl.uniformMatrix4fv(viewMatrixUniform, false, viewMatrix);
+                window.gl.uniformMatrix4fv(projMatrixUniform, false, projMatrix);
+                window.gl.uniformMatrix4fv(normalMatrixUniform, false, normalMatrix);
             }                  
 
-            function drawScene(vertexBuffer, indexBuffer, normalBuffer, strip) {
-                // Se configura el viewport dentro del "canvas". 
-                // En este caso se utiliza toda el área disponible
-                gl.viewport(0, 0, $canvas.width(), $canvas.height()); // NOTACION DE JQUERY, IMPORTAR LIBRERIA
-                
-                // Se habilita el color de borrado para la pantalla (Color Buffer) y otros buffers
-                gl.clearColor(0.2,0.2,0.2,1);
-                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            function drawScene() {         
+                setupVertexShaderMatrix();
+                camaraMatrix = camara.getCameraMatrix();
 
-                // Se configura la matriz de proyección
-                mat4.identity(projMatrix);
-                mat4.perspective(projMatrix, 30, aspect, 0.1, 100.0); // ASPECT VIENE DE JQUERY CANVAS
-                mat4.scale(projMatrix,projMatrix,[1,-1,1]); // parche para hacer un flip de Y, parece haber un bug en glmatrix
-                
-                // Se inicializan las variables asociadas con la Iluminación
-                
-                gl.uniform1f(shaderProgram.frameUniform, time/10.0 );
-                gl.uniform3f(shaderProgram.ambientColorUniform, 0.6, 0.6, 0.6 );
-                gl.uniform3f(shaderProgram.directionalColorUniform, 1.2, 1.1, 0.7);
-                gl.uniform1i(shaderProgram.useLightingUniform,(lighting=="true"));
-                
-                // Definimos la ubicación de la camara                        
-                
-                mat4.lookAt(matrizVista, // QUE SERIA MATRIX VISTA?
-                    vec3.fromValues(0,alturaCamara,distanciaCamara),
-                    vec3.fromValues(0,0,0),
-                    vec3.fromValues(0,1,0)
-                );
-                    
-                var lightPosition = [10.0,0.0, 3.0];  
-                gl.uniform3fv(shaderProgram.lightingDirectionUniform, lightPosition);            
-
-                escena.dibujar(mat4.create()) // TODO: revisar que matriz va
-            }   
-
-            function animate(){     
-                // deberia escuchar acciones del teclado y mover los objetos o la camara    
+                window.gl.uniformMatrix4fv(window.gl.getUniformLocation(window.glProgram, "viewMatrix"), false, camaraMatrix); // la matriz de camara sera la viewMatrix
+      
+                escena.dibujar(modelMatrix, camaraMatrix);
             }
             
             function tick(){
                 requestAnimationFrame(tick);
+
+                window.gl.clear( window.gl.COLOR_BUFFER_BIT | window.gl.DEPTH_BUFFER_BIT );
+                window.gl.clearColor(0, 0, 0, 1);
+
                 drawScene();
-                animate();
             }
 
             window.onload=initWebGL;
