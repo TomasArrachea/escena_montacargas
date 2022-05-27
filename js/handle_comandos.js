@@ -98,16 +98,16 @@ let mouseDownListener = () => {
 let mouseMoveListener = (e, camara) => {
     if (mouseClick) {
       if (e.pageX > oldX){
-        camara.sumGiroX((e.pageX-oldX)*VEL_ROTACION_CAMARA);
+        camara.sumGiroGuiniada((e.pageX-oldX)*VEL_ROTACION_CAMARA);
       }
       else if(e.pageX < oldX){
-        camara.sumGiroX((e.pageX-oldX)*VEL_ROTACION_CAMARA);
+        camara.sumGiroGuiniada((e.pageX-oldX)*VEL_ROTACION_CAMARA);
       }
       if(e.pageY > oldY){
-        camara.sumGiroY((e.pageY - oldY)*VEL_ROTACION_CAMARA);
+        camara.sumGiroCabeceo((e.pageY - oldY)*VEL_ROTACION_CAMARA);
       }
       else if(e.pageY < oldY){
-        camara.sumGiroY((e.pageY - oldY)*VEL_ROTACION_CAMARA);
+        camara.sumGiroCabeceo((e.pageY - oldY)*VEL_ROTACION_CAMARA);
       }
     }
     oldX = e.pageX;
