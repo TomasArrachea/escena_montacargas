@@ -10,7 +10,6 @@ class SupBarrido {
     getPos(u, v) {
         var tope = this.curva.length/2 - 1
         var index = Math.floor(u * tope) // hay muchos vertices repetidos, resultan en triangulos colapsados. Que pasa con las normales?
-        console.log('indice: ' + index)
         var angulo = this.torsion * v;
         var x = this.curva[index*2];
         var z = this.curva[index*2+1];
@@ -45,43 +44,5 @@ class SupBarrido {
         return n;
     }
 } 
-
-class SupRevolucion {
-    // Sup de revolucion.
-    constructor(curva){
-        this.curva = curva;
-    }
-    
-    getPos(u, v) {
-        var index = Math.floor(v * (this.curva.length/2 -1));
-        u = u * 2 * Math.PI;
-        var x = this.curva[index*2] * Math.sin(u);
-        var z = this.curva[index*2] * Math.cos(u);
-        var y = this.curva[index*2+1];
-        return [x,y,z];
-    }
-
-    getNormal(u, v) {
-        var p=this.getPos(u,v);
-        var v=vec3.create();
-        vec3.normalize(v,p);
-
-        var delta=0.05;
-        var p1=this.getPos(u,v);
-        var p2=this.getPos(u,v+delta);
-        var p3=this.getPos(u+delta,v);
-
-        var v1=vec3.fromValues(p2[0]-p1[0],p2[1]-p1[1],p2[2]-p1[2]);
-        var v2=vec3.fromValues(p3[0]-p1[0],p3[1]-p1[1],p3[2]-p1[2]);
-
-        vec3.normalize(v1,v1);
-        vec3.normalize(v2,v2);
-        
-        var n=vec3.create();
-        vec3.cross(n,v1,v2);
-        vec3.scale(n,n,-1);
-        return n;
-    }
-}
 
 export {SupBarrido};
