@@ -100,14 +100,14 @@
                     setupWebGL();
                     initShaders();
                     escena = new Escena();
-                    camara = new Camara(escena.getCarro(), 0, 0);
+                    camara = new Camara(escena.getCarro(), escena.getImpresora().posicion, escena.getEstanteria().posicion);
                     setupVertexShaderMatrix();
                     initMenu(escena);
                     setupListeners();
 
 
                     drawScene();
-                    // tick();   
+                    tick();   
 
                 }else{    
                     alert(  "Error: Your browser does not appear to support WebGL.");
@@ -193,7 +193,6 @@
             function drawScene() {         
                 setupVertexShaderMatrix();
                 camaraMatrix = camara.getCameraMatrix();
-
                 window.gl.uniformMatrix4fv(window.gl.getUniformLocation(window.glProgram, "viewMatrix"), false, camaraMatrix); // la matriz de camara sera la viewMatrix
       
                 escena.dibujar(modelMatrix, camaraMatrix);
