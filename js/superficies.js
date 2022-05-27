@@ -17,37 +17,37 @@ class SupPiso {
 }
 
 class SupCubo {
-    static generarSuperficie(ancho, alto, largo) {
+    static generarSuperficie(x, y, z) {
         var positionBuffer = [         
-            ancho/2,alto/2,largo/2,
-            ancho/2,-alto/2,largo/2,
-            ancho/2,alto/2,-largo/2,
-            ancho/2,-alto/2,-largo/2,
+            x/2,y/2,z/2,
+            x/2,-y/2,z/2,
+            x/2,y/2,-z/2,
+            x/2,-y/2,-z/2,
             
-            ancho/2,alto/2,-largo/2,
-            -ancho/2,alto/2,-largo/2,
-            ancho/2,-alto/2,-largo/2,
-            -ancho/2,-alto/2,-largo/2,
+            x/2,y/2,-z/2,
+            -x/2,y/2,-z/2,
+            x/2,-y/2,-z/2,
+            -x/2,-y/2,-z/2,
     
-            ancho/2,alto/2,largo/2,
-            -ancho/2,alto/2,largo/2,
-            ancho/2,-alto/2,largo/2,
-            -ancho/2,-alto/2,largo/2,
+            x/2,y/2,z/2,
+            -x/2,y/2,z/2,
+            x/2,-y/2,z/2,
+            -x/2,-y/2,z/2,
     
-            -ancho/2,alto/2,largo/2,
-            -ancho/2,-alto/2,largo/2,
-            -ancho/2,alto/2,-largo/2,
-            -ancho/2,-alto/2,-largo/2,
+            -x/2,y/2,z/2,
+            -x/2,-y/2,z/2,
+            -x/2,y/2,-z/2,
+            -x/2,-y/2,-z/2,
     
-            ancho/2,alto/2,largo/2,
-            ancho/2,alto/2,-largo/2,
-            -ancho/2,alto/2,largo/2,
-            -ancho/2,alto/2,-largo/2,
+            x/2,y/2,z/2,
+            x/2,y/2,-z/2,
+            -x/2,y/2,z/2,
+            -x/2,y/2,-z/2,
     
-            ancho/2,-alto/2,largo/2,
-            ancho/2,-alto/2,-largo/2,
-            -ancho/2,-alto/2,largo/2,
-            -ancho/2,-alto/2,-largo/2,
+            x/2,-y/2,z/2,
+            x/2,-y/2,-z/2,
+            -x/2,-y/2,z/2,
+            -x/2,-y/2,-z/2,
     
         ];
         var normalBuffer = [
@@ -108,7 +108,7 @@ class Cilindro {
 
     getPos(u, v) {
         u = u * 2 * Math.PI
-        var y = this.altura/2 * (v - 1/2);
+        var y = this.largo/2 * v;
         var x = this.radio * Math.sin(u);
         var z = this.radio * Math.cos(u);
         return [x,y,z];
