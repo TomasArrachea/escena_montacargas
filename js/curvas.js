@@ -463,6 +463,7 @@ function generarTrapecio() {
         [centro[0]+base1/2, centro[1]+largo/2],
         [centro[0]-base1/2, centro[1]+largo/2]
     );
+    return curva.puntos;
 }
 
 export {generarA1, generarA2, generarB1, generarB2, generarB3, generarB4, generarCurvaChasis, generarCurvaGalpon, generarCurvaRueda, generarTrapecio};
