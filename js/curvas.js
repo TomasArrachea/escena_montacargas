@@ -247,7 +247,7 @@ function generarB4() {
 
 function generarA1() {
     var inicio = [0,0];
-    var curva = Curva();
+    var curva = new Curva();
 
     // segmento horizontal
     curva.agregarSegmento(
