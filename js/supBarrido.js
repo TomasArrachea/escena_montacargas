@@ -8,21 +8,22 @@ class SupBarrido {
     }
 
     getPos(u, v) {
-        // TODO: revisar que es mas util si u y v no vienen como angulos
-        var index = (u/2*Math.PI) * (this.curva.length/2 -1) // revisar: seria mejor que para los segmentos lineales se elija siempre los extremos, sino se pierde mucha info. El parametro deberia usarse solo en las curvas cub y cuadr.
-        var angulo = this.torsion * (v/Math.PI)
+        var tope = this.curva.length/2 - 1
+        var index = Math.floor(u * tope) // hay muchos vertices repetidos, resultan en triangulos colapsados. Que pasa con las normales?
+        console.log('indice: ' + index)
+        var angulo = this.torsion * v;
         var x = this.curva[index*2];
         var z = this.curva[index*2+1];
         var y = (v - 0.5) * this.altura 
 
-        // rotacion alrededor del eje y
-        x = Math.cos(angulo)*x - Math.sin(angulo)*y
-        z = Math.sin(angulo)*x + Math.cos(angulo)*y
+        // rotacion alrededor del eje y con angulo de torsion
+        x = Math.cos(angulo)*x - Math.sin(angulo)*z
+        z = Math.sin(angulo)*x + Math.cos(angulo)*z
         return [x,y,z]
     }
 
     getNormal(u, v) {
-        // Revisar, creo que calcula la normal con los puntos del triangulo haciendo prod vectorial. Es generico para todas las superficies? revisar triangulos colapsados
+        // Normal estimada. Revisar triangulos colapsados.
         var p=this.getPos(u,v);
         var v=vec3.create();
         vec3.normalize(v,p);
@@ -43,8 +44,7 @@ class SupBarrido {
         vec3.scale(n,n,-1);
         return n;
     }
-}
- 
+} 
 
 class SupRevolucion {
     // Sup de revolucion.
@@ -53,11 +53,12 @@ class SupRevolucion {
     }
     
     getPos(u, v) {
-        var index = (v/Math.PI) * (this.curva.length/2 -1)
+        var index = Math.floor(v * (this.curva.length/2 -1));
+        u = u * 2 * Math.PI;
         var x = this.curva[index*2] * Math.sin(u);
         var z = this.curva[index*2] * Math.cos(u);
-        var y = this.curva[index*2+1]
-        return [x,y,z]
+        var y = this.curva[index*2+1];
+        return [x,y,z];
     }
 
     getNormal(u, v) {
@@ -83,4 +84,4 @@ class SupRevolucion {
     }
 }
 
-export {SupBarrido, SupRevolucion};
+export {SupBarrido};
