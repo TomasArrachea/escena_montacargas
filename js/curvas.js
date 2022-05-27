@@ -322,12 +322,12 @@ function generarA2() {
 }
 
 
-function generarCurvaRueda() {
+function generarCurvaRueda(radio, ancho) {
     var curva = new Curva();
     var inicio = [0,0];
-    var radio = 120;
+    var radio = radio;
     var desnivel_tapa = radio/8;
-    var ancho_goma = radio/4;
+    var ancho_goma = ancho;
     var ancho_desnivel = radio/6;
     var ancho = ancho_desnivel+ancho_goma;
     // tapa inferior
