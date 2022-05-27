@@ -1,10 +1,9 @@
 import {Cilindro, SupCubo, SupPiso} from './superficies.js';
-import {SupBarrido, SupRevolucion} from './supBarrido.js';
+import {SupBarrido} from './supBarrido.js';
+import {SupRevolucion} from './supRevolucion.js';
 import {generarA1, generarA2, generarB1, generarB2, generarB3, generarB4, generarCurvaChasis, generarCurvaGalpon, generarCurvaRueda, generarTrapecio} from './curvas.js'
 import {mat4, vec3} from 'https://cdn.skypack.dev/gl-matrix';
 
-var filas = 10;
-var columnas = 10;
 
 class Objeto3D {
     constructor() {
@@ -20,31 +19,32 @@ class Objeto3D {
     }
 
     actualizarMatrizModelado() {
-        //usar rotacion, escala y posicion para actualizar la matriz
+        // Usa rotacion, escala y posicion para actualizar la matriz
         mat4.identity(this.matrizModelado);
-        mat4.translate(this.matrizModelado,this.matrizModelado,this.posicion);
+        mat4.scale(this.matrizModelado,this.matrizModelado,this.escala);
         mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
         mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
         mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [0,0,1]);
-        mat4.scale(this.matrizModelado,this.matrizModelado,this.escala);
+        mat4.translate(this.matrizModelado,this.matrizModelado,this.posicion);
     }
 
-    actualizarMatrizNormales(viewMatrix) {
+    setMatricesShader(viewMatrix, modelado) {
         // Actualiza la matriz de normales del vertex shader usando la matriz de modelado y la matriz de la camara
         var normalMatrix = mat4.create();
         mat4.multiply(normalMatrix, viewMatrix, this.matrizModelado);
         mat4.invert(normalMatrix, normalMatrix);
         mat4.transpose(normalMatrix, normalMatrix);
-        window.gl.uniformMatrix4fv(window.gl.getUniformLocation(window.glProgram, "normalMatrix"), false, normalMatrix);
+        gl.uniformMatrix4fv(gl.getUniformLocation(glProgram, "normalMatrix"), false, normalMatrix);
+        // gl.uniformMatrix4fv(gl.getUniformLocation(glProgram, "modelMatrix"), false, modelado); // FIX CUANDO AGREGO ESTO NO SE VE, PERO SINO NO SE APLICAN LAS MATRICES DE MODELADO
     }
 
     dibujar(matrizPadre, viewMatrix) {
-        var m = mat4.create();
+        var modelado = mat4.create();
         this.actualizarMatrizModelado();
-        mat4.multiply(m, matrizPadre, this.matrizModelado);
-        // this.actualizarMatrizNormales(viewMatrix); FIX FALLA EL MULTIPLY
+        mat4.multiply(modelado, matrizPadre, this.matrizModelado);
+        this.setMatricesShader(viewMatrix, modelado);
 
-        if (this.vertexBuffer && this.indexBuffer) {
+        if (this.vertexBuffer && this.indexBuffer) {    
             let vertexPositionAttribute = gl.getAttribLocation(glProgram, "aVertexPosition");
             gl.enableVertexAttribArray(vertexPositionAttribute);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
@@ -55,19 +55,17 @@ class Objeto3D {
             gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
             gl.vertexAttribPointer(vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
                 
-            window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-            // window.gl.uniform1i(shaderProgram.useLightingUniform,(lighting=="true")); // revisar esta linea, iluminacion?
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
             if (this.strip){
-                window.gl.drawElements(window.gl.TRIANGLE_STRIP, this.indexBuffer.numItems, window.gl.UNSIGNED_SHORT, 0);
+                gl.drawElements(gl.TRIANGLE_STRIP, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
             } else {
-                window.gl.drawElements(window.gl.LINE_STRIP, this.indexBuffer.numItems, window.gl.UNSIGNED_SHORT, 0);
+                gl.drawElements(gl.LINE_STRIP, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
             }
-            console.log('SE DIBUJO: ' +  this.constructor.name)
         }
 
         for (var i = 0; i < this.hijos.length; i++) {
-            this.hijos[i].dibujar(m);
+            this.hijos[i].dibujar(modelado, viewMatrix);
         }
     }
 
@@ -75,38 +73,31 @@ class Objeto3D {
         this.strip = strip;
 
         // generar buffers de webgl
-        this.vertexBuffer = window.gl.createBuffer();
-        window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.vertexBuffer);
-        window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(buffers.positionBuffer), window.gl.STATIC_DRAW);
+        this.vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(buffers.positionBuffer), gl.STATIC_DRAW);
         this.vertexBuffer.itemSize = 3;
         this.vertexBuffer.numItems = buffers.positionBuffer.length / 3;
     
-        this.normalBuffer = window.gl.createBuffer();
-        window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.normalBuffer);
-        window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(buffers.normalBuffer), window.gl.STATIC_DRAW);
+        this.normalBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(buffers.normalBuffer), gl.STATIC_DRAW);
         this.normalBuffer.itemSize = 3;
         this.normalBuffer.numItems = buffers.normalBuffer.length / 3;
     
-        this.indexBuffer = window.gl.createBuffer();
-        window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        window.gl.bufferData(window.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(buffers.indexBuffer), window.gl.STATIC_DRAW);
+        this.indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(buffers.indexBuffer), gl.STATIC_DRAW);
         this.indexBuffer.itemSize = 1;
         this.indexBuffer.numItems = buffers.indexBuffer.length;
-
-        console.log('setGeometria ' + this.constructor.name + ' buffer ' + buffers.positionBuffer[0])
-
     }
 
     agregarHijo(h) {
         this.hijos.push(h);
     }
 
-    quitarHijo(h) {
-        // devuelve un array con los elementos borrados. Si no se borra nada, no devuelve nada
-        const index = this.hijos.indexOf(h);
-        if (index > -1) {
-            return this.hijos.splice(index);
-        }
+    quitarHijo() {
+        return this.hijos.pop();
     }
 
     setPosicion(x,y,z) {
@@ -131,7 +122,8 @@ class Objeto3D {
 class Galpon extends Objeto3D {
     constructor() {
         super();
-        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaGalpon(), 100, 0), filas, columnas));
+        // TODO: revisar las filas y columnas
+        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaGalpon(), 30, 0), 15, 15));
         // rotar y escalar
     }
 }
@@ -139,23 +131,38 @@ class Galpon extends Objeto3D {
 class Piso extends Objeto3D {
     constructor() {
         super();
-        this.setGeometria(generarSuperficie(new SupPiso(500, 500), filas, columnas));
+        // TODO: revisar las filas y columnas
+        this.setGeometria(generarSuperficie(new SupPiso(50, 50), 15, 15));
     }
 }
 
-const DISTANCIA_RECOJER = 1;
-const DISTANCIA_DEPOSITAR = 1;
 
 class Carro extends Objeto3D {
     constructor(estanteria) {
-        super();
-        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaChasis(), 20, 0)));
+        const DISTANCIA_RECOJER = 1;
+        const DISTANCIA_DEPOSITAR = 1;
 
-        // TODO: acomodar posiciones y orientaciones
-        this.agregarHijo(new Rueda());
-        this.agregarHijo(new Rueda());
-        this.agregarHijo(new Rueda());
-        this.agregarHijo(new Rueda());
+        super();
+        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaChasis(), 3, 0)));
+        this.setEscala(1, 1, 1);
+        this.setRotacion(0, 0, Math.PI/2);
+
+        var rueda = new Rueda();
+        rueda.setPosicion(3,1,2);
+        this.agregarHijo(rueda);
+        
+        var rueda = new Rueda();
+        rueda.setPosicion(-3,1,2);
+        this.agregarHijo(rueda);
+        
+        var rueda = new Rueda();
+        rueda.setPosicion(3,1,-2);
+        this.agregarHijo(rueda);
+        
+        var rueda = new Rueda();
+        rueda.setPosicion(-3,1,-2);
+        this.agregarHijo(rueda);
+        
         this.agregarHijo(new Asiento());
         this.agregarHijo(new Cabina());
         this.agregarHijo(new Elevador());
@@ -197,7 +204,7 @@ class Carro extends Objeto3D {
 
     actualizarMatrizModelado() {
         // Actualiza la posicion antes de generar la matriz de modelado
-        this.rotacion[1] = this.velGiro;
+        this.rotacion[1] += this.velGiro;
         vec3.add(this.posicion, this.posicion, [this.velX, 0, 0]);
 
         mat4.identity(this.matrizModelado);
@@ -212,7 +219,7 @@ class Carro extends Objeto3D {
 class Rueda extends Objeto3D {
     constructor() {
         super();
-        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda())));
+        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(1, 1))));
     }
 }
 
@@ -258,50 +265,79 @@ class Estanteria extends Objeto3D {
     constructor() {
         super();
         // objeto vacio
-        var ancho_estanteria = 6;
-        var largo_estanteria = 15;
-        var alto_estanteria = 1;
-        var ancho_col = 1;
-        var largo_col = 1;
-        var alto_col = 10;
+        var xEstanteria = 6;
+        var yEstanteria = 1;
+        var zEstanteria = 4;
+        var xCol = 1;
+        var yCol = 8;
+        var zCol = 1;
+        
+        var estanteria = new Cubo(xEstanteria, yEstanteria, zEstanteria);
+        estanteria.setPosicion(0,2,0);
+        this.agregarHijo(estanteria);
 
-        this.agregarHijo(new Cubo(ancho_estanteria, largo_estanteria, alto_estanteria)); // estanteria 1
-        this.agregarHijo(new Cubo(ancho_estanteria, largo_estanteria, alto_estanteria)); // estanteria 2
-        this.agregarHijo(new Cubo(ancho_estanteria, largo_estanteria, alto_estanteria)); // estanteria 3
+        var estanteria = new Cubo(xEstanteria, yEstanteria, zEstanteria);
+        estanteria.setPosicion(0,4,0);
+        this.agregarHijo(estanteria);
+
+        var estanteria = new Cubo(xEstanteria, yEstanteria, zEstanteria);
+        estanteria.setPosicion(0,6,0);
+        this.agregarHijo(estanteria);
+
+        var columna;
         for (var i = 0; i < 2; i++)
             for (var j = 0; j < 9; j++)
-                this.agregarHijo(new Cubo(ancho_col, largo_col, alto_col)); // columnas
+                columna = new Cubo(xCol, yCol, zCol);
+                columna.setPosicion(i, 0, -4.5+j);
+                this.agregarHijo(columna);
+    }
+
+    agregarObjeto(objeto, posicion) {
+        this.agregarHijo(objeto);
+        objeto.setPosicion(0, 2, 0); // TODO: elegir la ubicacion mas cercana a posicion
     }
 }
 
 class Impresora extends Objeto3D {
     constructor() {
         super();
-        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda())), false);
+        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(2, 2))), false);
+        this.setEscala(1,1,1);
 
-        this.agregarHijo(new Barra());
-        this.agregarHijo(new Cabezal());
+        var cabezal = new Cabezal();
+        cabezal.setPosicion(0,4,5);
+        this.agregarHijo(cabezal);
+
+        var barra = new Barra();
+        barra.setPosicion(0,0,5);
+        this.agregarHijo(barra);
+
+        this.velCabezal = 0;
     }
 
-    agregarObjeto(objeto, posicion) {
-        // seleccionar el estante mas cercano a la posicion
-        // setear posicion del objeto a la posicion del estante.
-        this.agregarHijo(objeto);
+    recojerImpresion() {
+        return this.quitarHijo()
+    }
+
+    imprimir() {
+        //mover el cabezal en y
+        this.velCabezal = 5;
 
     }
+
 }
 
 class Cubo extends Objeto3D {
-    constructor(ancho, largo, alto) {
+    constructor(x, y, z) {
         super();
-        this.setGeometria(SupCubo.generarSuperficie(ancho, largo, alto), false);
+        this.setGeometria(SupCubo.generarSuperficie(x, y, z), false);
     }
 }
 
 class Barra extends Objeto3D {
     constructor() {
         super();
-        this.setGeometria(generarSuperficie(new Cilindro(1, 4)));
+        this.setGeometria(generarSuperficie(new Cilindro(0.1, 7)));
     }
 }
 
@@ -309,11 +345,25 @@ class Cabezal extends Objeto3D {
     constructor() {
         super();
         // objeto vacio
-        this.agregarHijo(new Cubo(3,1,1)); // agarre con la barra
-        this.agregarHijo(new Cubo(1,1,2)); // tirante 1
-        this.agregarHijo(new Cubo(1,1,2)); // tirante 2
-        this.agregarHijo(new Cubo(3,2,1)); // agarre con panel
-        this.agregarHijo(new Cubo(5,4,1)); // panel
+        var agarreBarra = new Cubo(3,1,1)
+        agarreBarra.setPosicion(0,0,0);
+        this.agregarHijo(agarreBarra);
+
+        var tirante1 = new Cubo(1,1,2);
+        tirante1.setPosicion(1,0,-2);
+        this.agregarHijo(tirante1);
+
+        var tirante2 = new Cubo(1,1,2);
+        tirante2.setPosicion(-1,0,-2);
+        this.agregarHijo(tirante2);
+
+        var agarrePanel = new Cubo(3,1,1);
+        agarrePanel.setPosicion(0,0,-2.5);
+        this.agregarHijo(agarrePanel);
+
+        var panel = new Cubo(4,2,1);
+        panel.setPosicion(0,-0.5,-2.5);
+        this.agregarHijo(panel);
     }
 }
 
@@ -322,16 +372,33 @@ class Escena extends Objeto3D {
         super();
         // objeto vacio
         var estanteria = new Estanteria();
-        var impresora = new Impresora();
-        this.agregarHijo(new Carro(estanteria, impresora));
-        this.agregarHijo(impresora);
+        estanteria.setPosicion(-20,-5,0);
+        estanteria.setEscala(0.5, 0.5, 0.5);
         this.agregarHijo(estanteria);
-        this.agregarHijo(new Piso());
-        this.agregarHijo(new Galpon());
+    
+        var impresora = new Impresora();
+        impresora.setPosicion(10,10,0);
+        impresora.setEscala(0.5, 0.5, 0.5);
+        this.agregarHijo(impresora);
+    
+        var carro = new Carro(estanteria, impresora);
+        impresora.setPosicion(5,0,0);
+        impresora.setEscala(0.5, 0.5, 0.5);
+        this.agregarHijo(carro);
+
+        var piso = new Piso();
+        piso.setPosicion(0,0,0);
+        piso.setEscala(4, 0, 4);
+        this.agregarHijo(piso);
+
+        var galpon = new Galpon();
+        galpon.setPosicion(0,0,0);
+        galpon.setEscala(5, 5, 5);
+        this.agregarHijo(galpon);
     }
 
     getCarro() {
-        return this.hijos[0];
+        return this.hijos[2];
     }
 
     getImpresora() {
@@ -339,7 +406,7 @@ class Escena extends Objeto3D {
     }
 
     getEstanteria() {
-        return this.hijos[2];
+        return this.hijos[0];
     }
 }
 
@@ -354,6 +421,9 @@ function generarImpresion(tipoSuperficie, curva, torsion){
 }
 
 function generarSuperficie(superficie,filas,columnas){
+
+    var filas = 10;
+    var columnas = 10;
     // revisar el algoritmo del index buffer, copiar la implementacion de setupBuffers?
     var positionBuffer = [];
     var indexBuffer = [];  
@@ -391,7 +461,6 @@ function generarSuperficie(superficie,filas,columnas){
             indexBuffer.push(columnas + columnas*i);
         }   
     }
-    
     return {
         positionBuffer,
         normalBuffer,
