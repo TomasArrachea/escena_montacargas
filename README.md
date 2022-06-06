@@ -10,3 +10,4 @@ Comandos:
 - W,S: avanzar o retroceder
 - Q,E: subir o bajar pala
 - G: tomar un objeto 3D de la impresora o dejarlo en un casillero libre de la estantería
+- 1,2,3,4,5,6 para cambiar de cámara
