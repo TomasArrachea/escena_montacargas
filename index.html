@@ -184,7 +184,7 @@
                 var projMatrixUniform  = window.gl.getUniformLocation(window.glProgram, "projMatrix");
                 var normalMatrixUniform  = window.gl.getUniformLocation(window.glProgram, "normalMatrix");
 
-                window.gl.uniformMatrix4fv(modelMatrixUniform, false, modelMatrix);
+                window.gl.uniformMatrix4fv(modelMatrixUniform, false, modelMatrix); // REVISAR: no hay que hacer nada con la matriz modelMatrix? es solo la identidad
                 window.gl.uniformMatrix4fv(viewMatrixUniform, false, viewMatrix);
                 window.gl.uniformMatrix4fv(projMatrixUniform, false, projMatrix);
                 window.gl.uniformMatrix4fv(normalMatrixUniform, false, normalMatrix);
@@ -195,7 +195,7 @@
                 camaraMatrix = camara.getCameraMatrix();
                 window.gl.uniformMatrix4fv(window.gl.getUniformLocation(window.glProgram, "viewMatrix"), false, camaraMatrix); // la matriz de camara sera la viewMatrix
       
-                escena.dibujar(modelMatrix, camaraMatrix);
+                escena.dibujar(camaraMatrix);
             }
             
             function tick(){
