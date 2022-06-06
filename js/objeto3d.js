@@ -19,30 +19,43 @@ class Objeto3D {
     }
 
     actualizarMatrizModelado() {
-        // Usa rotacion, escala y posicion para actualizar la matriz
+        //Reset matriz de modelado.
         mat4.identity(this.matrizModelado);
-        mat4.scale(this.matrizModelado,this.matrizModelado,this.escala);
-        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
-        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
-        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [0,0,1]);
-        mat4.translate(this.matrizModelado,this.matrizModelado,this.posicion);
+        //Escalar, rotar, trasladar en ese orden.
+        if (this.escala[0] != 0 || this.escala[1] != 0 || this.escala[2] != 0){
+            mat4.scale(this.matrizModelado, this.matrizModelado, this.escala);
+        }
+        if ((this.rotacion[0] != 0 || this.rotacion[1] != 0 || this.rotacion[2] != 0) && this.anguloRotacion != 0){
+            mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
+            mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
+            mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [0,0,1]);
+        }
+        mat4.translate(this.matrizModelado, this.matrizModelado, this.posicion);
     }
 
-    setMatricesShader(viewMatrix, modelado) {
+    setMatricesShader(matrizPadre) {
         // Actualiza la matriz de normales del vertex shader usando la matriz de modelado y la matriz de la camara
-        var normalMatrix = mat4.create();
-        mat4.multiply(normalMatrix, viewMatrix, this.matrizModelado);
-        mat4.invert(normalMatrix, normalMatrix);
-        mat4.transpose(normalMatrix, normalMatrix);
-        gl.uniformMatrix4fv(gl.getUniformLocation(glProgram, "normalMatrix"), false, normalMatrix);
-        // gl.uniformMatrix4fv(gl.getUniformLocation(glProgram, "modelMatrix"), false, modelado); // FIX CUANDO AGREGO ESTO NO SE VE, PERO SINO NO SE APLICAN LAS MATRICES DE MODELADO
-    }
 
-    dibujar(matrizPadre, viewMatrix) {
+        // matriz modelado
         var modelado = mat4.create();
         this.actualizarMatrizModelado();
         mat4.multiply(modelado, matrizPadre, this.matrizModelado);
-        this.setMatricesShader(viewMatrix, modelado);
+
+        // matriz normal
+        var normal = mat4.create();
+        mat4.invert(normal, modelado);
+        mat4.transpose(normal, normal);
+        
+        var normalMatrixUniform = gl.getUniformLocation(glProgram, "normalMatrix");
+        var modelMatrixUniform = gl.getUniformLocation(glProgram, "modelMatrix")
+
+        gl.uniformMatrix4fv(normalMatrixUniform, false, normal);
+        gl.uniformMatrix4fv(modelMatrixUniform, false, modelado);
+        return modelado;
+    }
+
+    dibujar(matrizPadre) {
+        var modelado = this.setMatricesShader(matrizPadre);
 
         if (this.vertexBuffer && this.indexBuffer) {    
             let vertexPositionAttribute = gl.getAttribLocation(glProgram, "aVertexPosition");
@@ -65,7 +78,7 @@ class Objeto3D {
         }
 
         for (var i = 0; i < this.hijos.length; i++) {
-            this.hijos[i].dibujar(modelado, viewMatrix);
+            this.hijos[i].dibujar(modelado);
         }
     }
 
