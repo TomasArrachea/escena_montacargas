@@ -9,7 +9,7 @@ const VEL_TRASLACION = 0.05;  // velocidad de traslacion
 const VEL_PALA = 0.1;
 const VEL_GIRO = 0.02;        // velocidad de giro
 const DELTA_ZOOM = 0.55;
-const FACTOR_ZOOM_MOUSE = 0.1;
+const FACTOR_ZOOM_MOUSE = 0.02;
 const VEL_ROTACION_CAMARA = 0.01;
 
 
