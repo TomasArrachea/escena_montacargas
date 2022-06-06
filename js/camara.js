@@ -58,31 +58,31 @@ class Camara {
     }
 
     getCameraMatrix(){
-        // Se deberia refactorizar haciendo un objeto por cada tipo de foco.
+        // todo: refactorizar haciendo un objeto por cada tipo de foco.
+        var alturaCamara = 5
 
         if (this.camaraActual == GENERAL){
             let m = mat4.create();
-            let posicionCamara = vec3.fromValues(-this.alejamiento,0,0);
+            let posicionCamara = vec3.fromValues(-this.alejamiento,alturaCamara,0);
             
             mat4.lookAt(m, posicionCamara, vec3.fromValues(0,0,0), vec3.fromValues(0,1,0));
 
-            mat4.rotate(m, m, Math.PI/6, [0,0,1]);
-
-            mat4.rotate(m, m, this.rotacionGuiniada, vec3.fromValues(0,1,0));
+            // mat4.rotate(m, m, Math.PI/6, [0,0,1]); // rotacion para que se vea desde arriba y no paralelo al suelo
             mat4.rotate(m, m, this.rotacionCabeceo, vec3.fromValues(0,0,1));
+            mat4.rotate(m, m, this.rotacionGuiniada, vec3.fromValues(0,1,0));
             return m;
 
         } else if (this.camaraActual == IMPRESORA) {
             let m = mat4.create();
             let posicionCamara = vec3.fromValues(
                 -this.posImpresora[0] + this.alejamiento,
-                -this.posImpresora[1],
+                -this.posImpresora[1] + alturaCamara,
                 -this.posImpresora[2]
             );
             
             mat4.lookAt(m, posicionCamara, vec3.fromValues(-this.posImpresora[0],-this.posImpresora[1], -this.posImpresora[2]), vec3.fromValues(0,1,0));
-            mat4.rotate(m, m, this.rotacionGuiniada, vec3.fromValues(0,1,0));
             mat4.rotate(m, m, this.rotacionCabeceo, vec3.fromValues(0,0,1));
+            mat4.rotate(m, m, this.rotacionGuiniada, vec3.fromValues(0,1,0));
             
             return m;
         }
@@ -92,13 +92,13 @@ class Camara {
             mat4.identity(m);
             let posicionCamara = vec3.fromValues(
                 -this.posEstanteria[0] + this.alejamiento,
-                -this.posEstanteria[1],
+                -this.posEstanteria[1] + alturaCamara,
                 -this.posEstanteria[2]
             );
             
             mat4.lookAt(m, posicionCamara, vec3.fromValues(-this.posEstanteria[0],-this.posEstanteria[1], -this.posEstanteria[2]), vec3.fromValues(0,1,0));
-            mat4.rotate(m, m, this.rotacionGuiniada, vec3.fromValues(0,1,0));
             mat4.rotate(m, m, this.rotacionCabeceo, vec3.fromValues(0,0,1));
+            mat4.rotate(m, m, this.rotacionGuiniada, vec3.fromValues(0,1,0));
             return m;
         }
         
