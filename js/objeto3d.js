@@ -472,12 +472,12 @@ class Escena extends Objeto3D {
         super();
         // objeto vacio
         var estanteria = new Estanteria();
-        estanteria.setPosicion(-10,0,0);
+        estanteria.setPosicion(-7,0,0);
         estanteria.setEscala(0.5, 0.5, 0.5);
         this.agregarHijo(estanteria);
     
         var impresora = new Impresora();
-        impresora.setPosicion(10,0,0);
+        impresora.setPosicion(7,0,0);
         this.agregarHijo(impresora);
     
         var carro = new Carro(estanteria, impresora);

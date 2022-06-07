@@ -23,7 +23,7 @@ class Camara {
         this.posImpresora = posImpresora;
         this.carro = carro;
 
-        this.alejamiento = 10;
+        this.alejamiento = 7;
         this.rotacionGuiniada = 0;
         this.rotacionCabeceo = 0;
     }
@@ -32,7 +32,7 @@ class Camara {
         this.camaraActual = idCamara;
         this.rotacionCabeceo = 0;
         this.rotacionGuiniada = 0;
-        this.alejamiento = 10;
+        this.alejamiento = 7;
     }
 
     zoom(delta){
@@ -57,24 +57,31 @@ class Camara {
 
     getCameraMatrix(){
         // todo: refactorizar haciendo un objeto por cada tipo de foco.
-        var alturaCamara = 5
+        var alturaCamara = 2
 
         if (this.camaraActual == GENERAL){
             let vista = mat4.create();
-            let posicionCamara = vec3.fromValues(-this.alejamiento, alturaCamara, 0);            
+            let posicionCamara = vec3.fromValues(0, alturaCamara, this.alejamiento);            
 
             mat4.lookAt(vista, posicionCamara, vec3.fromValues(0,0,0), vec3.fromValues(0,1,0));
-            mat4.rotate(vista, vista, this.rotacionCabeceo, vec3.fromValues(0,0,1));
+            mat4.rotate(vista, vista, this.rotacionCabeceo, vec3.fromValues(1,0,0));
             mat4.rotate(vista, vista, this.rotacionGuiniada, vec3.fromValues(0,1,0));
             return vista;
 
         } else if (this.camaraActual == IMPRESORA) {
             let vista = mat4.create();
-            let posicionCamara = vec3.fromValues(this.alejamiento, alturaCamara, 0);
-            
-            mat4.lookAt(vista, posicionCamara, vec3.fromValues(-this.posImpresora[0], 0, -this.posImpresora[2]), vec3.fromValues(0,1,0));
-            mat4.rotate(vista, vista, this.rotacionCabeceo, vec3.fromValues(0,0,1));
+            let posicionCamara = vec3.fromValues(0, alturaCamara, this.alejamiento);
+            mat4.lookAt(vista, posicionCamara, vec3.fromValues(this.posImpresora[0], 0, this.posImpresora[2]), vec3.fromValues(0,1,0));
+
+            var xAxis = vec3.fromValues(1,0,0);
+            var vectorCamaraEstanteria = vec3.create();
+            vec3.sub(vectorCamaraEstanteria, this.posImpresora, posicionCamara);
+            vec3.cross(xAxis, vectorCamaraEstanteria, vec3.fromValues(0,1,0));
+
+            mat4.translate(vista, vista, this.posImpresora);
+            mat4.rotate(vista, vista, this.rotacionCabeceo, xAxis);
             mat4.rotate(vista, vista, this.rotacionGuiniada, vec3.fromValues(0,1,0));
+            mat4.translate(vista, vista, [-this.posImpresora[0], -this.posImpresora[1], -this.posImpresora[2]]);
             
             return vista;
         }
@@ -82,11 +89,21 @@ class Camara {
         else if (this.camaraActual == ESTANTERIA) {
             let vista = mat4.create();
             mat4.identity(vista);
-            let posicionCamara = vec3.fromValues(this.alejamiento, alturaCamara, 0);
-            
+            let posicionCamara = vec3.fromValues(0, alturaCamara, this.alejamiento);
             mat4.lookAt(vista, posicionCamara, vec3.fromValues(this.posEstanteria[0], 0, this.posEstanteria[2]), vec3.fromValues(0,1,0));
-            mat4.rotate(vista, vista, this.rotacionCabeceo, vec3.fromValues(0,0,1));
+
+            mat4.translate(vista, vista, this.posEstanteria);
+            // no quiero rotar el eje x, quiero que rote sobre el eje x que se forma al rotar la vista para ver el objeto
+            // es el prod vectorial de y y la posicion de la estantería - pos de camara
+            var xAxis = vec3.fromValues(1,0,0);
+            var vectorCamaraEstanteria = vec3.create();
+            vec3.sub(vectorCamaraEstanteria, this.posEstanteria, posicionCamara);
+            vec3.cross(xAxis, vectorCamaraEstanteria, vec3.fromValues(0,1,0));
+
+            mat4.rotate(vista, vista, this.rotacionCabeceo, xAxis);
             mat4.rotate(vista, vista, this.rotacionGuiniada, vec3.fromValues(0,1,0));
+            mat4.translate(vista, vista, [-this.posEstanteria[0], -this.posEstanteria[1], -this.posEstanteria[2]]);
+
             return vista;
         }
         
