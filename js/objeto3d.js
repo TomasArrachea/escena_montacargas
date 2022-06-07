@@ -304,7 +304,7 @@ class Estanteria extends Objeto3D {
         var xCol = 1;
         var yCol = 8;
         var zCol = 1;
-        
+
         var estanteria = new Cubo(xEstanteria, yEstanteria, zEstanteria);
         estanteria.setPosicion(0,2,0);
         this.agregarHijo(estanteria);
@@ -335,7 +335,6 @@ class Impresora extends Objeto3D {
     constructor() {
         super();
         this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(2, 2))));
-        this.setEscala(1,1,1);
 
         var cabezal = new Cabezal();
         cabezal.setPosicion(0,4,5);
@@ -406,18 +405,18 @@ class Escena extends Objeto3D {
         super();
         // objeto vacio
         var estanteria = new Estanteria();
-        estanteria.setPosicion(-20,-5,0);
+        estanteria.setPosicion(-20,0,-5);
         estanteria.setEscala(0.5, 0.5, 0.5);
         this.agregarHijo(estanteria);
     
         var impresora = new Impresora();
-        impresora.setPosicion(10,10,0);
+        impresora.setPosicion(20,0,20);
         impresora.setEscala(0.5, 0.5, 0.5);
         this.agregarHijo(impresora);
     
         var carro = new Carro(estanteria, impresora);
-        impresora.setPosicion(5,0,0);
-        impresora.setEscala(0.5, 0.5, 0.5);
+        carro.setPosicion(5,0,0);
+        carro.setEscala(0.5, 0.5, 0.5);
         this.agregarHijo(carro);
 
         var piso = new Piso();

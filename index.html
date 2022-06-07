@@ -100,7 +100,7 @@
                     setupWebGL();
                     initShaders();
                     escena = new Escena();
-                    camara = new Camara(escena.getCarro(), escena.getImpresora().posicion, escena.getEstanteria().posicion);
+                    camara = new Camara(escena.getCarro(), escena.getPosImpresora(), escena.getPosEstanteria());
                     setupVertexShaderMatrix();
                     initMenu(escena);
                     setupListeners();
@@ -193,7 +193,7 @@
             function drawScene() {         
                 setupVertexShaderMatrix();
                 camaraMatrix = camara.getCameraMatrix();
-                window.gl.uniformMatrix4fv(window.gl.getUniformLocation(window.glProgram, "viewMatrix"), false, camaraMatrix); // la matriz de camara sera la viewMatrix
+                // revisar la matriz de camara nunca se setea como viewMatrix????
       
                 escena.dibujar(camaraMatrix);
             }

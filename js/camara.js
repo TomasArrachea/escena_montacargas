@@ -22,18 +22,16 @@ class Camara {
         this.posEstanteria = posEstanteria;
         this.posImpresora = posImpresora;
         this.carro = carro;
-        this.alejamiento = 10;
-        this.rotacionActual = 0;
-        this.velocidadRotacion = 0.002;
 
+        this.alejamiento = 10;
         this.rotacionGuiniada = 0;
         this.rotacionCabeceo = 0;
     }
 
     setCamera(idCamara){
         this.camaraActual = idCamara;
-        this.rotacionGuiniada = 0;
         this.rotacionCabeceo = 0;
+        this.rotacionGuiniada = 0;
         this.alejamiento = 10;
     }
 
@@ -53,7 +51,7 @@ class Camara {
     }
 
     sumGiroCabeceo(delta){
-        if (this.rotacionCabeceo < 1.2 && delta > 0 || this.rotacionCabeceo > -0.4 && delta < 0)
+        if (this.rotacionCabeceo + delta < 1.2 && this.rotacionCabeceo + delta > -0.4)
             this.rotacionCabeceo += delta;
     }
 
@@ -62,89 +60,75 @@ class Camara {
         var alturaCamara = 5
 
         if (this.camaraActual == GENERAL){
-            let m = mat4.create();
-            let posicionCamara = vec3.fromValues(-this.alejamiento,alturaCamara,0);
-            
-            mat4.lookAt(m, posicionCamara, vec3.fromValues(0,0,0), vec3.fromValues(0,1,0));
+            let vista = mat4.create();
+            let posicionCamara = vec3.fromValues(-this.alejamiento, alturaCamara, 0);            
 
-            // mat4.rotate(m, m, Math.PI/6, [0,0,1]); // rotacion para que se vea desde arriba y no paralelo al suelo
-            mat4.rotate(m, m, this.rotacionCabeceo, vec3.fromValues(0,0,1));
-            mat4.rotate(m, m, this.rotacionGuiniada, vec3.fromValues(0,1,0));
-            return m;
+            mat4.lookAt(vista, posicionCamara, vec3.fromValues(0,0,0), vec3.fromValues(0,1,0));
+            mat4.rotate(vista, vista, this.rotacionCabeceo, vec3.fromValues(0,0,1));
+            mat4.rotate(vista, vista, this.rotacionGuiniada, vec3.fromValues(0,1,0));
+            return vista;
 
         } else if (this.camaraActual == IMPRESORA) {
-            let m = mat4.create();
-            let posicionCamara = vec3.fromValues(
-                -this.posImpresora[0] + this.alejamiento,
-                -this.posImpresora[1] + alturaCamara,
-                -this.posImpresora[2]
-            );
+            let vista = mat4.create();
+            let posicionCamara = vec3.fromValues(this.alejamiento, alturaCamara, 0);
             
-            mat4.lookAt(m, posicionCamara, vec3.fromValues(-this.posImpresora[0],-this.posImpresora[1], -this.posImpresora[2]), vec3.fromValues(0,1,0));
-            mat4.rotate(m, m, this.rotacionCabeceo, vec3.fromValues(0,0,1));
-            mat4.rotate(m, m, this.rotacionGuiniada, vec3.fromValues(0,1,0));
+            mat4.lookAt(vista, posicionCamara, vec3.fromValues(-this.posImpresora[0], 0, -this.posImpresora[2]), vec3.fromValues(0,1,0));
+            mat4.rotate(vista, vista, this.rotacionCabeceo, vec3.fromValues(0,0,1));
+            mat4.rotate(vista, vista, this.rotacionGuiniada, vec3.fromValues(0,1,0));
             
-            return m;
+            return vista;
         }
 
         else if (this.camaraActual == ESTANTERIA) {
-            let m = mat4.create();
-            mat4.identity(m);
-            let posicionCamara = vec3.fromValues(
-                -this.posEstanteria[0] + this.alejamiento,
-                -this.posEstanteria[1] + alturaCamara,
-                -this.posEstanteria[2]
-            );
+            let vista = mat4.create();
+            mat4.identity(vista);
+            let posicionCamara = vec3.fromValues(this.alejamiento, alturaCamara, 0);
             
-            mat4.lookAt(m, posicionCamara, vec3.fromValues(-this.posEstanteria[0],-this.posEstanteria[1], -this.posEstanteria[2]), vec3.fromValues(0,1,0));
-            mat4.rotate(m, m, this.rotacionCabeceo, vec3.fromValues(0,0,1));
-            mat4.rotate(m, m, this.rotacionGuiniada, vec3.fromValues(0,1,0));
-            return m;
+            mat4.lookAt(vista, posicionCamara, vec3.fromValues(this.posEstanteria[0], 0, this.posEstanteria[2]), vec3.fromValues(0,1,0));
+            mat4.rotate(vista, vista, this.rotacionCabeceo, vec3.fromValues(0,0,1));
+            mat4.rotate(vista, vista, this.rotacionGuiniada, vec3.fromValues(0,1,0));
+            return vista;
         }
         
         else if (this.camaraActual == CONDUCTOR) {
-            this.carro.actualizarMatrizModelado();
-            let matrizCamara = this.carro.matrizModelado;
-            let m = mat4.create();
+            let matrizCamara = mat4.create();
+            mat4.copy(matrizCamara, this.carro.matrizModelado);
+            let vista = mat4.create();
 
-            mat4.translate(m, m, [0,0,0]);
-
-            // Roto para que quede atras y con un angulo de inclinación
-            mat4.rotate(m, m, Math.PI/2, [0,1,0]);
-            mat4.rotate(m, m, Math.PI/6, [0,0,1]);
+            mat4.translate(vista, vista, vec3.fromValues(0, -5, 0)); // traslacion para que la camara este a la altura del conductor
+            mat4.rotate(vista, vista, Math.PI, [0,1,0]); // roto para que vea hacia adelante
             
-            // Tomo la transormación inversa del carro para utilizarlo como matriz de cámara
+            // Tomo la transformación inversa del carro para utilizarlo como matriz de cámara
             mat4.invert(matrizCamara, matrizCamara);
-            mat4.multiply(m, m, matrizCamara);
-            return m;
+            mat4.multiply(vista, vista, matrizCamara);
+            return vista;
 
         } else if (this.camaraActual == CARRO_TRASERA) {
             this.carro.actualizarMatrizModelado();
-            let matrizCamara = this.carro.matrizModelado;
-            let m = mat4.create();
+            let matrizCamara = mat4.create();
+            mat4.copy(matrizCamara, this.carro.matrizModelado);
+            let vista = mat4.create();
 
-            mat4.translate(m, m, [-this.alejamiento,0,0]);
-            // Roto para que quede atras
-            mat4.rotate(m, m, Math.PI/2, [0,1,0]);
+            mat4.translate(vista, vista, vec3.fromValues(0, -7, -12)); // mover la camara atras del carro
+            mat4.rotate(vista, vista, Math.PI, [0,1,0]); // roto para que vea hacia adelante
             
             // Tomo la transormación inversa del carro para utilizarlo como matriz de cámara
             mat4.invert(matrizCamara, matrizCamara);
-            mat4.multiply(m, m, matrizCamara);
-            return m;
+            mat4.multiply(vista, vista, matrizCamara);
+            return vista;
 
         } else if (this.camaraActual == CARRO_LATERAL) {
             this.carro.actualizarMatrizModelado();
             let matrizCamara = this.carro.matrizModelado;
-            let m = mat4.create();
+            let vista = mat4.create();
 
-            mat4.translate(m, m, [-this.alejamiento,0,0]);
-            // Roto para que quede en el lateral
-            mat4.rotate(m, m, Math.PI/4, [0,1,0]);
+            mat4.translate(vista, vista, vec3.fromValues(0, -7, -12));
+            mat4.rotate(vista, vista, -Math.PI/2, [0,1,0]); 
             
             // Tomo la transormación inversa del carro para utilizarlo como matriz de cámara
             mat4.invert(matrizCamara, matrizCamara);
-            mat4.multiply(m, m, matrizCamara);
-            return m;
+            mat4.multiply(vista, vista, matrizCamara);
+            return vista;
         }
     }
 }
