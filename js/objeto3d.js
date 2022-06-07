@@ -203,7 +203,7 @@ class Carro extends Objeto3D {
         var cabina = new Asiento();
         cabina.setPosicion(0, alto/2+1.5, largo/2-0.5);
         cabina.setRotacion(0,0,Math.PI); // por alguna razon para rotar en el eje y hay que aplicar la rotacion en el eje z. Lo mismo en el asiento
-        cabina.setEscala(1,0.3,1);
+        cabina.setEscala(1,0.25,1);
         this.agregarHijo(cabina);
 
         this.elevador = new Elevador();
