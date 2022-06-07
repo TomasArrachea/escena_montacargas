@@ -5,7 +5,7 @@
 // OP para acercar o alejar la camara
 // 1,2,3,4,5,6 para cambiar el objetivo de la camara
 
-const VEL_TRASLACION = 0.05;  // velocidad de traslacion 
+const VEL_TRASLACION = 0.1;  // velocidad de traslacion 
 const VEL_PALA = 0.1;
 const VEL_GIRO = 0.02;        // velocidad de giro
 const DELTA_ZOOM = 0.55;
@@ -16,21 +16,27 @@ const VEL_ROTACION_CAMARA = 0.01;
 let keyDownListener = (event, escena, camara) => {
     var carro = escena.getCarro();
     if (event.code == 'Digit1') {
+        console.log('CAMARA GENERAL');
         camara.setCamera(1);
     }
     if (event.code == 'Digit2') {
+        console.log('CAMARA IMPRESORA');
         camara.setCamera(2);
     }
     if (event.code == 'Digit3') {
+        console.log('CAMARA ESTANTERIA');
         camara.setCamera(3);
     }
     if (event.code == 'Digit4') {
+        console.log('CAMARA DEL CONDUCTOR');
         camara.setCamera(4);
     }
     if (event.code == 'Digit5') {
+        console.log('CAMARA TRASERA DEL CARRO');
         camara.setCamera(5);
     }
     if (event.code == 'Digit6') {
+        console.log('CAMARA LATERAL DEL CARRO');
         camara.setCamera(6);
     }
     if (event.code=='KeyO') {

@@ -393,8 +393,8 @@ function generarCurvaGalpon() {
 function generarCurvaChasis() {
     var curva = new Curva();
     var centro = [0,0];
-    var largo = 130;
-    var ancho = 100;
+    var largo = 4;
+    var ancho = 3;
     var cola = ancho*0.3;
     
     // dibujar lado derecho
@@ -423,7 +423,7 @@ function generarCurvaChasis() {
         [centro[0]-ancho/2, centro[1]+largo/2]
     );
 
-    // parte de arriba
+    // parte de abajo
     curva.agregarSegmento(
         [centro[0]-ancho/2+cola, centro[1]-largo/2-cola],
         [centro[0]-ancho/2, centro[1]-largo/2],

@@ -22,15 +22,16 @@ class Objeto3D {
         //Reset matriz de modelado.
         mat4.identity(this.matrizModelado);
         //Escalar, rotar, trasladar en ese orden.
-        if (this.escala[0] != 0 || this.escala[1] != 0 || this.escala[2] != 0){
+        if (this.escala[0] != 0 && this.escala[1] != 0 && this.escala[2] != 0){
             mat4.scale(this.matrizModelado, this.matrizModelado, this.escala);
         }
-        if ((this.rotacion[0] != 0 || this.rotacion[1] != 0 || this.rotacion[2] != 0) && this.anguloRotacion != 0){
-            mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
-            mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
-            mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [0,0,1]);
-        }
         mat4.translate(this.matrizModelado, this.matrizModelado, this.posicion);
+        if (this.rotacion[0] != 0)
+            mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
+        if (this.rotacion[1] != 0)
+            mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
+        if (this.rotacion[2] != 0)
+            mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [0,0,1]);
     }
 
     setMatricesShader(matrizPadre) {
@@ -73,7 +74,7 @@ class Objeto3D {
             if (this.strip){
                 gl.drawElements(gl.TRIANGLE_STRIP, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
             } else {
-                gl.drawElements(gl.LINE_STRIP, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+                gl.drawElements(gl.TRIANGLES, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
             }
         }
 
@@ -82,9 +83,7 @@ class Objeto3D {
         }
     }
 
-    setGeometria(buffers, strip=true) {
-        this.strip = strip;
-
+    setGeometria(buffers) {
         // generar buffers de webgl
         this.vertexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
@@ -114,21 +113,25 @@ class Objeto3D {
     }
 
     setPosicion(x,y,z) {
-        this.posicion[0]=x;
-        this.posicion[1]=y;
-        this.posicion[2]=z;
+        this.posicion[0] = x;
+        this.posicion[1] = y;
+        this.posicion[2] = z;
     }
 
     setRotacion(x,y,z) {
-        this.rotacion[0]=x;
-        this.rotacion[1]=y;
-        this.rotacion[2]=z;
+        this.rotacion[0] += x;
+        this.rotacion[1] += y;
+        this.rotacion[2] += z;
     }
 
     setEscala(x,y,z) {
-        this.escala[0]=x;
-        this.escala[1]=y;
-        this.escala[2]=z;
+        this.escala[0] = x;
+        this.escala[1] = y;
+        this.escala[2] = z;
+    }
+
+    getPosicion() {
+        return this.posicion;
     }
 }
 
@@ -149,31 +152,42 @@ class Piso extends Objeto3D {
     }
 }
 
+class Chasis extends Objeto3D {
+    constructor() {
+        super();
+        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaChasis(), 4, 0)));
+    }
+}
 
 class Carro extends Objeto3D {
     constructor(estanteria) {
         const DISTANCIA_RECOJER = 1;
         const DISTANCIA_DEPOSITAR = 1;
 
+        // objeto vacio
         super();
-        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaChasis(), 3, 0)));
-        this.setEscala(1, 1, 1);
-        this.setRotacion(0, 0, Math.PI/2);
+        
+        var chasis = new Chasis();
+        chasis.setRotacion(0, 0, Math.PI/2);
+        chasis.setPosicion(0, 2, 0);
+        this.agregarHijo(chasis);
 
         var rueda = new Rueda();
-        rueda.setPosicion(3,1,2);
+        rueda.setPosicion(2,1,2);
+        rueda.setRotacion(0, Math.PI, 0);
         this.agregarHijo(rueda);
         
         var rueda = new Rueda();
-        rueda.setPosicion(-3,1,2);
+        rueda.setPosicion(-2,1,2);
         this.agregarHijo(rueda);
         
         var rueda = new Rueda();
-        rueda.setPosicion(3,1,-2);
+        rueda.setPosicion(2,1,-2);
+        rueda.setRotacion(0, Math.PI, 0);
         this.agregarHijo(rueda);
         
         var rueda = new Rueda();
-        rueda.setPosicion(-3,1,-2);
+        rueda.setPosicion(-2,1,-2);
         this.agregarHijo(rueda);
         
         this.agregarHijo(new Asiento());
@@ -186,6 +200,7 @@ class Carro extends Objeto3D {
         this.carga = null;
         this.impresora = this.impresora;
         this.estanteria = estanteria;
+        this.matrizRotacion = mat4.create();
     }
 
     setVelGiro(v){
@@ -216,16 +231,20 @@ class Carro extends Objeto3D {
     }
 
     actualizarMatrizModelado() {
-        // Actualiza la posicion antes de generar la matriz de modelado
+        // Actualiza la posicion segun el giro del carro
         this.rotacion[1] += this.velGiro;
-        vec3.add(this.posicion, this.posicion, [this.velX, 0, 0]);
+        var avance = vec3.fromValues(0, 0, this.velX)
+
+        mat4.rotate(this.matrizRotacion, this.matrizRotacion, this.velGiro, vec3.fromValues(0,1,0));                
+        vec3.transformMat4(avance, avance, this.matrizRotacion);
+
+        vec3.add(this.posicion, this.posicion, avance);
 
         mat4.identity(this.matrizModelado);
-        mat4.translate(this.matrizModelado,this.matrizModelado,this.posicion);
-        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
+        mat4.translate(this.matrizModelado, this.matrizModelado, this.posicion);
         mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
-        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [0,0,1]);
-        mat4.scale(this.matrizModelado,this.matrizModelado,this.escala);
+        if (this.escala[0] != 0 && this.escala[1] != 0 && this.escala[2] != 0)
+            mat4.scale(this.matrizModelado, this.matrizModelado, this.escala);
     }
 }
 
@@ -233,6 +252,7 @@ class Rueda extends Objeto3D {
     constructor() {
         super();
         this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(1, 1))));
+        this.setRotacion(0, 0, Math.PI/2);
     }
 }
 
@@ -314,7 +334,7 @@ class Estanteria extends Objeto3D {
 class Impresora extends Objeto3D {
     constructor() {
         super();
-        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(2, 2))), false);
+        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(2, 2))));
         this.setEscala(1,1,1);
 
         var cabezal = new Cabezal();
@@ -343,7 +363,8 @@ class Impresora extends Objeto3D {
 class Cubo extends Objeto3D {
     constructor(x, y, z) {
         super();
-        this.setGeometria(SupCubo.generarSuperficie(x, y, z), false);
+        this.strip = false;
+        this.setGeometria(SupCubo.generarSuperficie(x, y, z));
     }
 }
 
@@ -411,15 +432,24 @@ class Escena extends Objeto3D {
     }
 
     getCarro() {
-        return this.hijos[2];
+        var carro = this.hijos[2];
+        if (carro instanceof Carro)
+            return carro;
+        return null;
     }
 
-    getImpresora() {
-        return this.hijos[1];
+    getPosImpresora() {
+        var impresora = this.hijos[1];
+        if (impresora instanceof Impresora)
+            return impresora.getPosicion();
+        return vec3.create();
     }
 
-    getEstanteria() {
-        return this.hijos[0];
+    getPosEstanteria() {
+        var estanteria = this.hijos[0];
+        if (estanteria instanceof Estanteria)
+            return estanteria.getPosicion();
+        return vec3.create();
     }
 }
 
