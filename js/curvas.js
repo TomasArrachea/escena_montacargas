@@ -359,12 +359,10 @@ function generarCurvaRueda(radio, ancho) {
 }
 
 
-function generarCurvaGalpon() {
+function generarCurvaGalpon(alto, ancho) {
     var curva = new Curva();
     var centro = [0,0];
     var cte_circunferencia = 0.55;
-    var alto = 30;
-    var ancho = 50;
     var radio = (alto+ancho)/4;
 
     // pared izquierda

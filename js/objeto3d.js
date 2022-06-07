@@ -139,7 +139,10 @@ class Galpon extends Objeto3D {
     constructor() {
         super();
         // TODO: revisar las filas y columnas
-        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaGalpon(), 30, 0), 15, 15));
+        var alto = 10;
+        var ancho = 30;
+        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaGalpon(alto, ancho), 30, 0), 15, 15));
+        this.setRotacion(Math.PI/2, Math.PI, 0);
     }
 }
 
@@ -488,7 +491,6 @@ class Escena extends Objeto3D {
         this.agregarHijo(piso);
 
         var galpon = new Galpon();
-        galpon.setPosicion(0,0,0);
         this.agregarHijo(galpon);
     }
 
