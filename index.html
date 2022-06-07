@@ -119,7 +119,7 @@
                 document.addEventListener('keydown', function(event){keyDownListener(event, escena, camara)});
                 document.addEventListener('keyup', function(event){keyUpListener(event, escena)});
                 document.addEventListener('mousedown', mouseDownListener);
-                document.addEventListener('mousemove', function(event){mouseMoveListener(event, camara)});
+                document.addEventListener('mousemove', function(event){mouseMoveListener(event, camara, canvas.width, canvas.height)});
                 document.addEventListener('mouseup', mouseUpListener);
                 document.addEventListener('wheel', function(event){mouseWheelListener(event, camara)});
             }          
