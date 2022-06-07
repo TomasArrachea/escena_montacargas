@@ -22,10 +22,10 @@ class Objeto3D {
         //Reset matriz de modelado.
         mat4.identity(this.matrizModelado);
         //Escalar, rotar, trasladar en ese orden.
+        mat4.translate(this.matrizModelado, this.matrizModelado, this.posicion);
         if (this.escala[0] != 0 && this.escala[1] != 0 && this.escala[2] != 0){
             mat4.scale(this.matrizModelado, this.matrizModelado, this.escala);
         }
-        mat4.translate(this.matrizModelado, this.matrizModelado, this.posicion);
         if (this.rotacion[0] != 0)
             mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
         if (this.rotacion[1] != 0)
@@ -140,7 +140,6 @@ class Galpon extends Objeto3D {
         super();
         // TODO: revisar las filas y columnas
         this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaGalpon(), 30, 0), 15, 15));
-        // rotar y escalar
     }
 }
 
@@ -153,9 +152,11 @@ class Piso extends Objeto3D {
 }
 
 class Chasis extends Objeto3D {
-    constructor() {
+    constructor(ancho, alto, largo) {
         super();
-        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaChasis(), 4, 0)));
+        this.ancho = 3.5;
+        this.alto = 3;
+        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaChasis(alto, largo), ancho, 0)));
     }
 }
 
@@ -163,40 +164,52 @@ class Carro extends Objeto3D {
     constructor(estanteria) {
         const DISTANCIA_RECOJER = 1;
         const DISTANCIA_DEPOSITAR = 1;
+        var ancho = 3.5;
+        var alto = 2;
+        var largo = 4;
 
         // objeto vacio
         super();
-        
-        var chasis = new Chasis();
+        var chasis = new Chasis(ancho, alto, largo);
         chasis.setRotacion(0, 0, Math.PI/2);
-        chasis.setPosicion(0, 2, 0);
+        chasis.setPosicion(0, 0.5+alto/2, 0);
         this.agregarHijo(chasis);
 
         var rueda = new Rueda();
-        rueda.setPosicion(2,1,2);
+        rueda.setPosicion(ancho/2,1,ancho/2);
         rueda.setRotacion(0, Math.PI, 0);
         this.agregarHijo(rueda);
         
         var rueda = new Rueda();
-        rueda.setPosicion(-2,1,2);
+        rueda.setPosicion(-ancho/2,1,ancho/2);
         this.agregarHijo(rueda);
         
         var rueda = new Rueda();
-        rueda.setPosicion(2,1,-2);
+        rueda.setPosicion(ancho/2,1,-ancho/2);
         rueda.setRotacion(0, Math.PI, 0);
         this.agregarHijo(rueda);
         
         var rueda = new Rueda();
-        rueda.setPosicion(-2,1,-2);
+        rueda.setPosicion(-ancho/2,1,-ancho/2);
         this.agregarHijo(rueda);
         
-        this.agregarHijo(new Asiento());
-        this.agregarHijo(new Cabina());
-        this.agregarHijo(new Elevador());
+        var asiento = new Asiento();
+        asiento.setPosicion(0, alto/2+1.5, -largo/2+0.5);
+        this.agregarHijo(asiento);
+
+        var cabina = new Asiento();
+        cabina.setPosicion(0, alto/2+1.5, largo/2-0.5);
+        cabina.setRotacion(0,0,Math.PI); // por alguna razon para rotar en el eje y hay que aplicar la rotacion en el eje z. Lo mismo en el asiento
+        cabina.setEscala(1,0.3,1);
+        this.agregarHijo(cabina);
+
+        this.elevador = new Elevador();
+        this.elevador.setPosicion(0, alto/2+0.5, largo/2+alto*0.3+0.05);
+        this.elevador.setEscala(1,1.6,1)
+        this.agregarHijo(this.elevador);
 
         this.velGiro = 0;
         this.velX = 0;
-        this.velY = 0;
         this.carga = null;
         this.impresora = this.impresora;
         this.estanteria = estanteria;
@@ -212,7 +225,7 @@ class Carro extends Objeto3D {
     }
 
     setVelY(v) {
-        this.velY = v;
+        this.elevador.setVelY(v);
     }
 
     toggleRecojer() {
@@ -251,7 +264,7 @@ class Carro extends Objeto3D {
 class Rueda extends Objeto3D {
     constructor() {
         super();
-        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(1, 1))));
+        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(1, 0.4))));
         this.setRotacion(0, 0, Math.PI/2);
     }
 }
@@ -259,7 +272,12 @@ class Rueda extends Objeto3D {
 class Asiento extends Objeto3D {
     constructor() {
         super();
-        this.setGeometria(generarSuperficie(new SupBarrido(generarTrapecio(), 20, 0)));
+        this.baseGrande = 1;
+        this.baseChica = 0.5;
+        this.largo = 2;
+        var sup = generarTrapecio(this.baseChica, this.baseGrande, this.largo);
+        this.setGeometria(generarSuperficie(new SupBarrido(sup, 2, 0)));
+        this.setRotacion(-Math.PI/2, 0, -Math.PI/2);
     }
 }
 
@@ -274,23 +292,61 @@ class Elevador extends Objeto3D {
     constructor() {
         super();
         // objeto vacio
+        var anchoCol = 0.3;
+        var largoCol = 5.2;
+        var altoCol = 0.1;
 
-        var ancho_col = 2;
-        var largo_col = 2;
-        var alto_col = 7;
-        var ancho_transversal = 2;
-        var largo_transversal = 2;
-        var alto_transversal = 3;
-        var ancho_pala = 6;
-        var largo_pala = 6;
-        var alto_pala = 1;
+        var anchoTransversal = 2.5;
+        var largoTransversal = 0.2;
+        var altoTransversal = 0.08;
+        
+        this.anchoPala = 2;
+        var largoPala = 0.05;
+        var altoPala = 2;
 
-        this.agregarHijo(new Cubo(ancho_col, largo_col, alto_col)); // col 1
-        this.agregarHijo(new Cubo(ancho_col, largo_col, alto_col)); // col 2
-        this.agregarHijo(new Cubo(ancho_transversal, largo_transversal, alto_transversal)); // transversal 1
-        this.agregarHijo(new Cubo(ancho_transversal, largo_transversal, alto_transversal)); // transversal 2
-        this.agregarHijo(new Cubo(ancho_transversal, largo_transversal, alto_transversal)); // transversal 3
-        this.agregarHijo(new Cubo(ancho_pala, largo_pala, alto_pala)); // pala
+        var columna = new Cubo(anchoCol, largoCol, altoCol)
+        columna.setPosicion(-(anchoTransversal-0.4)/2, largoCol/2-1, 0);
+        this.agregarHijo(columna); // col 1
+
+        var columna = new Cubo(anchoCol, largoCol, altoCol)
+        columna.setPosicion((anchoTransversal-0.5)/2, largoCol/2-1, 0);
+        this.agregarHijo(columna); // col 2
+
+        var tirante = new Cubo(anchoTransversal, largoTransversal, altoTransversal);
+        tirante.setPosicion(0, 0, 0);
+        this.agregarHijo(tirante); // transversal 1
+
+        var tirante = new Cubo(anchoTransversal, largoTransversal, altoTransversal);
+        tirante.setPosicion(0, 2, 0);
+        this.agregarHijo(tirante); // transversal 2
+
+        var tirante = new Cubo(anchoTransversal, largoTransversal, altoTransversal);
+        tirante.setPosicion(0, 4, 0);
+        this.agregarHijo(tirante); // transversal 3
+
+        this.basePala = 0;
+        this.topePala = 4;
+        this.velPala = 0;
+        this.alturaPala = this.basePala;
+        this.pala = new Cubo(this.anchoPala, largoPala, altoPala);
+        this.pala.setPosicion(0, this.alturaPala, this.anchoPala/2);
+        this.agregarHijo(this.pala);
+    }
+
+    setVelY(v) {
+        this.velPala = v;
+    }
+    
+    actualizarMatrizModelado() {
+        if (this.alturaPala + this.velPala < this.topePala && this.alturaPala + this.velPala >= this.basePala)
+            this.alturaPala += this.velPala;
+        this.pala.setPosicion(0, this.alturaPala, this.anchoPala/2);
+
+        mat4.identity(this.matrizModelado);
+        mat4.translate(this.matrizModelado, this.matrizModelado, this.posicion);
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
+        if (this.escala[0] != 0 && this.escala[1] != 0 && this.escala[2] != 0)
+            mat4.scale(this.matrizModelado, this.matrizModelado, this.escala);
     }
 }
 
@@ -298,31 +354,34 @@ class Estanteria extends Objeto3D {
     constructor() {
         super();
         // objeto vacio
-        var xEstanteria = 6;
-        var yEstanteria = 1;
-        var zEstanteria = 4;
-        var xCol = 1;
-        var yCol = 8;
-        var zCol = 1;
+        var xEstanteria = 2;
+        var yEstanteria = 0.2;
+        var zEstanteria = 16;
+        var xCol = 0.2;
+        var yCol = 7.2;
+        var zCol = 0.2;
 
         var estanteria = new Cubo(xEstanteria, yEstanteria, zEstanteria);
         estanteria.setPosicion(0,2,0);
         this.agregarHijo(estanteria);
 
         var estanteria = new Cubo(xEstanteria, yEstanteria, zEstanteria);
-        estanteria.setPosicion(0,4,0);
+        estanteria.setPosicion(0,4.5,0);
         this.agregarHijo(estanteria);
 
         var estanteria = new Cubo(xEstanteria, yEstanteria, zEstanteria);
-        estanteria.setPosicion(0,6,0);
+        estanteria.setPosicion(0,7,0);
         this.agregarHijo(estanteria);
 
         var columna;
+        zEstanteria = zEstanteria - 1;
+        xEstanteria = xEstanteria - 0.5;
         for (var i = 0; i < 2; i++)
-            for (var j = 0; j < 9; j++)
+            for (var j = 0; j < 9; j++) {
                 columna = new Cubo(xCol, yCol, zCol);
-                columna.setPosicion(i, 0, -4.5+j);
+                columna.setPosicion(i*xEstanteria-xEstanteria/2, yCol/2, -zEstanteria/2+j*zEstanteria/8);
                 this.agregarHijo(columna);
+            }
     }
 
     agregarObjeto(objeto, posicion) {
@@ -334,15 +393,19 @@ class Estanteria extends Objeto3D {
 class Impresora extends Objeto3D {
     constructor() {
         super();
-        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(2, 2))));
+        var radio = 1.2;
+        var ancho = 1;
+        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(radio, ancho))));
+        
+        var barra = new Barra();
+        barra.setPosicion(0,ancho,radio*4/5);
+        this.agregarHijo(barra);
 
         var cabezal = new Cabezal();
-        cabezal.setPosicion(0,4,5);
+        this.topeCabezal = ancho+barra.largo*4/5;
+        this.baseCabezal = ancho+barra.largo*1/5;
+        cabezal.setPosicion(0,this.topeCabezal,radio);
         this.agregarHijo(cabezal);
-
-        var barra = new Barra();
-        barra.setPosicion(0,0,5);
-        this.agregarHijo(barra);
 
         this.velCabezal = 0;
     }
@@ -370,7 +433,8 @@ class Cubo extends Objeto3D {
 class Barra extends Objeto3D {
     constructor() {
         super();
-        this.setGeometria(generarSuperficie(new Cilindro(0.1, 7)));
+        this.largo = 3;
+        this.setGeometria(generarSuperficie(new Cilindro(0.1, this.largo)));
     }
 }
 
@@ -378,24 +442,24 @@ class Cabezal extends Objeto3D {
     constructor() {
         super();
         // objeto vacio
-        var agarreBarra = new Cubo(3,1,1)
+        var agarreBarra = new Cubo(0.4,0.2,0.3)
         agarreBarra.setPosicion(0,0,0);
         this.agregarHijo(agarreBarra);
 
-        var tirante1 = new Cubo(1,1,2);
-        tirante1.setPosicion(1,0,-2);
-        this.agregarHijo(tirante1);
+        var tirante = new Cubo(0.1,0.15,1);
+        tirante.setPosicion(0.1,0,-0.5);
+        this.agregarHijo(tirante);
 
-        var tirante2 = new Cubo(1,1,2);
-        tirante2.setPosicion(-1,0,-2);
-        this.agregarHijo(tirante2);
+        var tirante = new Cubo(0.1,0.15,1);
+        tirante.setPosicion(-0.1,0,-0.7);
+        this.agregarHijo(tirante);
 
-        var agarrePanel = new Cubo(3,1,1);
-        agarrePanel.setPosicion(0,0,-2.5);
+        var agarrePanel = new Cubo(0.6,0.2,0.3);
+        agarrePanel.setPosicion(0,0,-1.2);
         this.agregarHijo(agarrePanel);
 
-        var panel = new Cubo(4,2,1);
-        panel.setPosicion(0,-0.5,-2.5);
+        var panel = new Cubo(1.5,0.05,1.5);
+        panel.setPosicion(0,-0.05,-1.2);
         this.agregarHijo(panel);
     }
 }
@@ -405,18 +469,17 @@ class Escena extends Objeto3D {
         super();
         // objeto vacio
         var estanteria = new Estanteria();
-        estanteria.setPosicion(-20,0,-5);
+        estanteria.setPosicion(-10,0,0);
         estanteria.setEscala(0.5, 0.5, 0.5);
         this.agregarHijo(estanteria);
     
         var impresora = new Impresora();
-        impresora.setPosicion(20,0,20);
-        impresora.setEscala(0.5, 0.5, 0.5);
+        impresora.setPosicion(10,0,0);
         this.agregarHijo(impresora);
     
         var carro = new Carro(estanteria, impresora);
-        carro.setPosicion(5,0,0);
-        carro.setEscala(0.5, 0.5, 0.5);
+        carro.setPosicion(0,0,0);
+        carro.setEscala(0.4, 0.4, 0.4);
         this.agregarHijo(carro);
 
         var piso = new Piso();
@@ -426,7 +489,6 @@ class Escena extends Objeto3D {
 
         var galpon = new Galpon();
         galpon.setPosicion(0,0,0);
-        galpon.setEscala(5, 5, 5);
         this.agregarHijo(galpon);
     }
 

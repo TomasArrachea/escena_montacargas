@@ -108,7 +108,7 @@ class Cilindro {
 
     getPos(u, v) {
         u = u * 2 * Math.PI
-        var y = this.largo/2 * v;
+        var y = this.largo * v;
         var x = this.radio * Math.sin(u);
         var z = this.radio * Math.cos(u);
         return [x,y,z];

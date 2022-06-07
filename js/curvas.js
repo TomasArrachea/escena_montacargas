@@ -363,8 +363,8 @@ function generarCurvaGalpon() {
     var curva = new Curva();
     var centro = [0,0];
     var cte_circunferencia = 0.55;
-    var alto = 100;
-    var ancho = 400;
+    var alto = 30;
+    var ancho = 50;
     var radio = (alto+ancho)/4;
 
     // pared izquierda
@@ -390,11 +390,9 @@ function generarCurvaGalpon() {
 }
 
 
-function generarCurvaChasis() {
+function generarCurvaChasis(ancho, largo) {
     var curva = new Curva();
     var centro = [0,0];
-    var largo = 4;
-    var ancho = 3;
     var cola = ancho*0.3;
     
     // dibujar lado derecho
@@ -440,28 +438,24 @@ function generarCurvaChasis() {
 }
 
 
-function generarTrapecio() {
+function generarTrapecio(base1, base2, largo) {
     var curva = new Curva();
-    var centro = [0,0];
-    var largo = 130;
-    var base1 = 100;
-    var base2 = 200;
 
     curva.agregarSegmento(
-        [centro[0]-base1/2, centro[1]+largo/2],
-        [centro[0]-base1/2, centro[1]-largo/2]
+        [0, 0],
+        [0, largo]
     );
     curva.agregarSegmento(
-        [centro[0]-base1/2, centro[1]-largo/2],
-        [centro[0]+base2/2, centro[1]-largo/2]
+        [0, largo],
+        [base1, largo]
     );
     curva.agregarSegmento(
-        [centro[0]+base2/2, centro[1]-largo/2],
-        [centro[0]+base1/2, centro[1]+largo/2]
+        [base1, largo],
+        [base2, 0]
     );
     curva.agregarSegmento(
-        [centro[0]+base1/2, centro[1]+largo/2],
-        [centro[0]-base1/2, centro[1]+largo/2]
+        [base2, 0],
+        [0, 0]
     );
     return curva.puntos;
 }
