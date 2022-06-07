@@ -101,8 +101,14 @@ let mouseDownListener = () => {
     mouseClick = true;
   }
 
-let mouseMoveListener = (e, camara) => {
-    if (mouseClick) {
+function isInsideCanvas(x, y, canvasW, canvasH) {
+    return window.screen.width/2 - canvasW/2 < x && x < window.screen.width/2 + canvasW/2 
+        && window.screen.height/2 - canvasH/2 < y && y < window.screen.height/2 + canvasH/2;
+}
+
+let mouseMoveListener = (e, camara, canvasW, canvasH) => {
+
+    if (mouseClick && isInsideCanvas(e.pageX, e.pageY, canvasW, canvasH)) {
       if (e.pageX > oldX){
         camara.sumGiroGuiniada((e.pageX-oldX)*VEL_ROTACION_CAMARA);
       }
