@@ -1,16 +1,24 @@
 class Curva {
     constructor() {
-        this.puntos = []
+        this.puntos = [];
+        this.normales = [];
     }
     
     B0cuadr = function (u) { return (1 - u) * (1 - u); } 
     B1cuadr = function (u) { return 2 * u * (1 - u); } 
     B2cuadr = function (u) { return u * u; }
+    B0cuadrDer = function (u) { return -2+2*u; } 
+    B1cuadrDer = function (u) { return 2-4*u; }  
+    B2cuadrDer = function (u) { return 2*u; }
     B0cub = function (u) { return (1 - u) * (1 - u) * (1 - u); }
     B1cub = function (u) { return 3 * (1 - u) * (1 - u) * u; }
     B2cub = function (u) { return 3 * (1 - u) * u * u; }
     B3cub = function (u) { return u * u * u; }
-    
+    B0cubDer = function (u) { return -3*u*u+6*u-3;}
+    B1cubDer = function (u) { return  9*u*u-12*u+3; }
+    B2cubDer = function (u) { return -9*u*u+6*u;}		
+    B3cubDer = function (u) { return 3*u*u; }
+
     #curvaLineal(u, p0, p1) {
         var punto = new Object();
         punto.x = (1 - u) * p0[0] + u * p1[0];
@@ -32,20 +40,50 @@ class Curva {
         return punto;
     }
 
+    #curvaLinealDer(u, p0, p1) {
+        var punto = new Object();
+        punto.x = -p0[0] + p1[0];
+        punto.y = -p0[1] + p1[1];
+        return punto;
+    }
+    
+    #curvaCuadraticaDer(u, p0, p1, p2) {
+        var punto = new Object();
+        punto.x = this.B0cuadrDer(u) * p0[0] + this.B1cuadrDer(u) * p1[0] + this.B2cuadrDer(u) * p2[0];
+        punto.y = this.B0cuadrDer(u) * p0[1] + this.B1cuadrDer(u) * p1[1] + this.B2cuadrDer(u) * p2[1];
+        return punto;
+    }
+
+    #curvaCubicaDer(u, p0, p1, p2, p3) {
+        var punto = new Object();
+        punto.x = this.B0cubDer(u) * p0[0] + this.B1cubDer(u) * p1[0] + this.B2cubDer(u) * p2[0] + this.B3cubDer(u) * p3[0];
+        punto.y = this.B0cubDer(u) * p0[1] + this.B1cubDer(u) * p1[1] + this.B2cubDer(u) * p2[1] + this.B3cubDer(u) * p3[1];
+        return punto;
+    }
+
     agregarSegmento(p0, p1) {
         var deltaU = 1;
         for (var u = 0; u <= 1.001; u = u + deltaU) {
             var punto = this.#curvaLineal(u, p0, p1);
             this.puntos.push(punto.x);
             this.puntos.push(punto.y);
+            var normal = this.#curvaLinealDer(u, p0, p1);
+            var mod = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+            this.normales.push(-normal.y/mod);
+            this.normales.push(normal.x/mod);
         }
     }
+
     agregarCurvaCuadratica(p0, p1, p2) {
         var deltaU = 0.01; 
         for (var u = 0; u <= 1.001; u = u + deltaU) {
             var punto = this.#curvaCuadratica(u, p0, p1, p2);
             this.puntos.push(punto.x);
             this.puntos.push(punto.y);
+            var normal = this.#curvaCuadraticaDer(u, p0, p1, p2);
+            var mod = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+            this.normales.push(-normal.y/mod);
+            this.normales.push(normal.x/mod);
         }
     }
 
@@ -55,6 +93,10 @@ class Curva {
             var punto = this.#curvaCubica(u, p0, p1, p2, p3);
             this.puntos.push(punto.x);
             this.puntos.push(punto.y);
+            var normal = this.#curvaCubicaDer(u, p0, p1, p2, p3);
+            var mod = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+            this.normales.push(-normal.y/mod);
+            this.normales.push(normal.x/mod);
         }
     }
 }
@@ -66,7 +108,7 @@ function generarB1() {
     for (var i = 0; i < puntos.length-1; i++) {
 	    curva.agregarSegmento(puntos[i], puntos[i+1]);
 	}
-    return curva.puntos;
+    return curva;
 }
 
 
@@ -88,12 +130,12 @@ function generarB2() {
             [centro[0] + ax2, centro[1] + ay2],
         );
     }
-    return curva.puntos;
+    return curva;
 }
 
 
 function generarB3() {
-    curva = new Curva();
+    var curva = new Curva();
     var centro = [0,0];
     var lado = 100;
     var cte_circunferencia = 0.70;
@@ -187,7 +229,7 @@ function generarB3() {
         [centro[0]+lado/2, centro[1]-lado_cajon/2-radio_equina*cte_circunferencia],
         [centro[0]+lado/2, centro[1]-lado_cajon/2]
     );
-    return curva.puntos;
+    return curva;
 }
 
 
@@ -241,7 +283,7 @@ function generarB4() {
         [centro[0]+ancho/2, centro[1]-altura/2-(ancho/2)*cte_circunferencia],
         [centro[0]+ancho/2, centro[1]-altura/2]
     );
-    return curva.puntos;
+    return curva;
 }
 
 
@@ -290,7 +332,7 @@ function generarA1() {
         [inicio[0]-120, inicio[1]-360],
         [inicio[0], inicio[1]-360]
     );
-    return curva.puntos;
+    return curva;
 }
 
 
@@ -318,7 +360,7 @@ function generarA2() {
         [inicio[0]-40, inicio[1]-235],
         [inicio[0]-50, inicio[1]-240]
     );
-    return curva.puntos;
+    return curva;
 }
 
 
@@ -355,7 +397,7 @@ function generarCurvaRueda(radio, ancho) {
         [inicio[0]+radio-ancho_goma-ancho_desnivel, inicio[1]+ancho-desnivel_tapa],
         [inicio[0], inicio[1]+ancho-desnivel_tapa],
     );
-    return curva.puntos;
+    return curva;
 }
 
 
@@ -384,7 +426,7 @@ function generarCurvaGalpon(alto, ancho) {
         [centro[0]+ancho/2, centro[1]+alto],
         [centro[0]+ancho/2, centro[1]],
     );
-    return curva.puntos;
+    return curva;
 }
 
 
@@ -432,7 +474,7 @@ function generarCurvaChasis(ancho, largo) {
         [centro[0]+ancho/2, centro[1]-largo/2],
         [centro[0]+ancho/2-cola, centro[1]-largo/2-cola],
     );
-    return curva.puntos;
+    return curva;
 }
 
 
@@ -455,7 +497,7 @@ function generarTrapecio(base1, base2, largo) {
         [base2, 0],
         [0, 0]
     );
-    return curva.puntos;
+    return curva;
 }
 
 export {generarA1, generarA2, generarB1, generarB2, generarB3, generarB4, generarCurvaChasis, generarCurvaGalpon, generarCurvaRueda, generarTrapecio};
