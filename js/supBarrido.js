@@ -15,7 +15,7 @@ class SupBarrido {
         var y = (v - 0.5) * this.altura;
 
         // rotacion alrededor del eje y con angulo de torsion
-        var angulo = this.torsion * v;
+        var angulo = v * this.torsion*Math.PI/180;
         x = Math.cos(angulo)*x - Math.sin(angulo)*z;
         z = Math.sin(angulo)*x + Math.cos(angulo)*z;
         return [x,y,z];

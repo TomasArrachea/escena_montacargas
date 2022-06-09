@@ -5,19 +5,18 @@ function initMenu(escena) {
 		forma2dRevolucion: 'A1',
 		angulo: 0,
 		generarImpresion: function() {
-			let impresora = escena.getImpresora();
 			if (this.tipoSuperficie == 'barrido') {
-				impresora.generarImpresion(this.tipoSuperficie, this.forma2dBarrido, this.angulo/2*Math.PI);
+				escena.generarImpresion(this.tipoSuperficie, this.forma2dBarrido, this.angulo/2*Math.PI);
 			} else {
-				impresora.generarImpresion(this.tipoSuperficie, this.forma2dRevolucion, this.angulo/2*Math.PI);
+				escena.generarImpresion(this.tipoSuperficie, this.forma2dRevolucion, 0);
 			}
 		}		
 	};
 	var gui = new dat.GUI();
 
 	gui.add(app, "tipoSuperficie",["barrido","revolucion"]);
-	gui.add(app, "forma2dRevolucion",["A1","A3","A3","A4"]);
-	gui.add(app, "forma2dBarrido",["B1","B3","B3","B4"]);
+	gui.add(app, "forma2dRevolucion",["A1","A2","A3","A4"]);
+	gui.add(app, "forma2dBarrido",["B1","B2","B3","B4"]);
 	gui.add(app, "angulo",0, 360).step(1);
 	gui.add(app, "generarImpresion");
 };

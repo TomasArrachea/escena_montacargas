@@ -103,7 +103,8 @@ class Curva {
 
 
 function generarB1() {
-    var puntos = [ [0,0], [0,100], [86,50], [0, 0] ]; // triangulo con un vertice en 0,0
+    var puntos = [ [-0.29,-0.5], [-0.29, 0.5], [0.57,0], [-0.29, -0.5] ]; // triangulo con centro en 0,0
+
     var curva = new Curva();
     for (var i = 0; i < puntos.length-1; i++) {
 	    curva.agregarSegmento(puntos[i], puntos[i+1]);
@@ -114,8 +115,7 @@ function generarB1() {
 
 function generarB2() {
     var curva = new Curva();
-    var centro = [0,0];
-    var radio = 100;
+    var radio = 0.5;
 
     for (var a = 0; a < 2*Math.PI; a = a + 2*Math.PI / 7) {
         var ax = radio*Math.cos(a);
@@ -125,9 +125,9 @@ function generarB2() {
         var ay2 = radio*Math.sin(a + 2*Math.PI / 7);
         
         curva.agregarCurvaCuadratica(
-            [centro[0] + ax, centro[1] + ay],
-            [centro[0] + (ax+ax2)/6, centro[1] + (ay+ay2)/6],
-            [centro[0] + ax2, centro[1] + ay2],
+            [ax, ay],
+            [(ax+ax2)/6, (ay+ay2)/6],
+            [ax2, ay2],
         );
     }
     return curva;
@@ -137,9 +137,9 @@ function generarB2() {
 function generarB3() {
     var curva = new Curva();
     var centro = [0,0];
-    var lado = 100;
+    var lado = 0.6;
     var cte_circunferencia = 0.70;
-    var lado_cajon = 27;
+    var lado_cajon = 0.135;
 
     var radio_equina = lado/2 - lado_cajon/2;
     // cajon derecho
@@ -235,8 +235,8 @@ function generarB3() {
 
 function generarB4() {
     var centro = [0,0];
-    var altura = 130;
-    var ancho = 100;
+    var altura = 0.6;
+    var ancho = 0.5;
     var cte_circunferencia = 0.5519;
     var curva = new Curva()    ;
 
@@ -294,43 +294,43 @@ function generarA1() {
     // segmento horizontal
     curva.agregarSegmento(
         inicio,
-        [inicio[0]-120, inicio[1]]
+        [inicio[0]-1.2, inicio[1]]
     );
     // segmento vertical 
     curva.agregarSegmento(
-        [inicio[0]-120, inicio[1]],
-        [inicio[0]-120, inicio[1]-50]
+        [inicio[0]-1.2, inicio[1]],
+        [inicio[0]-1.2, inicio[1]-0.5]
     );
     // curva interna
     curva.agregarCurvaCubica(
-        [inicio[0]-120, inicio[1]-50],
-        [inicio[0]-100, inicio[1]-70],
-        [inicio[0]-20, inicio[1]-70],
-        [inicio[0]-40, inicio[1]-90]
+        [inicio[0]-1.2, inicio[1]-0.5],
+        [inicio[0]-1, inicio[1]-0.7],
+        [inicio[0]-0.2, inicio[1]-0.7],
+        [inicio[0]-0.4, inicio[1]-0.9]
     );
     // curva 
     curva.agregarCurvaCubica(
-        [inicio[0]-40, inicio[1]-90],
-        [inicio[0]-120, inicio[1]-150],
-        [inicio[0]-120, inicio[1]-210],
-        [inicio[0]-40, inicio[1]-270]
+        [inicio[0]-0.4, inicio[1]-0.90],
+        [inicio[0]-1.20, inicio[1]-1.50],
+        [inicio[0]-1.20, inicio[1]-2.10],
+        [inicio[0]-0.40, inicio[1]-2.70]
     );
     // segunda curva interna
     curva.agregarCurvaCubica(
-        [inicio[0]-40, inicio[1]-270],
-        [inicio[0]-20, inicio[1]-290],
-        [inicio[0]-100, inicio[1]-290],
-        [inicio[0]-120, inicio[1]-310],
+        [inicio[0]-0.40, inicio[1]-2.70],
+        [inicio[0]-0.20, inicio[1]-2.90],
+        [inicio[0]-1, inicio[1]-2.90],
+        [inicio[0]-1.20, inicio[1]-3.10],
     );
     // segmento vertical
     curva.agregarSegmento(
-        [inicio[0]-120, inicio[1]-310],
-        [inicio[0]-120, inicio[1]-360]
+        [inicio[0]-1.20, inicio[1]-3.10],
+        [inicio[0]-1.20, inicio[1]-3.60]
     );
     // segmento horizontal
     curva.agregarSegmento(
-        [inicio[0]-120, inicio[1]-360],
-        [inicio[0], inicio[1]-360]
+        [inicio[0]-1.20, inicio[1]-3.60],
+        [inicio[0], inicio[1]-3.60]
     );
     return curva;
 }
@@ -342,23 +342,23 @@ function generarA2() {
 
     curva.agregarCurvaCubica(
         [inicio[0], inicio[1]],
-        [inicio[0]-100, inicio[1]],
-        [inicio[0]-20, inicio[1]-70],
-        [inicio[0]-25, inicio[1]-90]
+        [inicio[0]-1, inicio[1]],
+        [inicio[0]-0.20, inicio[1]-0.70],
+        [inicio[0]-0.25, inicio[1]-0.90]
     );
     // curva 
     curva.agregarCurvaCubica(
-        [inicio[0]-25, inicio[1]-90],
-        [inicio[0]-40, inicio[1]-150],
-        [inicio[0]-80, inicio[1]-210],
-        [inicio[0]-40, inicio[1]-220]
+        [inicio[0]-0.25, inicio[1]-0.90],
+        [inicio[0]-0.40, inicio[1]-1.50],
+        [inicio[0]-0.80, inicio[1]-2.10],
+        [inicio[0]-0.40, inicio[1]-2.20]
     );
     // segunda curva interna
     curva.agregarCurvaCubica(
-        [inicio[0]-40, inicio[1]-220],
-        [inicio[0]-40, inicio[1]-230],
-        [inicio[0]-40, inicio[1]-235],
-        [inicio[0]-50, inicio[1]-240]
+        [inicio[0]-0.40, inicio[1]-2.20],
+        [inicio[0]-0.40, inicio[1]-2.30],
+        [inicio[0]-0.40, inicio[1]-2.35],
+        [inicio[0]-0.50, inicio[1]-2.40]
     );
     return curva;
 }
@@ -369,9 +369,8 @@ function generarCurvaRueda(radio, ancho) {
     var inicio = [0,0];
     var radio = radio;
     var desnivel_tapa = radio/8;
-    var ancho_goma = ancho;
+    var ancho_goma = radio/4;
     var ancho_desnivel = radio/6;
-    var ancho = ancho_desnivel+ancho_goma;
     // tapa inferior
     curva.agregarSegmento(
         inicio,

@@ -1,6 +1,7 @@
 class SupRevolucion {
-    constructor(curva){
+    constructor(curva, radio){
         this.puntos = curva.puntos;
+        this.radio = radio;
         this.topePuntos = this.puntos.length/2 - 1;
         this.normales = curva.normales;
         this.topeNormales = this.normales.length/2 - 1;

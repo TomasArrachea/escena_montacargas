@@ -2,7 +2,7 @@ import {Cilindro, SupCubo, SupPiso} from './superficies.js';
 import {SupBarrido} from './supBarrido.js';
 import {SupRevolucion} from './supRevolucion.js';
 import {generarA1, generarA2, generarB1, generarB2, generarB3, generarB4, generarCurvaChasis, generarCurvaGalpon, generarCurvaRueda, generarTrapecio} from './curvas.js'
-import {mat4, vec3} from 'https://cdn.skypack.dev/gl-matrix';
+import {mat4, vec3, vec4} from 'https://cdn.skypack.dev/gl-matrix';
 
 
 class Objeto3D {
@@ -133,6 +133,17 @@ class Objeto3D {
     getPosicion() {
         return this.posicion;
     }
+
+    getPosicionMundo(matrizMundo){
+        var modelado = mat4.create();
+        this.actualizarMatrizModelado();
+        mat4.multiply(modelado, matrizMundo, this.matrizModelado);
+
+        let pos = vec4.create();
+        vec4.transformMat4(pos, vec4.fromValues(0,0,0,1), modelado);
+        return [pos[0], pos[1], pos[2]];
+    }
+
 }
 
 class Galpon extends Objeto3D {
@@ -164,15 +175,15 @@ class Chasis extends Objeto3D {
 }
 
 class Carro extends Objeto3D {
-    constructor(estanteria) {
-        const DISTANCIA_RECOJER = 1;
-        const DISTANCIA_DEPOSITAR = 1;
+    constructor(estanteria, impresora) {
+        super();
+        this.DISTANCIA_RECOJER = 1.5;
+        this.DISTANCIA_DEPOSITAR = 1;
         var ancho = 3.5;
         var alto = 2;
         var largo = 4;
 
         // objeto vacio
-        super();
         var chasis = new Chasis(ancho, alto, largo);
         chasis.setRotacion(0, 0, Math.PI/2);
         chasis.setPosicion(0, 0.5+alto/2, 0);
@@ -214,7 +225,7 @@ class Carro extends Objeto3D {
         this.velGiro = 0;
         this.velX = 0;
         this.carga = null;
-        this.impresora = this.impresora;
+        this.impresora = impresora;
         this.estanteria = estanteria;
         this.matrizRotacion = mat4.create();
     }
@@ -232,15 +243,22 @@ class Carro extends Objeto3D {
     }
 
     toggleRecojer() {
-        if (carga == null) {
-            if (vec3.distance(this.posicion, this.impresora.posicion) <= DISTANCIA_RECOJER) {
-                carga = this.impresora.recojerImpresion();
-                this.agregarHijo(carga);
+        if (this.carga == null) {
+            if (vec3.distance(this.elevador.getPosicionMundo(this.matrizModelado), this.impresora.posicion) <= this.DISTANCIA_RECOJER) {
+                console.log('Carga recogida.');
+                this.carga = this.impresora.recojerImpresion();
+
+                var m = mat4.create();
+                mat4.mul(m, this.matrizModelado, this.elevador.matrizModelado);
+                console.log( 'pos pala: '+ this.elevador.pala.getPosicionMundo(m));
+                
+                this.carga.setPosicion(1.5, 1.5, 0);
+                this.agregarHijo(this.carga);
             }
         } else {
-            if (vec3.distance(this.posicion, this.estanteria.posicion) <= DISTANCIA_DEPOSITAR) {
-                this.estanteria.agregarObjeto(carga, this.posicion); // la estanteria elige en que estante se deposita
-                carga = null;
+            if (vec3.distance(this.elevador.posicion, this.estanteria.posicion) <= this.DISTANCIA_DEPOSITAR) {
+                this.estanteria.agregarObjeto(this.carga, this.posicion); // la estanteria elige en que estante se deposita
+                this.carga = null;
                 this.quitarHijo();
             }
         }
@@ -265,9 +283,9 @@ class Carro extends Objeto3D {
 }
 
 class Rueda extends Objeto3D {
-    constructor() {
+    constructor(radio=1, ancho=0.4) {
         super();
-        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(1, 0.4))));
+        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(radio, ancho))));
         this.setRotacion(0, 0, Math.PI/2);
     }
 }
@@ -296,7 +314,7 @@ class Elevador extends Objeto3D {
         super();
         // objeto vacio
         var anchoCol = 0.3;
-        var largoCol = 5.2;
+        var largoCol = 4.7;
         var altoCol = 0.1;
 
         var anchoTransversal = 2.5;
@@ -308,11 +326,11 @@ class Elevador extends Objeto3D {
         var altoPala = 2;
 
         var columna = new Cubo(anchoCol, largoCol, altoCol)
-        columna.setPosicion(-(anchoTransversal-0.4)/2, largoCol/2-1, 0);
+        columna.setPosicion(-(anchoTransversal-0.4)/2, largoCol/2-0.5, 0);
         this.agregarHijo(columna); // col 1
 
         var columna = new Cubo(anchoCol, largoCol, altoCol)
-        columna.setPosicion((anchoTransversal-0.5)/2, largoCol/2-1, 0);
+        columna.setPosicion((anchoTransversal-0.5)/2, largoCol/2-0.5, 0);
         this.agregarHijo(columna); // col 2
 
         var tirante = new Cubo(anchoTransversal, largoTransversal, altoTransversal);
@@ -396,33 +414,119 @@ class Estanteria extends Objeto3D {
 class Impresora extends Objeto3D {
     constructor() {
         super();
-        var radio = 1.2;
-        var ancho = 1;
-        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(radio, ancho))));
+        this.VEL_SETUP = -0.05;
+        this.VEL_IMPRESION = 0.01;
+
+        var radio = 1;
+        this.alturaBase = 1.2;
+        var rueda = new Rueda(radio, this.alturaBase);
+        rueda.setRotacion(-Math.PI/2, Math.PI/2, 0);
+        this.agregarHijo(rueda)
         
+
+        this.zBarra = radio*4/5;
         var barra = new Barra();
-        barra.setPosicion(0,ancho,radio*4/5);
+        barra.setPosicion(0,this.alturaBase, this.zBarra);
         this.agregarHijo(barra);
 
-        var cabezal = new Cabezal();
-        this.topeCabezal = ancho+barra.largo*4/5;
-        this.baseCabezal = ancho+barra.largo*1/5;
-        cabezal.setPosicion(0,this.topeCabezal,radio);
-        this.agregarHijo(cabezal);
 
+        this.baseCabezal = this.alturaBase + barra.largo*1/10; // a ojo para que llegue casi a tocar la base de la impresora
+        this.topeCabezal = this.alturaBase + barra.largo*4/5;
         this.velCabezal = 0;
+        this.alturaCabezal = this.topeCabezal;
+        this.cabezal = new Cabezal();
+        this.cabezal.setPosicion(0, this.alturaCabezal, this.zBarra);
+        this.agregarHijo(this.cabezal);
+
+        this.setRotacion(0, Math.PI/2, 0);
+        this.impresion = null;
     }
 
     recojerImpresion() {
-        return this.quitarHijo()
+        this.impresion = null;
+        return this.quitarHijo();
     }
 
-    imprimir() {
-        //mover el cabezal en y
-        this.velCabezal = 5;
+    generarImpresion(tipoSuperficie, curva, torsion) {
+        console.log('Imprimiendo...');
+        if (this.velCabezal == this.VEL_IMPRESION) {
+            console.log('Ya hay una impresión en curso.');
+            return
+        }
+        if (this.impresion != null) {
+            console.log('Ya hay una impresion terminada.');
+            return
+        }
+        
+        this.velCabezal = this.VEL_SETUP;
+        if (tipoSuperficie == 'barrido') {
+            this.impresion = new ImpresionBarrido(curva, 1.1, torsion);
+            this.impresion.setPosicion(0, this.alturaBase+0.55, 0); // le sumo la mitad del alto de la figura
 
+        } else if (tipoSuperficie == 'revolucion') {
+            this.impresion = new ImpresionRevolucion(curva);
+            this.impresion.setPosicion(0, this.alturaBase, 0);
+        }
     }
 
+    actualizarMatrizModelado() {
+        if (this.alturaCabezal+this.velCabezal <= this.topeCabezal)
+            this.alturaCabezal += this.velCabezal;
+        if (this.alturaCabezal <= this.baseCabezal) {
+            this.velCabezal = this.VEL_IMPRESION;
+            // Agrego la impresion como hijo -> se dibuja
+            this.agregarHijo(this.impresion);
+        } else if (this.alturaCabezal >= this.topeCabezal-this.velCabezal)
+            this.velCabezal = 0
+
+        this.cabezal.setPosicion(0, this.alturaCabezal, this.zBarra);
+
+        mat4.identity(this.matrizModelado);
+        mat4.translate(this.matrizModelado, this.matrizModelado, this.posicion);
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[0], [1,0,0]);
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[1], [0,1,0]);
+        mat4.rotate(this.matrizModelado,this.matrizModelado,this.rotacion[2], [0,0,1]);
+        if (this.escala[0] != 0 && this.escala[1] != 0 && this.escala[2] != 0)
+            mat4.scale(this.matrizModelado, this.matrizModelado, this.escala);
+    }
+}
+
+class ImpresionRevolucion extends Objeto3D {
+    constructor(tipoCurva) {
+        super();
+        var curva;
+        if (tipoCurva == 'A1') {
+            curva = generarA1();
+            this.setRotacion(0, 0, Math.PI);
+            this.setEscala(0.5, 0.4, 0.5);
+        }
+        else if (tipoCurva == 'A2') {
+            curva = generarA2();
+            this.setRotacion(0, 0, Math.PI);
+            this.setEscala(1, 0.5, 1);
+        }
+        else if (tipoCurva == 'A3')
+            curva = generarA3();
+        else if (tipoCurva == 'A4')
+            curva = generarA4();
+        this.setGeometria(generarSuperficie(new SupRevolucion(curva)));
+    }
+}
+
+class ImpresionBarrido extends Objeto3D {
+    constructor(tipoCurva, altura, torsion) {
+        super();
+        var curva;
+        if (tipoCurva == 'B1')
+            curva = generarB1();
+        else if (tipoCurva == 'B2')
+            curva = generarB2();
+        else if (tipoCurva == 'B3')
+            curva = generarB3();
+        else if (tipoCurva == 'B4')
+            curva = generarB4();
+        this.setGeometria(generarSuperficie(new SupBarrido(curva, altura, torsion)));
+    }
 }
 
 class Cubo extends Objeto3D {
@@ -461,7 +565,7 @@ class Cabezal extends Objeto3D {
         agarrePanel.setPosicion(0,0,-1.2);
         this.agregarHijo(agarrePanel);
 
-        var panel = new Cubo(1.5,0.05,1.5);
+        var panel = new Cubo(1,0.05,1);
         panel.setPosicion(0,-0.05,-1.2);
         this.agregarHijo(panel);
     }
@@ -514,17 +618,14 @@ class Escena extends Objeto3D {
             return estanteria.getPosicion();
         return vec3.create();
     }
+
+    generarImpresion(tipoSuperficie, curva, torsion) {
+        var impresora = this.hijos[1];
+        if (impresora instanceof Impresora)
+            impresora.generarImpresion(tipoSuperficie, curva, torsion);
+    }
 }
 
-function generarImpresion(tipoSuperficie, curva, torsion){
-    // generar la nueva impresion de barrido a partir de parametros seteados en GUI:
-        // - Tipo de superficie: “barrido” o “revolución”
-        // - Forma 2D revolución: “A1”,”A2”,”A3” o “A4”
-        // - Forma 2D barrido: “B1”,”B2”,”B3”o ”B4”
-        // - Angulo de torsión barrido: ángulo
-
-    // funcion del objeto Impresora?
-}
 
 function generarSuperficie(superficie,filas,columnas){
 
