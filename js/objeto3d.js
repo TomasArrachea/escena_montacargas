@@ -247,16 +247,13 @@ class Carro extends Objeto3D {
             if (vec3.distance(this.elevador.getPosicionMundo(this.matrizModelado), this.impresora.posicion) <= this.DISTANCIA_RECOJER) {
                 console.log('Carga recogida.');
                 this.carga = this.impresora.recojerImpresion();
-
-                var m = mat4.create();
-                mat4.mul(m, this.matrizModelado, this.elevador.matrizModelado);
-                console.log( 'pos pala: '+ this.elevador.pala.getPosicionMundo(m));
-                
-                this.carga.setPosicion(1.5, 1.5, 0);
+                this.carga.setPosicion(0,3,4); // es la posicion relativa de la pala en el carro. En realidad la puedo calcular con la posicion de la pala en el elevador y la posicion de la pala en el elevador
+                this.carga.setEscala(1/0.4, 1/0.4, 1/0.4); // al auto se le aplica una escala en la escena. La deshago para la impresion
                 this.agregarHijo(this.carga);
             }
         } else {
-            if (vec3.distance(this.elevador.posicion, this.estanteria.posicion) <= this.DISTANCIA_DEPOSITAR) {
+            if (vec3.distance(this.elevador.getPosicionMundo(this.matrizModelado), this.estanteria.posicion) <= this.DISTANCIA_DEPOSITAR) {
+                console.log('Depositando carga...');
                 this.estanteria.agregarObjeto(this.carga, this.posicion); // la estanteria elige en que estante se deposita
                 this.carga = null;
                 this.quitarHijo();
@@ -407,7 +404,9 @@ class Estanteria extends Objeto3D {
 
     agregarObjeto(objeto, posicion) {
         this.agregarHijo(objeto);
-        objeto.setPosicion(0, 2, 0); // TODO: elegir la ubicacion mas cercana a posicion
+        objeto.setEscala(0.4, 0.4, 0.4); // deshago la escala del carro
+        objeto.setEscala(2, 2, 2); // deshago la escala de la estanteria
+        objeto.setPosicion(0, 3, 0); // TODO: elegir la ubicacion mas cercana a posicion
     }
 }
 
@@ -472,9 +471,10 @@ class Impresora extends Objeto3D {
     actualizarMatrizModelado() {
         if (this.alturaCabezal+this.velCabezal <= this.topeCabezal)
             this.alturaCabezal += this.velCabezal;
-        if (this.alturaCabezal <= this.baseCabezal) {
+            if (this.alturaCabezal < this.baseCabezal)
+                this.alturaCabezal = this.baseCabezal;
+        if (this.alturaCabezal == this.baseCabezal) { // solo se ejecuta una vez
             this.velCabezal = this.VEL_IMPRESION;
-            // Agrego la impresion como hijo -> se dibuja
             this.agregarHijo(this.impresion);
         } else if (this.alturaCabezal >= this.topeCabezal-this.velCabezal)
             this.velCabezal = 0
