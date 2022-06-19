@@ -1,5 +1,5 @@
 // HANDLE DE PRESION DE TECLAS
- 
+
 // ASDW para desplazar el carro en el plano XZ
 // QE para desplazar la pala del carro en el eje Y
 // OP para acercar o alejar la camara
@@ -39,10 +39,10 @@ let keyDownListener = (event, escena, camara) => {
         console.log('CAMARA LATERAL DEL CARRO');
         camara.setCamera(6);
     }
-    if (event.code=='KeyO') {
+    if (event.code == 'KeyO') {
         camara.zoom(DELTA_ZOOM);
     }
-    if (event.code=='KeyP') {
+    if (event.code == 'KeyP') {
         camara.zoom(-DELTA_ZOOM);
     }
     if (event.code == 'KeyA') {
@@ -99,39 +99,39 @@ let oldY = 0;
 
 let mouseDownListener = () => {
     mouseClick = true;
-  }
+}
 
 function isInsideCanvas(x, y, canvasW, canvasH) {
-    return window.screen.width/2 - canvasW/2 < x && x < window.screen.width/2 + canvasW/2 
-        && window.screen.height/2 - canvasH/2 < y && y < window.screen.height/2 + canvasH/2;
+    return window.screen.width / 2 - canvasW / 2 < x && x < window.screen.width / 2 + canvasW / 2
+        && window.screen.height / 2 - canvasH / 2 < y && y < window.screen.height / 2 + canvasH / 2;
 }
 
 let mouseMoveListener = (e, camara, canvasW, canvasH) => {
 
     if (mouseClick && isInsideCanvas(e.pageX, e.pageY, canvasW, canvasH)) {
-      if (e.pageX > oldX){
-        camara.sumGiroGuiniada((e.pageX-oldX)*VEL_ROTACION_CAMARA);
-      }
-      else if(e.pageX < oldX){
-        camara.sumGiroGuiniada((e.pageX-oldX)*VEL_ROTACION_CAMARA);
-      }
-      if(e.pageY > oldY){
-        camara.sumGiroCabeceo((e.pageY - oldY)*VEL_ROTACION_CAMARA);
-      }
-      else if(e.pageY < oldY){
-        camara.sumGiroCabeceo((e.pageY - oldY)*VEL_ROTACION_CAMARA);
-      }
+        if (e.pageX > oldX) {
+            camara.sumGiroGuiniada((e.pageX - oldX) * VEL_ROTACION_CAMARA);
+        }
+        else if (e.pageX < oldX) {
+            camara.sumGiroGuiniada((e.pageX - oldX) * VEL_ROTACION_CAMARA);
+        }
+        if (e.pageY > oldY) {
+            camara.sumGiroCabeceo((e.pageY - oldY) * VEL_ROTACION_CAMARA);
+        }
+        else if (e.pageY < oldY) {
+            camara.sumGiroCabeceo((e.pageY - oldY) * VEL_ROTACION_CAMARA);
+        }
     }
     oldX = e.pageX;
     oldY = e.pageY;
-  }
+}
 
 let mouseUpListener = () => {
     mouseClick = false;
-  }
+}
 
 let mouseWheelListener = (event, camara) => {
     camara.zoom(event.deltaY * FACTOR_ZOOM_MOUSE);
 }
 
-export {mouseWheelListener, mouseMoveListener, mouseUpListener, mouseDownListener, keyUpListener, keyDownListener}
+export { mouseWheelListener, mouseMoveListener, mouseUpListener, mouseDownListener, keyUpListener, keyDownListener }
