@@ -1,6 +1,6 @@
 import { mat4 } from 'https://cdn.skypack.dev/gl-matrix';
-import { Objeto3D } from './objeto3d';
-import { Cubo } from "./Cubo";
+import { Objeto3D } from './objeto3d.js';
+import { Cubo } from "./Cubo.js";
 
 
 export class Elevador extends Objeto3D {

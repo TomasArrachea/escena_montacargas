@@ -1,6 +1,6 @@
 import { SupRevolucion } from '../supRevolucion.js';
 import { generarA1, generarA2 } from '../curvas.js';
-import { Objeto3D, generarSuperficie } from './objeto3d';
+import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 
 export class ImpresionRevolucion extends Objeto3D {

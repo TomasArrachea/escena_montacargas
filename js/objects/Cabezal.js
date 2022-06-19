@@ -1,5 +1,5 @@
-import { Cubo } from './Cubo';
-import { Objeto3D } from './objeto3d';
+import { Cubo } from './Cubo.js';
+import { Objeto3D } from './objeto3d.js';
 
 
 export class Cabezal extends Objeto3D {

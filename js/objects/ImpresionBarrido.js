@@ -1,6 +1,6 @@
 import { SupBarrido } from '../supBarrido.js';
 import { generarB1, generarB2, generarB3, generarB4 } from '../curvas.js';
-import { Objeto3D, generarSuperficie } from './objeto3d';
+import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 
 export class ImpresionBarrido extends Objeto3D {

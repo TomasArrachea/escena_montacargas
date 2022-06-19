@@ -1,5 +1,5 @@
 import { Cilindro } from '../superficies.js';
-import { Objeto3D, generarSuperficie } from './objeto3d';
+import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 
 export class Barra extends Objeto3D {

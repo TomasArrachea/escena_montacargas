@@ -1,5 +1,5 @@
 import { SupPiso } from '../superficies.js';
-import { Objeto3D, generarSuperficie } from './objeto3d';
+import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 export class Piso extends Objeto3D {
     constructor() {

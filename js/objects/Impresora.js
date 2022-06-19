@@ -1,10 +1,10 @@
 import { mat4 } from 'https://cdn.skypack.dev/gl-matrix';
-import { Rueda } from './Rueda';
-import { Objeto3D } from './objeto3d';
-import { Cabezal } from "./Cabezal";
-import { Barra } from "./Barra";
-import { ImpresionBarrido } from "./ImpresionBarrido";
-import { ImpresionRevolucion } from "./ImpresionRevolucion";
+import { Rueda } from './Rueda.js';
+import { Objeto3D } from './objeto3d.js';
+import { Cabezal } from "./Cabezal.js";
+import { Barra } from "./Barra.js";
+import { ImpresionBarrido } from "./ImpresionBarrido.js";
+import { ImpresionRevolucion } from "./ImpresionRevolucion.js";
 
 export class Impresora extends Objeto3D {
     constructor() {

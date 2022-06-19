@@ -1,10 +1,10 @@
 import { vec3 } from 'https://cdn.skypack.dev/gl-matrix';
-import { Galpon } from './Galpon';
-import { Piso } from './Piso';
-import { Carro } from './Carro';
-import { Estanteria } from './Estanteria';
-import { Impresora } from './Impresora';
-import { Objeto3D } from './objeto3d';
+import { Galpon } from './Galpon.js';
+import { Piso } from './Piso.js';
+import { Carro } from './Carro.js';
+import { Estanteria } from './Estanteria.js';
+import { Impresora } from './Impresora.js';
+import { Objeto3D } from './objeto3d.js';
 
 export class Escena extends Objeto3D {
     constructor() {

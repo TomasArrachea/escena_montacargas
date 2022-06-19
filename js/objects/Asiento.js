@@ -1,6 +1,6 @@
 import { SupBarrido } from '../supBarrido.js';
 import { generarTrapecio } from '../curvas.js';
-import { Objeto3D, generarSuperficie } from './objeto3d';
+import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 
 export class Asiento extends Objeto3D {

@@ -1,6 +1,6 @@
 import { SupRevolucion } from '../supRevolucion.js';
 import { generarCurvaRueda } from '../curvas.js';
-import { Objeto3D, generarSuperficie } from './objeto3d';
+import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 
 export class Rueda extends Objeto3D {

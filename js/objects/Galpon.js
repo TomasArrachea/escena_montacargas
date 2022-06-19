@@ -1,6 +1,6 @@
 import { SupBarrido } from '../supBarrido.js';
 import { generarCurvaGalpon } from '../curvas.js';
-import { Objeto3D, generarSuperficie } from './objeto3d';
+import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 export class Galpon extends Objeto3D {
     constructor() {

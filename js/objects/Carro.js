@@ -1,9 +1,9 @@
 import { mat4, vec3 } from 'https://cdn.skypack.dev/gl-matrix';
-import { Chasis } from './Chasis';
-import { Objeto3D } from './objeto3d';
-import { Elevador } from "./Elevador";
-import { Asiento } from "./Asiento";
-import { Rueda } from "./Rueda";
+import { Chasis } from './Chasis.js';
+import { Objeto3D } from './objeto3d.js';
+import { Elevador } from "./Elevador.js";
+import { Asiento } from "./Asiento.js";
+import { Rueda } from "./Rueda.js";
 
 export class Carro extends Objeto3D {
     constructor(estanteria, impresora) {

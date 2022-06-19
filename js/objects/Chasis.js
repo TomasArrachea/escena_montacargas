@@ -1,6 +1,6 @@
 import { SupBarrido } from '../supBarrido.js';
 import { generarCurvaChasis } from '../curvas.js';
-import { Objeto3D, generarSuperficie } from './objeto3d';
+import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 export class Chasis extends Objeto3D {
     constructor(ancho, alto, largo) {
