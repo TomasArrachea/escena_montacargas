@@ -456,23 +456,24 @@ function generarCurvaChasis(ancho, largo) {
 
     // lado izquierdo
     curva.agregarSegmento(
-        [centro[0] - ancho / 2, centro[1] - largo / 2],
-        [centro[0] - ancho / 2, centro[1] + largo / 2]
+        [centro[0] - ancho / 2, centro[1] + largo / 2],
+        [centro[0] - ancho / 2, centro[1] - largo / 2]
     );
 
     // parte de abajo
     curva.agregarSegmento(
-        [centro[0] - ancho / 2 + cola, centro[1] - largo / 2 - cola],
         [centro[0] - ancho / 2, centro[1] - largo / 2],
-    );
-    curva.agregarSegmento(
-        [centro[0] + ancho / 2 - cola, centro[1] - largo / 2 - cola],
         [centro[0] - ancho / 2 + cola, centro[1] - largo / 2 - cola],
     );
     curva.agregarSegmento(
-        [centro[0] + ancho / 2, centro[1] - largo / 2],
+        [centro[0] - ancho / 2 + cola, centro[1] - largo / 2 - cola],
         [centro[0] + ancho / 2 - cola, centro[1] - largo / 2 - cola],
     );
+    curva.agregarSegmento(
+        [centro[0] + ancho / 2 - cola, centro[1] - largo / 2 - cola],
+        [centro[0] + ancho / 2, centro[1] - largo / 2],
+    );
+
     return curva;
 }
 
