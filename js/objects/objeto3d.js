@@ -142,13 +142,13 @@ export class Objeto3D {
 
 
 export function generarSuperficie(superficie, filas, columnas) {
-
-    var filas = 10;
-    var columnas = 10;
+    var filas = filas || 15;
+    var columnas = columnas || 15;
     // revisar el algoritmo del index buffer, copiar la implementacion de setupBuffers?
     var positionBuffer = [];
     var indexBuffer = [];
     var normalBuffer = [];
+    var uvBuffer = [];
 
     for (var i = 0; i <= filas; i++) {
         for (var j = 0; j <= columnas; j++) {
@@ -167,6 +167,11 @@ export function generarSuperficie(superficie, filas, columnas) {
             normalBuffer.push(nrm[0]);
             normalBuffer.push(nrm[1]);
             normalBuffer.push(nrm[2]);
+
+            var uvs = superficie.getCoordenadasTextura(u, v);
+
+            uvBuffer.push(uvs[0]);
+            uvBuffer.push(uvs[1]);
         }
     }
 
@@ -182,9 +187,11 @@ export function generarSuperficie(superficie, filas, columnas) {
             indexBuffer.push(columnas + columnas * i);
         }
     }
+
     return {
         positionBuffer,
         normalBuffer,
-        indexBuffer
+        indexBuffer,
+        uvBuffer
     };
 }
