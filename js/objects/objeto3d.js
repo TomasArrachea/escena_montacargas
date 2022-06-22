@@ -40,8 +40,8 @@ export class Objeto3D {
 
         // matriz normal
         var normal = mat4.create();
-        mat4.invert(normal, modelado);
-        mat4.transpose(normal, normal);
+        // mat4.invert(normal, modelado); // REVISAR, cuando agrego eso se se mal
+        // mat4.transpose(normal, normal);
 
         var normalMatrixUniform = gl.getUniformLocation(glProgram, "normalMatrix");
         var modelMatrixUniform = gl.getUniformLocation(glProgram, "modelMatrix")
