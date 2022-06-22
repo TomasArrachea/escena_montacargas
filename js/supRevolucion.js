@@ -24,6 +24,10 @@ class SupRevolucion {
         var y = this.normales[index * 2 + 1];
         return [x, y, z];
     }
+
+    getCoordenadasTextura(u, v) {
+        return [u, v];
+    }
 }
 
 export { SupRevolucion }

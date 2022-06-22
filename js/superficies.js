@@ -14,6 +14,10 @@ class SupPiso {
     getNormal(u, v) {
         return [0, 1, 0]
     }
+
+    getCoordenadasTextura(u, v) {
+        return [u, v];
+    }
 }
 
 class SupCubo {
@@ -91,10 +95,44 @@ class SupCubo {
             20, 21, 22, 22, 21, 23
         ];
 
+        var uvBuffer = [
+            // Front
+            0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0,
+            // Back
+            0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0,
+            // Top
+            0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0,
+            // Bottom
+            0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0,
+            // Right
+            0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0,
+            // Left
+            0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0
+        ];
+
         return {
             positionBuffer,
             normalBuffer,
-            indexBuffer
+            indexBuffer,
+            uvBuffer
         }
     }
 }
@@ -119,6 +157,10 @@ class Cilindro {
         var pos = this.getPos(u, v);
         var modulo = Math.sqrt(pos[0] ** 2 + pos[1] ** 2)
         return [pos[0] / modulo, pos[1] / modulo, 0];
+    }
+
+    getCoordenadasTextura(u, v) {
+        return [u, v];
     }
 }
 

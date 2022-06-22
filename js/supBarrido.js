@@ -26,10 +26,14 @@ class SupBarrido {
         var x = this.normales[index * 2];
         var z = this.normales[index * 2 + 1];
 
-        var angulo = this.torsion * v;
+        var angulo = this.torsion * v * Math.PI / 180;
         x = Math.cos(angulo) * x - Math.sin(angulo) * z;
         z = Math.sin(angulo) * x + Math.cos(angulo) * z;
         return [x, 0, z];
+    }
+
+    getCoordenadasTextura(u, v) {
+        return [u, v];
     }
 }
 
