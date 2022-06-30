@@ -106,8 +106,8 @@ function generarB1() {
     var puntos = [[-0.29, -0.5], [-0.29, 0.5], [0.57, 0], [-0.29, -0.5]]; // triangulo con centro en 0,0
 
     var curva = new Curva();
-    for (var i = 0; i < puntos.length - 1; i++) {
-        curva.agregarSegmento(puntos[i], puntos[i + 1]);
+    for (var i = puntos.length -1; i > 0; i--) {
+        curva.agregarSegmento(puntos[i], puntos[i - 1]);
     }
     return curva;
 }
