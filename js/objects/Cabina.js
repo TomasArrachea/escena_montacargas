@@ -5,6 +5,6 @@ import { Objeto3D, generarSuperficie } from './objeto3d.js';
 export class Cabina extends Objeto3D {
     constructor(padre) {
         super(padre);
-        this.setGeometria(generarSuperficie(new SupBarrido(generarTrapecio(), 20, 0)));
+        this.setGeometria(generarSuperficie(new SupBarrido(generarTrapecio(), 20)));
     }
 }

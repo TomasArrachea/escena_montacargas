@@ -10,7 +10,7 @@ export class Asiento extends Objeto3D {
         this.baseChica = 0.5;
         this.largo = 2;
         var sup = generarTrapecio(this.baseChica, this.baseGrande, this.largo);
-        this.setGeometria(generarSuperficie(new SupBarrido(sup, 2, 0, true)));
+        this.setGeometria(generarSuperficie(new SupBarrido(sup, 2)));
         this.setRotacion(-Math.PI / 2, 0, -Math.PI / 2);
     }
 }

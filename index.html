@@ -70,7 +70,10 @@
                 vec3 diffColor=mix(vec3(0.7,0.7,0.7),vNormal,0.4);
                 vec3 color=dot(lightVec,vNormal)*diffColor+vec3(0.2,0.2,0.2);
 
-                gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+                gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t)); // texturas sin iluminacion
+
+                gl_FragColor = vec4(vNormal, 1); // para ver las normales
+
 
             }
         </script>
@@ -206,9 +209,9 @@
         function drawScene() {
             setupVertexShaderMatrix();
             camaraMatrix = camara.getCameraMatrix();
-            // revisar la matriz de camara nunca se setea como viewMatrix????
+            gl.uniformMatrix4fv(gl.getUniformLocation(glProgram, "viewMatrix"), false, camaraMatrix);
 
-            escena.dibujar(camaraMatrix); // revisar!!
+            escena.dibujar(mat4.create());
         }
 
         function tick() {

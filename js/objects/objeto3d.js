@@ -51,7 +51,7 @@ export class Objeto3D {
             hijo.setColor(r, g, b);
         })
     }
-    
+
     initTextures(path) {
         const texture = gl.createTexture();
         const image = new Image();
@@ -60,18 +60,18 @@ export class Objeto3D {
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
             if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
                 gl.generateMipmap(gl.TEXTURE_2D);
-             } else {
+            } else {
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-             }
+            }
         }
         image.src = path;
         this.image = image;
         this.texture = texture;
     }
 
-    setTextureScale(x, y) { 
+    setTextureScale(x, y) {
         this.textureScale[0] = x; // usar la escala de la textura para modificar las coordenadas de la textura vs uvBuffer para que se repita
         this.textureScale[1] = y;
     }
@@ -99,17 +99,16 @@ export class Objeto3D {
         var modelado = mat4.create();
         this.actualizarMatrizModelado();
         mat4.multiply(modelado, matrizPadre, this.matrizModelado);
+        var modelMatrixUniform = gl.getUniformLocation(glProgram, "modelMatrix")
+        gl.uniformMatrix4fv(modelMatrixUniform, false, modelado);
 
         // matriz normal
         var normal = mat4.create();
-        // mat4.invert(normal, modelado); // REVISAR, cuando agrego eso se se mal
-        // mat4.transpose(normal, normal);
-
+        mat4.invert(normal, modelado);
+        mat4.transpose(normal, normal);
         var normalMatrixUniform = gl.getUniformLocation(glProgram, "normalMatrix");
-        var modelMatrixUniform = gl.getUniformLocation(glProgram, "modelMatrix")
-
         gl.uniformMatrix4fv(normalMatrixUniform, false, normal);
-        gl.uniformMatrix4fv(modelMatrixUniform, false, modelado);
+
         return modelado;
     }
 
@@ -208,7 +207,7 @@ export class Objeto3D {
         return this.posicion;
     }
 
-    getPosicionMundo(pos=[0, 0, 0]) {
+    getPosicionMundo(pos = [0, 0, 0]) {
         let posEnPadre = vec4.create();
         vec4.transformMat4(posEnPadre, [pos[0], pos[1], pos[2], 1], this.matrizModelado);
         if (this.padre == null) {
@@ -221,9 +220,9 @@ export class Objeto3D {
 
 
 
-export function generarSuperficie(superficie, filas, columnas) {
-    var filas = filas || 15;
-    var columnas = columnas || 15;
+export function generarSuperficie(superficie, escalaUv = 1) {
+    let columnas = superficie.columnas;
+    let filas = superficie.filas;
     var positionBuffer = [];
     var indexBuffer = [];
     var normalBuffer = [];
@@ -249,8 +248,8 @@ export function generarSuperficie(superficie, filas, columnas) {
 
             var uvs = superficie.getCoordenadasTextura(u, v);
 
-            uvBuffer.push(uvs[0]);
-            uvBuffer.push(uvs[1]);
+            uvBuffer.push(uvs[0] * escalaUv);
+            uvBuffer.push(uvs[1] * escalaUv);
         }
     }
 

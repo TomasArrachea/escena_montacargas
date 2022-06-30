@@ -2,6 +2,8 @@ class SupPiso {
     constructor(ancho, largo) {
         this.ancho = ancho;
         this.largo = largo;
+        this.filas = 1;
+        this.columnas = 1;
     }
 
     getPos(u, v) {
@@ -97,35 +99,35 @@ class SupCubo {
 
         var uvBuffer = [
             // Front
-            0.0,  0.0,
-            1.0,  0.0,
-            1.0,  1.0,
-            0.0,  1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             // Back
-            0.0,  0.0,
-            1.0,  0.0,
-            1.0,  1.0,
-            0.0,  1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             // Top
-            0.0,  0.0,
-            1.0,  0.0,
-            1.0,  1.0,
-            0.0,  1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             // Bottom
-            0.0,  0.0,
-            1.0,  0.0,
-            1.0,  1.0,
-            0.0,  1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             // Right
-            0.0,  0.0,
-            1.0,  0.0,
-            1.0,  1.0,
-            0.0,  1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             // Left
-            0.0,  0.0,
-            1.0,  0.0,
-            1.0,  1.0,
-            0.0,  1.0
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0
         ];
 
         return {
@@ -140,6 +142,8 @@ class SupCubo {
 
 class Cilindro {
     constructor(radio, largo) {
+        this.filas = 10;
+        this.columnas = 20;
         this.radio = radio;
         this.largo = largo;
     }
