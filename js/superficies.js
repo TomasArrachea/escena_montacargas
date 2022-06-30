@@ -169,4 +169,29 @@ class Cilindro {
 }
 
 
-export { Cilindro, SupCubo, SupPiso };
+class Esfera {
+    constructor(radio) {
+        this.radio = radio;
+    }
+
+    getPos(u, v) {
+        var y = (v - 0.5) * this.radio * 2;
+        var x = Math.cos(u * Math.PI * 2) * Math.sqrt(this.radio ** 2 - y ** 2);
+        var z = Math.sin(u * Math.PI * 2) * Math.sqrt(this.radio ** 2 - y ** 2);
+        return [x, y, z];
+    }
+
+    getNormal(u, v) {
+        var y = (v - 0.5) * 2;
+        var x = Math.cos(u * Math.PI * 2) * Math.sqrt(1 - y ** 2);
+        var z = Math.sin(u * Math.PI * 2) * Math.sqrt(1 - y ** 2);
+        return [x, y, z];
+    }
+
+    getCoordenadasTextura(u, v) {
+        return [v, u];
+    }
+}
+
+
+export { Cilindro, SupCubo, SupPiso, Esfera };

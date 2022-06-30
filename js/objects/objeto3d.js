@@ -45,10 +45,10 @@ export class Objeto3D {
         }
     }
 
-    setColor(r, g, b) {
-        this.color = vec3.fromValues(r, g, b);
+    setColor(color) {
+        this.color = color;
         this.hijos.forEach(function (hijo) {
-            hijo.setColor(r, g, b);
+            hijo.setColor(color);
         })
     }
 

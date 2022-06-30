@@ -1,3 +1,4 @@
+import { RGB_GREEN } from '../colors.js';
 import { Cubo } from './Cubo.js';
 import { Objeto3D } from './objeto3d.js';
 
@@ -6,6 +7,8 @@ export class Cabezal extends Objeto3D {
     constructor(padre) {
         super(padre);
         // objeto vacio
+        this.setColor(RGB_GREEN);
+
         var agarreBarra = new Cubo(this, 0.4, 0.2, 0.3);
         agarreBarra.setPosicion(0, 0, 0);
         this.agregarHijo(agarreBarra);

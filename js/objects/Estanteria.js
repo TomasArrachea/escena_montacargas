@@ -1,6 +1,7 @@
 import { vec3 } from 'https://cdn.skypack.dev/gl-matrix';
 import { Objeto3D } from './objeto3d.js';
 import { Cubo } from "./Cubo.js";
+import { RGB_BROWN, RGB_LIGHT_GREY } from '../colors.js';
 
 export class Estanteria extends Objeto3D {
     constructor(padre) {
@@ -17,14 +18,17 @@ export class Estanteria extends Objeto3D {
 
         var estanteria = new Cubo(this, this.xEstanteria, this.yEstanteria, this.zEstanteria);
         estanteria.setPosicion(0, 2, 0);
+        estanteria.setColor(RGB_LIGHT_GREY);
         this.agregarHijo(estanteria);
 
         var estanteria = new Cubo(this, this.xEstanteria, this.yEstanteria, this.zEstanteria);
         estanteria.setPosicion(0, 4.5, 0);
+        estanteria.setColor(RGB_LIGHT_GREY);
         this.agregarHijo(estanteria);
 
         var estanteria = new Cubo(this, this.xEstanteria, this.yEstanteria, this.zEstanteria);
         estanteria.setPosicion(0, 7, 0);
+        estanteria.setColor(RGB_LIGHT_GREY);
         this.agregarHijo(estanteria);
 
         var columna;
@@ -34,6 +38,7 @@ export class Estanteria extends Objeto3D {
             for (var j = 0; j < 9; j++) {
                 columna = new Cubo(this, xCol, this.yCol, zCol);
                 columna.setPosicion(i * this.xEstanteria - this.xEstanteria / 2, this.yCol / 2, -this.zEstanteria / 2 + j * this.zEstanteria / 8);
+                columna.setColor(RGB_BROWN);
                 this.agregarHijo(columna);
             }
     }

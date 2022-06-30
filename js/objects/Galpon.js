@@ -9,7 +9,9 @@ export class Galpon extends Objeto3D {
         var columnas = 20;
         var alto = 15;
         var ancho = 50;
-        this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaGalpon(alto, ancho), 50, 0, false, filas, columnas)));
+        this.initTextures('/maps/CorrugatedMetalPanel02_1K_BaseColor.png');
+        let superficie = new SupBarrido(generarCurvaGalpon(alto, ancho), 50, 0, false, filas, columnas)
+        this.setGeometria(generarSuperficie(superficie, 20));
         this.setRotacion(Math.PI / 2, Math.PI, 0);
     }
 }
