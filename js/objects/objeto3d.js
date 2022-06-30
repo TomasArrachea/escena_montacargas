@@ -1,8 +1,12 @@
-import { mat4, vec3, vec4 } from 'https://cdn.skypack.dev/gl-matrix';
+import { mat4, vec3, vec4, vec2 } from 'https://cdn.skypack.dev/gl-matrix';
 
+function isPowerOf2(value) {
+    return (value & (value - 1)) == 0;
+}
 
 export class Objeto3D {
-    constructor() {
+    constructor(padre) {
+        this.padre = padre;
         this.vertexBuffer = null;
         this.indexBuffer = null;
         this.normalBuffer = null;
@@ -12,6 +16,64 @@ export class Objeto3D {
         this.escala = vec3.fromValues(1, 1, 1);
         this.hijos = [];
         this.strip = true;
+
+        this.uvBuffer = null;
+        this.color = null;
+        this.image = null;
+        this.texture = null;
+        this.shininess = 1;
+        this.textureScale = vec2.fromValues(1, 1);
+    }
+
+    setShininess(shininess) {
+        this.shininess = shininess;
+        this.hijos.forEach(function (hijo) {
+            hijo.setShininess(shininess);
+        });
+    }
+
+    generarColor() {
+        // Para color uniforme
+        if (this.texture == null && this.color != null) {
+            let colorVecUniform = gl.getUniformLocation(glProgram, "colorVec");
+            gl.uniform3fv(colorVecUniform, this.color);
+        } else if (this.texture != null) {
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, this.texture);
+            gl.uniform1i(gl.getUniformLocation(glProgram, 'uSampler'), 0);
+            gl.uniform1f(gl.getUniformLocation(glProgram, 'Shininess'), this.shininess);
+        }
+    }
+
+    setColor(r, g, b) {
+        this.color = vec3.fromValues(r, g, b);
+        this.hijos.forEach(function (hijo) {
+            hijo.setColor(r, g, b);
+        })
+    }
+    
+    initTextures(path) {
+        const texture = gl.createTexture();
+        const image = new Image();
+        image.onload = function () {
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+                gl.generateMipmap(gl.TEXTURE_2D);
+             } else {
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+             }
+        }
+        image.src = path;
+        this.image = image;
+        this.texture = texture;
+    }
+
+    setTextureScale(x, y) { 
+        this.textureScale[0] = x; // usar la escala de la textura para modificar las coordenadas de la textura vs uvBuffer para que se repita
+        this.textureScale[1] = y;
     }
 
     actualizarMatrizModelado() {
@@ -51,22 +113,31 @@ export class Objeto3D {
         return modelado;
     }
 
+    initShaders() {
+        let vertexPositionAttribute = gl.getAttribLocation(glProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(vertexPositionAttribute);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+        gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
+        let vertexNormalAttribute = gl.getAttribLocation(glProgram, "aVertexNormal");
+        gl.enableVertexAttribArray(vertexNormalAttribute);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+        gl.vertexAttribPointer(vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+
+        let vertexUVAttribute = gl.getAttribLocation(glProgram, "aTextureCoord");
+        gl.enableVertexAttribArray(vertexUVAttribute);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
+        gl.vertexAttribPointer(vertexUVAttribute, 2, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+    }
+
     dibujar(matrizPadre) {
         var modelado = this.setMatricesShader(matrizPadre);
 
         if (this.vertexBuffer && this.indexBuffer) {
-            let vertexPositionAttribute = gl.getAttribLocation(glProgram, "aVertexPosition");
-            gl.enableVertexAttribArray(vertexPositionAttribute);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-            gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
-            let vertexNormalAttribute = gl.getAttribLocation(glProgram, "aVertexNormal");
-            gl.enableVertexAttribArray(vertexNormalAttribute);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-            gl.vertexAttribPointer(vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
-
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-
+            this.generarColor();
+            this.initShaders();
             if (this.strip) {
                 gl.drawElements(gl.TRIANGLE_STRIP, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
             } else {
@@ -77,6 +148,7 @@ export class Objeto3D {
         for (var i = 0; i < this.hijos.length; i++) {
             this.hijos[i].dibujar(modelado);
         }
+        gl.bindTexture(gl.TEXTURE_2D, null); // tengo que agregar esta linea para que no aplique la textura de un objeto a todos
     }
 
     setGeometria(buffers) {
@@ -98,6 +170,12 @@ export class Objeto3D {
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(buffers.indexBuffer), gl.STATIC_DRAW);
         this.indexBuffer.itemSize = 1;
         this.indexBuffer.numItems = buffers.indexBuffer.length;
+
+        this.uvBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(buffers.uvBuffer), gl.STATIC_DRAW);
+        this.uvBuffer.itemSize = 2;
+        this.uvBuffer.numItems = buffers.uvBuffer.length / 2;
     }
 
     agregarHijo(h) {
@@ -130,11 +208,13 @@ export class Objeto3D {
         return this.posicion;
     }
 
-    getPosicionMundo(matrizPadre) {
-        // multiplica la posicion por su matriz de modelado padre -> le aplica las rotaciones, escalas y traslaciones que determinan la posicion
-        let posMundo = vec4.create();
-        vec4.transformMat4(posMundo, [this.posicion[0], this.posicion[1], this.posicion[2], 1], matrizPadre);
-        return [posMundo[0], posMundo[1], posMundo[2]];
+    getPosicionMundo(pos=[0, 0, 0]) {
+        let posEnPadre = vec4.create();
+        vec4.transformMat4(posEnPadre, [pos[0], pos[1], pos[2], 1], this.matrizModelado);
+        if (this.padre == null) {
+            return [posEnPadre[0], posEnPadre[1], posEnPadre[2]];
+        }
+        return this.padre.getPosicionMundo(posEnPadre);
     }
 
 }
@@ -144,7 +224,6 @@ export class Objeto3D {
 export function generarSuperficie(superficie, filas, columnas) {
     var filas = filas || 15;
     var columnas = columnas || 15;
-    // revisar el algoritmo del index buffer, copiar la implementacion de setupBuffers?
     var positionBuffer = [];
     var indexBuffer = [];
     var normalBuffer = [];
