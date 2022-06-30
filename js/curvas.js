@@ -69,8 +69,8 @@ class Curva {
             this.puntos.push(punto.y);
             var normal = this.#curvaLinealDer(u, p0, p1);
             var mod = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
-            this.normales.push(-normal.y / mod);
-            this.normales.push(normal.x / mod);
+            this.normales.push(normal.y / mod);
+            this.normales.push(-normal.x / mod);
         }
     }
 
@@ -82,8 +82,8 @@ class Curva {
             this.puntos.push(punto.y);
             var normal = this.#curvaCuadraticaDer(u, p0, p1, p2);
             var mod = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
-            this.normales.push(-normal.y / mod);
-            this.normales.push(normal.x / mod);
+            this.normales.push(normal.y / mod);
+            this.normales.push(-normal.x / mod);
         }
     }
 
@@ -95,8 +95,8 @@ class Curva {
             this.puntos.push(punto.y);
             var normal = this.#curvaCubicaDer(u, p0, p1, p2, p3);
             var mod = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
-            this.normales.push(-normal.y / mod);
-            this.normales.push(normal.x / mod);
+            this.normales.push(normal.y / mod);
+            this.normales.push(-normal.x / mod);
         }
     }
 }
@@ -406,25 +406,25 @@ function generarCurvaGalpon(alto, ancho) {
     var cte_circunferencia = 0.55;
     var radio = (alto + ancho) / 4;
 
-    // pared izquierda
+    // pared derecha
     curva.agregarSegmento(
-        [centro[0] - ancho / 2, centro[1]],
-        [centro[0] - ancho / 2, centro[1] + alto],
+        [centro[0] + ancho / 2, centro[1]],
+        [centro[0] + ancho / 2, centro[1] + alto],
     );
 
     // techo
     curva.agregarCurvaCubica(
-        [centro[0] - ancho / 2, centro[1] + alto],
-        [centro[0] - ancho / 2 + radio * cte_circunferencia, centro[1] + alto + radio * cte_circunferencia],
-        [centro[0] + ancho / 2 - radio * cte_circunferencia, centro[1] + alto + radio * cte_circunferencia],
         [centro[0] + ancho / 2, centro[1] + alto],
+        [centro[0] + ancho / 2 - radio * cte_circunferencia, centro[1] + alto + radio * cte_circunferencia],
+        [centro[0] - ancho / 2 + radio * cte_circunferencia, centro[1] + alto + radio * cte_circunferencia],
+        [centro[0] - ancho / 2, centro[1] + alto],
+    );
+    // pared izquierda
+    curva.agregarSegmento(
+        [centro[0] - ancho / 2, centro[1] + alto],
+        [centro[0] - ancho / 2, centro[1]],
     );
 
-    // pared derecha
-    curva.agregarSegmento(
-        [centro[0] + ancho / 2, centro[1] + alto],
-        [centro[0] + ancho / 2, centro[1]],
-    );
     return curva;
 }
 
@@ -480,23 +480,23 @@ function generarCurvaChasis(ancho, largo) {
 
 function generarTrapecio(base1, base2, largo) {
     var curva = new Curva();
-
     curva.agregarSegmento(
         [0, 0],
-        [0, largo]
-    );
-    curva.agregarSegmento(
-        [0, largo],
-        [base1, largo]
-    );
-    curva.agregarSegmento(
-        [base1, largo],
-        [base2, 0]
+        [base2, 0],
     );
     curva.agregarSegmento(
         [base2, 0],
-        [0, 0]
+        [base1, largo],
     );
+    curva.agregarSegmento(
+        [base1, largo],
+        [0, largo],
+    );
+    curva.agregarSegmento(
+        [0, largo],
+        [0, 0],
+    );
+
     return curva;
 }
 

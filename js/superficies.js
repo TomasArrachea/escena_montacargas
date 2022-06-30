@@ -155,8 +155,8 @@ class Cilindro {
     getNormal(u, v) {
         // En x,z la normal es igual al vector de posicion normalizado.
         var pos = this.getPos(u, v);
-        var modulo = Math.sqrt(pos[0] ** 2 + pos[1] ** 2)
-        return [pos[0] / modulo, 0, pos[1] / modulo];
+        var modulo = Math.sqrt(pos[0] ** 2 + pos[2] ** 2)
+        return [pos[0] / modulo, 0, pos[2] / modulo];
     }
 
     getCoordenadasTextura(u, v) {
