@@ -1,4 +1,4 @@
-import { RGB_GREEN } from '../colors.js';
+import { RGB_GREEN } from '../common/colors.js';
 import { Cubo } from './Cubo.js';
 import { Objeto3D } from './objeto3d.js';
 

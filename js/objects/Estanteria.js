@@ -1,7 +1,7 @@
 import { vec3 } from 'https://cdn.skypack.dev/gl-matrix';
 import { Objeto3D } from './objeto3d.js';
 import { Cubo } from "./Cubo.js";
-import { RGB_BROWN, RGB_LIGHT_GREY } from '../colors.js';
+import { RGB_BROWN, RGB_LIGHT_GREY } from '../common/colors.js';
 
 export class Estanteria extends Objeto3D {
     constructor(padre) {

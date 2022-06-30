@@ -5,7 +5,8 @@ import { Cabezal } from "./Cabezal.js";
 import { Barra } from "./Barra.js";
 import { ImpresionBarrido } from "./ImpresionBarrido.js";
 import { ImpresionRevolucion } from "./ImpresionRevolucion.js";
-import { RGB_LIGHT_GREY } from '../colors.js';
+import { RGB_LIGHT_GREY } from '../common/colors.js';
+import { PRINTER } from '../common/textures.js';
 
 export class Impresora extends Objeto3D {
     constructor(padre) {
@@ -17,7 +18,7 @@ export class Impresora extends Objeto3D {
         this.alturaBase = 1.2;
         var rueda = new Rueda(this, radio, this.alturaBase);
         rueda.setRotacion(-Math.PI / 2, Math.PI / 2, 0);
-        rueda.initTextures('/maps/greyRoom1_back.jpg');
+        rueda.initTextures(PRINTER);
         this.agregarHijo(rueda);
 
         this.zBarra = radio * 4 / 5;

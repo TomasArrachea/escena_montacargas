@@ -1,7 +1,7 @@
 import { SupBarrido } from '../supBarrido.js';
 import { generarTrapecio } from '../curvas.js';
 import { Objeto3D, generarSuperficie } from './objeto3d.js';
-import { RGB_GREY } from '../colors.js';
+import { RGB_GREY } from '../common/colors.js';
 
 export class Cabina extends Objeto3D {
     constructor(padre) {

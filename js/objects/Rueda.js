@@ -1,6 +1,7 @@
 import { SupRevolucion } from '../supRevolucion.js';
 import { generarCurvaRueda } from '../curvas.js';
 import { Objeto3D, generarSuperficie } from './objeto3d.js';
+import { WHEEL } from '../common/textures.js';
 
 
 export class Rueda extends Objeto3D {
@@ -8,5 +9,6 @@ export class Rueda extends Objeto3D {
         super(padre);
         this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(radio, ancho))));
         this.setRotacion(0, 0, Math.PI / 2);
+        this.initTextures(WHEEL);
     }
 }
