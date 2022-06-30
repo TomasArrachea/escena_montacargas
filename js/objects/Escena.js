@@ -8,28 +8,28 @@ import { Objeto3D } from './objeto3d.js';
 
 export class Escena extends Objeto3D {
     constructor() {
-        super();
+        super(null);
         // objeto vacio
-        var estanteria = new Estanteria();
+        var estanteria = new Estanteria(this);
         estanteria.setPosicion(-7, 0, 0);
         estanteria.setEscala(0.5, 0.5, 0.5);
         this.agregarHijo(estanteria);
 
-        var impresora = new Impresora();
+        var impresora = new Impresora(this);
         impresora.setPosicion(7, 0, 0);
         this.agregarHijo(impresora);
 
-        var carro = new Carro(estanteria, impresora);
+        var carro = new Carro(this, estanteria, impresora);
         carro.setPosicion(0, 0, 0);
         carro.setEscala(0.4, 0.4, 0.4);
         this.agregarHijo(carro);
 
-        var piso = new Piso();
+        var piso = new Piso(this);
         piso.setPosicion(0, 0, 0);
         piso.setEscala(4, 0, 4);
         this.agregarHijo(piso);
 
-        var galpon = new Galpon();
+        var galpon = new Galpon(this);
         this.agregarHijo(galpon);
     }
 

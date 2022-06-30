@@ -4,8 +4,8 @@ import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 
 export class ImpresionBarrido extends Objeto3D {
-    constructor(tipoCurva, altura, torsion) {
-        super();
+    constructor(padre, tipoCurva, altura, torsion) {
+        super(padre);
         var curva;
         if (tipoCurva == 'B1')
             curva = generarB1();

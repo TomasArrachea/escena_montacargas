@@ -4,8 +4,8 @@ import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 
 export class ImpresionRevolucion extends Objeto3D {
-    constructor(tipoCurva) {
-        super();
+    constructor(padre, tipoCurva) {
+        super(padre);
         var curva;
         if (tipoCurva == 'A1') {
             curva = generarA1();

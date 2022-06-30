@@ -7,29 +7,27 @@ import { ImpresionBarrido } from "./ImpresionBarrido.js";
 import { ImpresionRevolucion } from "./ImpresionRevolucion.js";
 
 export class Impresora extends Objeto3D {
-    constructor() {
-        super();
+    constructor(padre) {
+        super(padre);
         this.VEL_SETUP = -0.05;
         this.VEL_IMPRESION = 0.01;
 
         var radio = 1;
         this.alturaBase = 1.2;
-        var rueda = new Rueda(radio, this.alturaBase);
+        var rueda = new Rueda(this, radio, this.alturaBase);
         rueda.setRotacion(-Math.PI / 2, Math.PI / 2, 0);
         this.agregarHijo(rueda);
 
-
         this.zBarra = radio * 4 / 5;
-        var barra = new Barra();
+        var barra = new Barra(this);
         barra.setPosicion(0, this.alturaBase, this.zBarra);
         this.agregarHijo(barra);
-
 
         this.baseCabezal = this.alturaBase + barra.largo * 1 / 10; // a ojo para que llegue casi a tocar la base de la impresora
         this.topeCabezal = this.alturaBase + barra.largo * 4 / 5;
         this.velCabezal = 0;
         this.alturaCabezal = this.topeCabezal;
-        this.cabezal = new Cabezal();
+        this.cabezal = new Cabezal(this);
         this.cabezal.setPosicion(0, this.alturaCabezal, this.zBarra);
         this.agregarHijo(this.cabezal);
 
@@ -55,11 +53,11 @@ export class Impresora extends Objeto3D {
 
         this.velCabezal = this.VEL_SETUP;
         if (tipoSuperficie == 'barrido') {
-            this.impresion = new ImpresionBarrido(curva, 1.1, torsion);
-            this.impresion.setPosicion(0, this.alturaBase + 0.55, 0); // le sumo la mitad del alto de la figura
+            this.impresion = new ImpresionBarrido(this, curva, 1.1, torsion);
+            this.impresion.setPosicion(0, this.alturaBase, 0); // le sumo la mitad del alto de la figura
 
         } else if (tipoSuperficie == 'revolucion') {
-            this.impresion = new ImpresionRevolucion(curva);
+            this.impresion = new ImpresionRevolucion(this, curva);
             this.impresion.setPosicion(0, this.alturaBase, 0);
         }
     }

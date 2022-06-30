@@ -3,8 +3,8 @@ import { Objeto3D } from './objeto3d.js';
 import { Cubo } from "./Cubo.js";
 
 export class Estanteria extends Objeto3D {
-    constructor() {
-        super();
+    constructor(padre) {
+        super(padre);
         this.DISTANCIA_DEPOSITAR = 1.5;
 
         // objeto vacio
@@ -15,15 +15,15 @@ export class Estanteria extends Objeto3D {
         this.yCol = 7.2;
         var zCol = 0.2;
 
-        var estanteria = new Cubo(this.xEstanteria, this.yEstanteria, this.zEstanteria);
+        var estanteria = new Cubo(this, this.xEstanteria, this.yEstanteria, this.zEstanteria);
         estanteria.setPosicion(0, 2, 0);
         this.agregarHijo(estanteria);
 
-        var estanteria = new Cubo(this.xEstanteria, this.yEstanteria, this.zEstanteria);
+        var estanteria = new Cubo(this, this.xEstanteria, this.yEstanteria, this.zEstanteria);
         estanteria.setPosicion(0, 4.5, 0);
         this.agregarHijo(estanteria);
 
-        var estanteria = new Cubo(this.xEstanteria, this.yEstanteria, this.zEstanteria);
+        var estanteria = new Cubo(this, this.xEstanteria, this.yEstanteria, this.zEstanteria);
         estanteria.setPosicion(0, 7, 0);
         this.agregarHijo(estanteria);
 
@@ -32,7 +32,7 @@ export class Estanteria extends Objeto3D {
         this.xEstanteria = this.xEstanteria - 0.5;
         for (var i = 0; i < 2; i++)
             for (var j = 0; j < 9; j++) {
-                columna = new Cubo(xCol, this.yCol, zCol);
+                columna = new Cubo(this, xCol, this.yCol, zCol);
                 columna.setPosicion(i * this.xEstanteria - this.xEstanteria / 2, this.yCol / 2, -this.zEstanteria / 2 + j * this.zEstanteria / 8);
                 this.agregarHijo(columna);
             }

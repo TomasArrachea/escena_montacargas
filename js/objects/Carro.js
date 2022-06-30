@@ -1,4 +1,4 @@
-import { mat4, vec3 } from 'https://cdn.skypack.dev/gl-matrix';
+import { mat4, vec3, vec4 } from 'https://cdn.skypack.dev/gl-matrix';
 import { Chasis } from './Chasis.js';
 import { Objeto3D } from './objeto3d.js';
 import { Elevador } from "./Elevador.js";
@@ -6,48 +6,48 @@ import { Asiento } from "./Asiento.js";
 import { Rueda } from "./Rueda.js";
 
 export class Carro extends Objeto3D {
-    constructor(estanteria, impresora) {
-        super();
-        this.DISTANCIA_RECOJER = 1.5;
+    constructor(padre, estanteria, impresora) {
+        super(padre);
+        this.DISTANCIA_RECOJER = 0.5;
         var ancho = 3.5;
         var alto = 2;
         var largo = 4;
 
         // objeto vacio
-        var chasis = new Chasis(ancho, alto, largo);
+        var chasis = new Chasis(this, ancho, alto, largo);
         chasis.setRotacion(0, 0, Math.PI / 2);
         chasis.setPosicion(0, 0.5 + alto / 2, 0);
         this.agregarHijo(chasis);
 
-        var rueda = new Rueda();
+        var rueda = new Rueda(this);
         rueda.setPosicion(ancho / 2, 1, ancho / 2);
         rueda.setRotacion(0, Math.PI, 0);
         this.agregarHijo(rueda);
 
-        var rueda = new Rueda();
+        var rueda = new Rueda(this);
         rueda.setPosicion(-ancho / 2, 1, ancho / 2);
         this.agregarHijo(rueda);
 
-        var rueda = new Rueda();
+        var rueda = new Rueda(this);
         rueda.setPosicion(ancho / 2, 1, -ancho / 2);
         rueda.setRotacion(0, Math.PI, 0);
         this.agregarHijo(rueda);
 
-        var rueda = new Rueda();
+        var rueda = new Rueda(this);
         rueda.setPosicion(-ancho / 2, 1, -ancho / 2);
         this.agregarHijo(rueda);
 
-        var asiento = new Asiento();
+        var asiento = new Asiento(this);
         asiento.setPosicion(0, alto / 2 + 1.5, -largo / 2 + 0.5);
         this.agregarHijo(asiento);
 
-        var cabina = new Asiento();
+        var cabina = new Asiento(this);
         cabina.setPosicion(0, alto / 2 + 1.5, largo / 2 - 0.5);
         cabina.setRotacion(0, 0, Math.PI); // por alguna razon para rotar en el eje y hay que aplicar la rotacion en el eje z. Lo mismo en el asiento
         cabina.setEscala(1, 0.25, 1);
         this.agregarHijo(cabina);
 
-        this.elevador = new Elevador();
+        this.elevador = new Elevador(this);
         this.elevador.setPosicion(0, alto / 2 + 0.5, largo / 2 + alto * 0.3 + 0.05);
         this.elevador.setEscala(1, 1.6, 1);
         this.agregarHijo(this.elevador);
@@ -73,46 +73,41 @@ export class Carro extends Objeto3D {
     }
 
     toggleRecojer() {
+        let posPala = this.elevador.pala.getPosicionMundo();
+
         if (this.carga == null) {
-            var posPalaEnCarro = this.getPosicionPala();
-            // aplico la matriz de modelado a la posicion de la pala. Podria hacer getPosicionMundo sobre la posicion del elevador
-            var posPala = vec3.create();
-            vec3.transformMat4(posPala, [posPalaEnCarro[0], posPalaEnCarro[1], posPalaEnCarro[2], 1], this.matrizModelado);
-
-            console.log('posPala=' + posPala);
-
-            var posImpresion = this.impresora.getPosicion(); // cambiar por la posicion de la impresion
+            let posImpresion = this.impresora.getPosicionMundo([0, this.impresora.alturaBase, 0]);
             if (vec3.distance(posPala, posImpresion) <= this.DISTANCIA_RECOJER) {
-                console.log('Carga recogida.');
                 this.carga = this.impresora.recojerImpresion();
-                this.carga.setPosicion(posPala[0], posPala[1], posPala[2]);
-                this.carga.setEscala(1 / 0.4, 1 / 0.4, 1 / 0.4); // al auto se le aplica una escala en la escena. La deshago para la impresion
+                const p = this.getPosicionPala();
+                this.carga.setPosicion(p[0], p[1], p[2]);
+                this.carga.setEscala(1 / this.escala[0], 1 / this.escala[1], 1 / this.escala[2]); // deshago la escala para que no se achique la impresion en el carro
+                this.carga.actualizarMatrizModelado()
                 this.agregarHijo(this.carga);
             }
         } else {
-            if (this.estanteria.intentarAgregarObjeto(this.carga, this.carga.getPosicionMundo(this.matrizModelado))) {
+            if (this.estanteria.intentarAgregarObjeto(this.carga, posPala)) {
                 this.carga = null;
                 this.quitarHijo();
             }
         }
     }
 
-
     getPosicionPala() {
-        // devuelve la posicion de la pala con respecto al centro del carro.
-        // es la pos de la pala relativa al elevador, mas la pos del elevador relativa al carro, aplicando la escala del elevador.
+        // devuelve la posicion de la pala con respecto al carro
+        var modeladoPala = mat4.create();
+        mat4.mul(modeladoPala, this.elevador.matrizModelado, this.elevador.pala.matrizModelado);
         var posPala = vec3.create();
-        vec3.add(posPala, this.elevador.getPosicion(), this.elevador.pala.getPosicion());
-        // var posPala = this.elevador.pala.getPosicionMundo(this.elevador.matrizModelado);
-        vec3.mul(posPala, posPala, this.elevador.escala);
+        vec4.transformMat4(posPala, [0, 0, 0, 1], modeladoPala);
+        posPala[1] += this.elevador.altoPala/2;
         return posPala;
     }
 
     actualizarMatrizModelado() {
         // Actualizar posicion de la carga segun la posicion de la pala
         if (this.carga) {
-            var posPala = this.getPosicionPala();
-            this.carga.setPosicion(posPala[0], posPala[1], posPala[2]);
+            const p = this.getPosicionPala();
+            this.carga.setPosicion(p[0], p[1], p[2]);
         }
         // Actualiza la posicion segun el giro del carro
         this.rotacion[1] += this.velGiro;
