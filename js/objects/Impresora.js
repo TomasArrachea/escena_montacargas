@@ -5,7 +5,7 @@ import { Cabezal } from "./Cabezal.js";
 import { Barra } from "./Barra.js";
 import { ImpresionBarrido } from "./ImpresionBarrido.js";
 import { ImpresionRevolucion } from "./ImpresionRevolucion.js";
-import { RGB_LIGHT_GREY } from '../common/colors.js';
+import { RGB_GREEN, RGB_DARK_GREY } from '../common/colors.js';
 import { PRINTER } from '../common/textures.js';
 
 export class Impresora extends Objeto3D {
@@ -24,7 +24,7 @@ export class Impresora extends Objeto3D {
         this.zBarra = radio * 4 / 5;
         var barra = new Barra(this);
         barra.setPosicion(0, this.alturaBase, this.zBarra);
-        barra.setColor(RGB_LIGHT_GREY);
+        barra.setColor(RGB_DARK_GREY);
         this.agregarHijo(barra);
 
         this.baseCabezal = this.alturaBase + barra.largo * 1 / 10; // a ojo para que llegue casi a tocar la base de la impresora
@@ -32,6 +32,7 @@ export class Impresora extends Objeto3D {
         this.velCabezal = 0;
         this.alturaCabezal = this.topeCabezal;
         this.cabezal = new Cabezal(this);
+        this.cabezal.setColor(RGB_GREEN);
         this.cabezal.setPosicion(0, this.alturaCabezal, this.zBarra);
         this.agregarHijo(this.cabezal);
 

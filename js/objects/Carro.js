@@ -4,6 +4,7 @@ import { Objeto3D } from './objeto3d.js';
 import { Elevador } from "./Elevador.js";
 import { Asiento } from "./Asiento.js";
 import { Rueda } from "./Rueda.js";
+import { RGB_DARK_GREY, RGB_GREY } from '../common/colors.js';
 
 export class Carro extends Objeto3D {
     constructor(padre, estanteria, impresora) {
@@ -39,12 +40,14 @@ export class Carro extends Objeto3D {
 
         var asiento = new Asiento(this);
         asiento.setPosicion(0, alto / 2 + 1.5, -largo / 2 + 0.5);
+        asiento.setColor(RGB_DARK_GREY);
         this.agregarHijo(asiento);
 
         var cabina = new Asiento(this);
         cabina.setPosicion(0, alto / 2 + 1.5, largo / 2 - 0.5);
         cabina.setRotacion(0, 0, Math.PI); // por alguna razon para rotar en el eje y hay que aplicar la rotacion en el eje z. Lo mismo en el asiento
         cabina.setEscala(1, 0.25, 1);
+        cabina.setColor(RGB_DARK_GREY);
         this.agregarHijo(cabina);
 
         this.elevador = new Elevador(this);

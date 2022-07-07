@@ -33,15 +33,17 @@ export class Objeto3D {
     }
 
     generarColor() {
-        // Para color uniforme
-        if (this.texture == null && this.color != null) {
-            let colorVecUniform = gl.getUniformLocation(glProgram, "colorVec");
-            gl.uniform3fv(colorVecUniform, this.color);
-        } else if (this.texture != null) {
+        if (this.texture != null) {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.texture);
             gl.uniform1i(gl.getUniformLocation(glProgram, 'uSampler'), 0);
-            gl.uniform1f(gl.getUniformLocation(glProgram, 'Shininess'), this.shininess);
+            gl.uniform1f(gl.getUniformLocation(glProgram, 'uShininess'), this.shininess);
+            gl.uniform1f(gl.getUniformLocation(glProgram, 'hasTexture'), true);
+
+        } else if(this.color != null) {
+            let colorVecUniform = gl.getUniformLocation(glProgram, "uColor");
+            gl.uniform3fv(colorVecUniform, this.color);
+            gl.uniform1f(gl.getUniformLocation(glProgram, 'hasTexture'), false);
         }
     }
 
