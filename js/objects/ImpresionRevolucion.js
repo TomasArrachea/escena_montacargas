@@ -6,7 +6,7 @@ import { Objeto3D, generarSuperficie } from './objeto3d.js';
 export class ImpresionRevolucion extends Objeto3D {
     constructor(padre, tipoCurva, textura) {
         super(padre);
-        this.initTextures('../../maps/' + textura);
+        this.initTextures('maps/' + textura);
         var curva;
         if (tipoCurva == 'A1') {
             curva = generarA1();
