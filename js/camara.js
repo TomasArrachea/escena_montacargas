@@ -112,7 +112,7 @@ class Camara {
             mat4.copy(matrizCamara, this.carro.matrizModelado);
             let vista = mat4.create();
 
-            mat4.translate(vista, vista, vec3.fromValues(0, -3.8, 4.4)); // traslacion para que la camara este a la altura del conductor
+            mat4.translate(vista, vista, vec3.fromValues(0, -3.8, 0)); // traslacion para que la camara este a la altura del conductor
             mat4.rotate(vista, vista, Math.PI, [0, 1, 0]); // roto para que vea hacia adelante
 
             // Tomo la transformación inversa del carro para utilizarlo como matriz de cámara
