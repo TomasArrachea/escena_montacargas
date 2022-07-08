@@ -54,9 +54,9 @@ export class Escena extends Objeto3D {
         return vec3.create();
     }
 
-    generarImpresion(tipoSuperficie, curva, torsion) {
+    generarImpresion(tipoSuperficie, curva, textura, torsion) {
         var impresora = this.hijos[1];
         if (impresora instanceof Impresora)
-            impresora.generarImpresion(tipoSuperficie, curva, torsion);
+            impresora.generarImpresion(tipoSuperficie, curva, textura, torsion);
     }
 }

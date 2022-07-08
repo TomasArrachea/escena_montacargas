@@ -109,7 +109,7 @@
                 vec3 Kd = vec3(textureVec.s, textureVec.t, textureVec.p);
                 vec3 Ks = vec3(1,1,1);
 
-                highp float factorAtenuacion = 1.0/(1.0 + 0.04*length(vec3(vPosWorld) - vec3(thisSpot.position)));
+                highp float factorAtenuacion = 1.0/(1.0 + 0.04 * length(vec3(vPosWorld) - vec3(thisSpot.position))); // decaimiento lineal
 
                 float angle = acos( dot(-s, spotDir) );
                 float cutoff = radians( clamp( thisSpot.cutoff, 0.0, 90.0 ) );
@@ -142,7 +142,7 @@
                 vec3 v = normalize(uCameraPos - vPosWorld );
                 vec3 r = reflect (-s, n );
 
-                highp float factorAtenuacion = 1.0/(1.0 + length(vec3(vPosWorld) - vec3(lightPos))/0.1);
+                highp float factorAtenuacion = 1.0/(1.0 + 10.0 * length(vec3(vPosWorld) - vec3(lightPos))); // decaimiento lineal
 
                 highp float intensityA = 0.0;
                 highp float intensityD = 0.7;

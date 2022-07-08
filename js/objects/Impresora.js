@@ -44,7 +44,7 @@ export class Impresora extends Objeto3D {
         return this.quitarHijo();
     }
 
-    generarImpresion(tipoSuperficie, curva, torsion) {
+    generarImpresion(tipoSuperficie, curva, textura, torsion) {
         console.log('Imprimiendo...');
         if (this.velCabezal == this.VEL_IMPRESION) {
             console.log('Ya hay una impresión en curso.');
@@ -57,11 +57,11 @@ export class Impresora extends Objeto3D {
 
         this.velCabezal = this.VEL_SETUP;
         if (tipoSuperficie == 'barrido') {
-            this.impresion = new ImpresionBarrido(this, curva, 1.1, torsion);
+            this.impresion = new ImpresionBarrido(this, curva, textura, 1.1, torsion);
             this.impresion.setPosicion(0, this.alturaBase, 0); // le sumo la mitad del alto de la figura
 
         } else if (tipoSuperficie == 'revolucion') {
-            this.impresion = new ImpresionRevolucion(this, curva);
+            this.impresion = new ImpresionRevolucion(this, curva, textura);
             this.impresion.setPosicion(0, this.alturaBase, 0);
         }
     }
