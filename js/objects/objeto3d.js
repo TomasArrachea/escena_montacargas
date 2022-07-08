@@ -133,9 +133,13 @@ export class Objeto3D {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     }
 
+    setLights() {
+    }
+
     dibujar(matrizPadre) {
         var modelado = this.setMatricesShader(matrizPadre);
 
+        this.setLights();
         if (this.vertexBuffer && this.indexBuffer) {
             this.generarColor();
             this.initShaders();

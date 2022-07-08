@@ -32,7 +32,6 @@ export class Impresora extends Objeto3D {
         this.velCabezal = 0;
         this.alturaCabezal = this.topeCabezal;
         this.cabezal = new Cabezal(this);
-        this.cabezal.setColor(RGB_GREEN);
         this.cabezal.setPosicion(0, this.alturaCabezal, this.zBarra);
         this.agregarHijo(this.cabezal);
 

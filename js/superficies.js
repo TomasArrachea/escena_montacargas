@@ -169,23 +169,26 @@ class Cilindro {
 }
 
 
-class Esfera {
+class SupEsfera {
     constructor(radio) {
         this.radio = radio;
+        this.filas = 10;
+        this.columnas = 10;
     }
 
     getPos(u, v) {
-        var y = (v - 0.5) * this.radio * 2;
-        var x = Math.cos(u * Math.PI * 2) * Math.sqrt(this.radio ** 2 - y ** 2);
-        var z = Math.sin(u * Math.PI * 2) * Math.sqrt(this.radio ** 2 - y ** 2);
+        u = u * Math.PI
+        v = v * 2 * Math.PI
+        var x = this.radio * Math.sin(u) * Math.cos(v);
+        var y = this.radio * Math.cos(u);
+        var z = this.radio * Math.sin(u) * Math.sin(v);
         return [x, y, z];
     }
 
     getNormal(u, v) {
-        var y = (v - 0.5) * 2;
-        var x = Math.cos(u * Math.PI * 2) * Math.sqrt(1 - y ** 2);
-        var z = Math.sin(u * Math.PI * 2) * Math.sqrt(1 - y ** 2);
-        return [x, y, z];
+        var pos = this.getPos(u, v);
+        var len = Math.sqrt(pos[0] ** 2 + pos[1] ** 2 + pos[2] ** 2);
+        return [pos[0] / len, pos[1] / len, pos[2] / len];
     }
 
     getCoordenadasTextura(u, v) {
@@ -194,4 +197,4 @@ class Esfera {
 }
 
 
-export { Cilindro, SupCubo, SupPiso, Esfera };
+export { Cilindro, SupCubo, SupPiso, SupEsfera };
