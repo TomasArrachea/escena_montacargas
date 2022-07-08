@@ -1,5 +1,5 @@
 class SupBarrido {
-    constructor(curva, altura, torsion = 0, esImpresion = false, filas = 6, columnas = 6) {
+    constructor(curva, altura, torsion = 0, esImpresion = false, filas = 8, columnas = 8) {
         this.puntos = curva.puntos;
         this.topePuntos = this.puntos.length / 2 - 1;
         this.normales = curva.normales;
@@ -16,11 +16,15 @@ class SupBarrido {
             v = v - 0.5; // base en el eje y = 0
         }
         var y = v * this.altura;
+        var index = Math.floor(u * this.topePuntos) // hay muchos vertices repetidos, resultan en triangulos colapsados. Que pasa con las normales?
+        var x = this.puntos[index * 2];
+        var z = this.puntos[index * 2 + 1];
 
         if (!this.esImpresion) {
             // tapas
             if (v == -0.5) {
-                return [0, -0.5 * this.altura, 0];
+                y = -0.5 * this.altura;
+                z = 0;
             } else if (v == 1 / this.filas - 0.5) {
                 y = -0.5 * this.altura;
             } else if (v == 2 / this.filas - 0.5) {
@@ -30,13 +34,10 @@ class SupBarrido {
             } else if (v == (this.filas - 1) / this.filas - 0.5) {
                 y = 0.5 * this.altura;
             } else if (v == 0.5) {
-                return [0, 0.5 * this.altura, 0];
+                y = 0.5 * this.altura;
+                z = 0;
             }
         }
-
-        var index = Math.floor(u * this.topePuntos) // hay muchos vertices repetidos, resultan en triangulos colapsados. Que pasa con las normales?
-        var x = this.puntos[index * 2];
-        var z = this.puntos[index * 2 + 1];
 
         // rotacion alrededor del eje y con angulo de torsion
         var angulo = v * this.torsion * Math.PI / 180;
@@ -46,14 +47,16 @@ class SupBarrido {
     }
 
     getNormal(u, v) {
-        if (v == 0) {
-            return [0, -1, 0];
-        } else if (v == 1 / this.filas) {
-            return [0, -1, 0];
-        } else if (v == (this.filas - 1) / this.filas) {
-            return [0, 1, 0];
-        } else if (v == 1) {
-            return [0, 1, 0];
+        if (!this.esImpresion) {
+            if (v == 0) {
+                return [0, -1, 0];
+            } else if (v == 1 / this.filas) {
+                return [0, -1, 0];
+            } else if (v == (this.filas - 1) / this.filas) {
+                return [0, 1, 0];
+            } else if (v == 1) {
+                return [0, 1, 0];
+            }
         }
 
         var index = Math.floor(u * this.topeNormales)

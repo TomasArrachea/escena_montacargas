@@ -192,7 +192,7 @@ class SupEsfera {
     }
 
     getCoordenadasTextura(u, v) {
-        return [v, u];
+        return [u, v];
     }
 }
 

@@ -3,9 +3,9 @@ import { SupPiso } from '../superficies.js';
 import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 export class Piso extends Objeto3D {
-    constructor(padre) {
+    constructor(padre, texturePath = FLOOR, textureScale = 20, alto = 70, ancho = 70) {
         super(padre);
-        this.initTextures(FLOOR);
-        this.setGeometria(generarSuperficie(new SupPiso(70, 70), 20));
+        this.initTextures(texturePath);
+        this.setGeometria(generarSuperficie(new SupPiso(alto, ancho), textureScale));
     }
 }

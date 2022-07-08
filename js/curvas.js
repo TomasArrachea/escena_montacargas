@@ -61,8 +61,7 @@ class Curva {
         return punto;
     }
 
-    agregarSegmento(p0, p1) {
-        var deltaU = 1;
+    agregarSegmento(p0, p1, deltaU = 1) {
         for (var u = 0; u <= 1.001; u = u + deltaU) {
             var punto = this.#curvaLineal(u, p0, p1);
             this.puntos.push(punto.x);
@@ -407,10 +406,10 @@ function generarCurvaGalpon(alto, ancho) {
     var radio = (alto + ancho) / 4;
 
     // pared derecha
-    curva.agregarSegmento(
-        [centro[0] + ancho / 2, centro[1]],
-        [centro[0] + ancho / 2, centro[1] + alto],
-    );
+    // curva.agregarSegmento(
+    //     [centro[0] + ancho / 2, centro[1]],
+    //     [centro[0] + ancho / 2, centro[1] + alto],
+    // );
 
     // techo
     curva.agregarCurvaCubica(
@@ -420,10 +419,10 @@ function generarCurvaGalpon(alto, ancho) {
         [centro[0] - ancho / 2, centro[1] + alto],
     );
     // pared izquierda
-    curva.agregarSegmento(
-        [centro[0] - ancho / 2, centro[1] + alto],
-        [centro[0] - ancho / 2, centro[1]],
-    );
+    // curva.agregarSegmento(
+    //     [centro[0] - ancho / 2, centro[1] + alto],
+    //     [centro[0] - ancho / 2, centro[1]],
+    // );
 
     return curva;
 }

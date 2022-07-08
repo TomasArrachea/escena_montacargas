@@ -5,7 +5,7 @@ import { Cabezal } from "./Cabezal.js";
 import { Barra } from "./Barra.js";
 import { ImpresionBarrido } from "./ImpresionBarrido.js";
 import { ImpresionRevolucion } from "./ImpresionRevolucion.js";
-import { RGB_GREEN, RGB_DARK_GREY } from '../common/colors.js';
+import { RGB_DARK_GREY } from '../common/colors.js';
 import { PRINTER } from '../common/textures.js';
 
 export class Impresora extends Objeto3D {

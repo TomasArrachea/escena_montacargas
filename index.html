@@ -82,12 +82,12 @@
                 float cutoff; 
             };
 
-            uniform SpotLightInfo Spot11;
-            uniform SpotLightInfo Spot12;
-            uniform SpotLightInfo Spot13;
-            uniform SpotLightInfo Spot21;
-            uniform SpotLightInfo Spot22;
-            uniform SpotLightInfo Spot23;
+            uniform SpotLightInfo Spot1;
+            uniform SpotLightInfo Spot2;
+            uniform SpotLightInfo Spot3;
+            uniform SpotLightInfo Spot4;
+            uniform SpotLightInfo Spot5;
+            uniform SpotLightInfo Spot6;
 
             uniform vec4 uPosPoint1;
             uniform vec4 uPosPoint2;
@@ -119,7 +119,7 @@
                     float spotFactor = pow( dot(-s, spotDir), thisSpot.exponent );
                     vec3 v = normalize(vec3(vec3(uCameraPos) - vec3(vPosWorld)));
                     vec3 h = normalize( v + s );
-                    vec3 SpecularLight = spotFactor * thisSpot.intensityS * factorAtenuacion * Ks * max(dot(h, vNormal), uShininess);
+                    vec3 SpecularLight = spotFactor * thisSpot.intensityS * factorAtenuacion * Ks * pow(dot(h, vNormal), uShininess);
                     vec3 DiffuseLight = spotFactor * thisSpot.intensityD * factorAtenuacion * Kd * max(dot(s, vNormal), 0.0 );
                     if (uShininess == 0.0){
                         SpecularLight = vec3(0.0, 0.0, 0.0);
@@ -146,11 +146,11 @@
 
                 highp float intensityA = 0.0;
                 highp float intensityD = 0.7;
-                highp float intensityS = 0.7;
+                highp float intensityS = 0.5;
 
                 vec3 AmbientLight = Ka * intensityA;
                 vec3 DiffuseLight = Kd * max(dot (s , n), 0.0 ) * intensityD * factorAtenuacion;
-                vec3 SpecularLight = Ks * max( dot( r,v ), uShininess) * intensityS * factorAtenuacion;
+                vec3 SpecularLight = Ks * pow( dot( r,v ), uShininess) * intensityS * factorAtenuacion;
                 if (uShininess == 0.0){
                     SpecularLight = vec3(0.0,0.0,0.0);
                 }
@@ -160,7 +160,7 @@
 
             void main(void) {
 
-                vec3 totalSpotLight = calculateSpotlight(Spot11) + calculateSpotlight(Spot12) + calculateSpotlight(Spot13) + calculateSpotlight(Spot21) + calculateSpotlight(Spot22) + calculateSpotlight(Spot23);
+                vec3 totalSpotLight = calculateSpotlight(Spot1) + calculateSpotlight(Spot2) + calculateSpotlight(Spot3) + calculateSpotlight(Spot4) + calculateSpotlight(Spot5) + calculateSpotlight(Spot6);
                 vec3 totalPointLight = calculatePointLight(uPosPoint1) + calculatePointLight(uPosPoint2) + calculatePointLight(uPosPoint3) + calculatePointLight(uPosPoint4);
                 gl_FragColor = vec4( totalSpotLight + totalPointLight, 1.0);
 
