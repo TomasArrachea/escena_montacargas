@@ -71,6 +71,7 @@ class Camara {
         } else if (this.camaraActual == IMPRESORA) {
             let vista = mat4.create();
             let posicionCamara = vec3.fromValues(0, alturaCamara, this.alejamiento);
+            vec3.add(posicionCamara, posicionCamara, this.posImpresora);
             mat4.lookAt(vista, posicionCamara, vec3.fromValues(this.posImpresora[0], 0, this.posImpresora[2]), vec3.fromValues(0, 1, 0));
 
             var xAxis = vec3.fromValues(1, 0, 0);
@@ -90,6 +91,7 @@ class Camara {
             let vista = mat4.create();
             mat4.identity(vista);
             let posicionCamara = vec3.fromValues(0, alturaCamara, this.alejamiento);
+            vec3.add(posicionCamara, posicionCamara, this.posEstanteria);
             mat4.lookAt(vista, posicionCamara, vec3.fromValues(this.posEstanteria[0], 0, this.posEstanteria[2]), vec3.fromValues(0, 1, 0));
 
             mat4.translate(vista, vista, this.posEstanteria);
