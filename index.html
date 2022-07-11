@@ -23,11 +23,13 @@
 
 <body>
 
-    <center>
-        <canvas id="my-canvas" width="1000" height="800">
-            Your browser does not support the HTML5 canvas element.
-        </canvas>
-    </center>
+    <div style="overflow: hidden;">
+        <center>
+            <canvas id="my-canvas" width="1000" height="800">
+                Your browser does not support the HTML5 canvas element.
+            </canvas>
+        </center>
+    </div>
 
     <script type="text/javascript" src="js/glmatrix/gl-matrix.js"></script>
 
@@ -194,6 +196,7 @@
         function initWebGL() {
 
             canvas = document.getElementById("my-canvas");
+            canvas.height = window.innerHeight - 50;
 
             try {
                 window.gl = canvas.getContext("webgl");
