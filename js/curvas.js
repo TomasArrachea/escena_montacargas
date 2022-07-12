@@ -362,6 +362,15 @@ function generarA2() {
     return curva;
 }
 
+function generarA3() {
+    var curva = new Curva();
+    return curva;
+}
+
+function generarA4() {
+    var curva = new Curva();
+    return curva;
+}
 
 function generarCurvaRueda(radio, ancho) {
     var curva = new Curva();
@@ -405,12 +414,6 @@ function generarCurvaGalpon(alto, ancho) {
     var cte_circunferencia = 0.55;
     var radio = (alto + ancho) / 4;
 
-    // pared derecha
-    // curva.agregarSegmento(
-    //     [centro[0] + ancho / 2, centro[1]],
-    //     [centro[0] + ancho / 2, centro[1] + alto],
-    // );
-
     // techo
     curva.agregarCurvaCubica(
         [centro[0] + ancho / 2, centro[1] + alto],
@@ -418,12 +421,6 @@ function generarCurvaGalpon(alto, ancho) {
         [centro[0] - ancho / 2 + radio * cte_circunferencia, centro[1] + alto + radio * cte_circunferencia],
         [centro[0] - ancho / 2, centro[1] + alto],
     );
-    // pared izquierda
-    // curva.agregarSegmento(
-    //     [centro[0] - ancho / 2, centro[1] + alto],
-    //     [centro[0] - ancho / 2, centro[1]],
-    // );
-
     return curva;
 }
 
@@ -499,4 +496,4 @@ function generarTrapecio(base1, base2, largo) {
     return curva;
 }
 
-export { generarA1, generarA2, generarB1, generarB2, generarB3, generarB4, generarCurvaChasis, generarCurvaGalpon, generarCurvaRueda, generarTrapecio };
+export { generarA1, generarA2, generarA3, generarA4, generarB1, generarB2, generarB3, generarB4, generarCurvaChasis, generarCurvaGalpon, generarCurvaRueda, generarTrapecio };

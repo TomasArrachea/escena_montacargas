@@ -1,5 +1,5 @@
 import { SupRevolucion } from '../supRevolucion.js';
-import { generarA1, generarA2 } from '../curvas.js';
+import { generarA1, generarA2, generarA3, generarA4 } from '../curvas.js';
 import { Objeto3D, generarSuperficie } from './objeto3d.js';
 
 

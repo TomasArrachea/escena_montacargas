@@ -14,7 +14,7 @@ class SupPiso {
     }
 
     getNormal(u, v) {
-        return [0, 1, 0]
+        return [0, 1, 0];
     }
 
     getCoordenadasTextura(u, v) {

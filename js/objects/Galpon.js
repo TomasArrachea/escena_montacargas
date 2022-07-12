@@ -25,11 +25,12 @@ export class Galpon extends Objeto3D {
         this.agregarHijo(galpon);
 
         let paredIzq = new Pared(this);
-        paredIzq.setPosicion(-ancho/2, 0, 0);
+        paredIzq.setPosicion(-ancho / 2, 0, 0);
         this.agregarHijo(paredIzq);
 
         let paredDer = new Pared(this);
-        paredDer.setPosicion(ancho/2, 0, 0);
+        paredDer.setPosicion(ancho / 2, 0, 0);
+        paredDer.setRotacion(0, Math.PI, 0);
         this.agregarHijo(paredDer);
 
         this.posLamparas = [
@@ -42,7 +43,7 @@ export class Galpon extends Objeto3D {
         ]
         for (let i = 0; i < this.posLamparas.length; i++) {
             let lampara = new Barra(this, 0.2, 0.2);
-            lampara.setPosicion(this.posLamparas[i][0], this.posLamparas[i][1]-1, this.posLamparas[i][2]);
+            lampara.setPosicion(this.posLamparas[i][0], this.posLamparas[i][1] - 1, this.posLamparas[i][2]);
             lampara.setColor(RGB_WHITE);
             this.agregarHijo(lampara);
         }
@@ -52,7 +53,7 @@ export class Galpon extends Objeto3D {
         let direccionSpot = vec3.fromValues(0, -1, 0);
         for (let i = 0; i < this.posLamparas.length; i++) {
             var posicionSpot = this.posLamparas[i];
-            this.setSpotLight(i+1, this.getPosicionMundo(posicionSpot), direccionSpot);
+            this.setSpotLight(i + 1, this.getPosicionMundo(posicionSpot), direccionSpot);
         }
     }
 
