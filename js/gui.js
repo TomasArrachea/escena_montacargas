@@ -7,7 +7,7 @@ function initMenu(escena) {
 		textura: 'patron1',
 		generarImpresion: function () {
 			if (this.tipoSuperficie == 'barrido') {
-				escena.generarImpresion(this.tipoSuperficie, this.forma2dBarrido, this.textura + '.png', this.angulo / 2 * Math.PI);
+				escena.generarImpresion(this.tipoSuperficie, this.forma2dBarrido, this.textura + '.png', this.angulo);
 			} else {
 				escena.generarImpresion(this.tipoSuperficie, this.forma2dRevolucion, this.textura  + '.png', 0);
 			}
