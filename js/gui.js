@@ -35,8 +35,6 @@ function initMenu(escena) {
 			controllerRev = impresora.add(app, "forma2dRevolucion", ["A1", "A2", "A3", "A4"]).name('Forma de revolución');
 }
 	}).setValue('barrido');
-	// impresora.add(app, "forma2dRevolucion", ["A1", "A2", "A3", "A4"]).name('Forma de revolución');
-	// impresora.add(app, "forma2dBarrido", ["B1", "B2", "B3", "B4"]).name('Forma de barrido');
 	impresora.open();
 
 	var instrucciones = gui.addFolder('Instrucciones');
