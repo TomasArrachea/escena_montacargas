@@ -1,4 +1,4 @@
-import { mat4, vec3, vec4, vec2 } from 'https://cdn.skypack.dev/gl-matrix';
+import { mat4, vec3 } from 'https://cdn.skypack.dev/gl-matrix';
 
 class SupBarrido {
     constructor(curva, altura, torsion = 0, esImpresion = false, filas = 20, columnas = 20) {
@@ -50,8 +50,48 @@ class SupBarrido {
         
         return [pos[0], pos[1], pos[2]];
     }
-    
+
+    normalizar(v) {
+        var modulo = Math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
+        if (modulo > 0) {
+            v[0] = v[0] / modulo;
+            v[1] = v[1] / modulo;
+            v[2] = v[2] / modulo;
+        }
+        return v;
+    }
+
     getNormal(u, v) {
+        // ver como se resuelve en revolucion
+        if (!this.esImpresion) {
+            if (v == 0) {
+                return [0, -1, 0];
+            } else if (v == 1 / this.filas) {
+                return [0, -1, 0];
+            } else if (v == (this.filas - 1) / this.filas) {
+                return [0, 1, 0];
+            } else if (v == 1) {
+                return [0, 1, 0];
+            }
+        }
+
+        if (this.torsion != 0) {
+            // calculo la normal aproximada segun los vertices vecinos
+            var p0, p1, p2;
+            p0 = this.getPos(u, v);
+            p1 = this.getPos(u + 1/this.columnas, v);
+            p2 = this.getPos(u, v + 1/this.filas);
+
+            var vec1 = [p2[0]-p0[0], p2[1]-p0[1], p2[2]-p0[2]];
+            var vec2 = [p0[0]-p1[0], p0[1]-p1[1], p0[2]-p1[2]];    
+
+            var normal = vec3.create();
+            vec3.cross(normal, vec2, vec1);
+            var normal = this.normalizar(normal);
+            return normal;
+        }
+
+        // normal exacta usando la normal de la curva
         var index = Math.floor(u * this.topeNormales)
         var x = this.normales[index * 2];
         var y = 0;
@@ -66,19 +106,6 @@ class SupBarrido {
     }
 
     getCoordenadasTextura(u, v) {
-        // if (v == 0) {
-        //     return [0, 0.5];
-        // } else if (v == 1 / this.filas) {
-        //     return [0, -1];
-        // } else if (as) {
-
-        // } else if (as) {
-
-        // } else if (v == (this.filas - 1) / this.filas) {
-        //     return [0, 1];
-        // } else if (v == 1) {
-        //     return [0, 1];
-        // }
         return [u, v];
     }
 }
