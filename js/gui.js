@@ -18,8 +18,8 @@ function initMenu(escena) {
 	};
 	var gui = new dat.GUI();
 
-	var instrucciones = gui.addFolder('Instrucciones');
-	instrucciones.add(app, "verComandos").name('Ver instrucciones');
+	var instrucciones = gui.addFolder('Ayuda');
+	instrucciones.add(app, "verComandos").name('Ver ayuda');
 	
 	var impresora = gui.addFolder('Impresora');
 	var controllerBarrido, controllerRev, controllerAngulo;
