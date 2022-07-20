@@ -10,5 +10,6 @@ export class Chasis extends Objeto3D {
         this.ancho = 3.5;
         this.alto = 3;
         this.setGeometria(generarSuperficie(new SupBarrido(generarCurvaChasis(alto, largo), ancho)));
+        this.setShininess(1);
     }
 }

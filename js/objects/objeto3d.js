@@ -21,7 +21,7 @@ export class Objeto3D {
         this.color = null;
         this.image = null;
         this.texture = null;
-        this.shininess = 1;
+        this.shininess = 0;
         this.textureScale = vec2.fromValues(1, 1);
     }
 

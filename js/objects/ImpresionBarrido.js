@@ -17,5 +17,6 @@ export class ImpresionBarrido extends Objeto3D {
         else if (tipoCurva == 'B4')
             curva = generarB4();
         this.setGeometria(generarSuperficie(new SupBarrido(curva, altura, torsion, true)));
+        this.setShininess(1);
     }
 }

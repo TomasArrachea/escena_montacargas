@@ -111,8 +111,6 @@
                 vec3 Kd = vec3(textureVec.s, textureVec.t, textureVec.p);
                 vec3 Ks = vec3(1,1,1);
 
-                highp float factorAtenuacion = 1.0/(1.0 + 0.04 * length(vec3(vPosWorld) - vec3(thisSpot.position))); // decaimiento lineal
-
                 float angle = acos( dot(-s, spotDir) );
                 float cutoff = radians( clamp( thisSpot.cutoff, 0.0, 90.0 ) );
                 vec3 ambient = thisSpot.intensityA * Ka;
@@ -121,8 +119,8 @@
                     float spotFactor = pow( dot(-s, spotDir), thisSpot.exponent );
                     vec3 v = normalize(vec3(vec3(uCameraPos) - vec3(vPosWorld)));
                     vec3 h = normalize( v + s );
-                    vec3 SpecularLight = spotFactor * thisSpot.intensityS * factorAtenuacion * Ks * pow(dot(h, vNormal), uShininess);
-                    vec3 DiffuseLight = spotFactor * thisSpot.intensityD * factorAtenuacion * Kd * max(dot(s, vNormal), 0.0 );
+                    vec3 SpecularLight = spotFactor * thisSpot.intensityS * Ks * pow(dot(h, vNormal), uShininess);
+                    vec3 DiffuseLight = spotFactor * thisSpot.intensityD * Kd * max(dot(s, vNormal), 0.0 );
                     if (uShininess == 0.0){
                         SpecularLight = vec3(0.0, 0.0, 0.0);
                     }
@@ -164,6 +162,9 @@
 
                 vec3 totalSpotLight = calculateSpotlight(Spot1) + calculateSpotlight(Spot2) + calculateSpotlight(Spot3) + calculateSpotlight(Spot4) + calculateSpotlight(Spot5) + calculateSpotlight(Spot6);
                 vec3 totalPointLight = calculatePointLight(uPosPoint1) + calculatePointLight(uPosPoint2) + calculatePointLight(uPosPoint3) + calculatePointLight(uPosPoint4);
+                
+                gl_FragColor = vec4(vNormal, 1);
+                //return;
                 gl_FragColor = vec4( totalSpotLight + totalPointLight, 1.0);
 
             }
@@ -197,6 +198,7 @@
 
             canvas = document.getElementById("my-canvas");
             canvas.height = window.innerHeight - 50;
+            canvas.width = Math.min(window.innerWidth, canvas.width);
 
             try {
                 window.gl = canvas.getContext("webgl");

@@ -23,5 +23,6 @@ export class ImpresionRevolucion extends Objeto3D {
         else if (tipoCurva == 'A4')
             curva = generarA4();
         this.setGeometria(generarSuperficie(new SupRevolucion(curva)));
+        this.setShininess(1);
     }
 }
