@@ -36,7 +36,7 @@ class Camara {
     }
 
     zoom(delta) {
-        if ((this.alejamiento + delta) > 0)
+        if ((this.alejamiento + delta) > 0.5)
             this.alejamiento += delta;
 
     }
@@ -51,17 +51,17 @@ class Camara {
     }
 
     sumGiroCabeceo(delta) {
-        if (this.rotacionCabeceo + delta < 1.2 && this.rotacionCabeceo + delta > -0.4)
+        if (this.rotacionCabeceo + delta < 1.15 && this.rotacionCabeceo + delta > -0.45)
             this.rotacionCabeceo += delta;
     }
 
     getCameraMatrix() {
         // todo: refactorizar haciendo un objeto por cada tipo de foco.
-        var alturaCamara = 2
+        var alturaCamara = 0.5;
 
         if (this.camaraActual == GENERAL) {
             let vista = mat4.create();
-            let posicionCamara = vec3.fromValues(0, alturaCamara, this.alejamiento);
+            let posicionCamara = vec3.fromValues(0, alturaCamara*this.alejamiento, this.alejamiento);
 
             mat4.lookAt(vista, posicionCamara, vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
             mat4.rotate(vista, vista, this.rotacionCabeceo, vec3.fromValues(1, 0, 0));
@@ -70,7 +70,7 @@ class Camara {
 
         } else if (this.camaraActual == IMPRESORA) {
             let vista = mat4.create();
-            let posicionCamara = vec3.fromValues(0, alturaCamara, this.alejamiento);
+            let posicionCamara = vec3.fromValues(0, alturaCamara*this.alejamiento, this.alejamiento);
             vec3.add(posicionCamara, posicionCamara, this.posImpresora);
             mat4.lookAt(vista, posicionCamara, vec3.fromValues(this.posImpresora[0], 0, this.posImpresora[2]), vec3.fromValues(0, 1, 0));
 
@@ -90,7 +90,7 @@ class Camara {
         else if (this.camaraActual == ESTANTERIA) {
             let vista = mat4.create();
             mat4.identity(vista);
-            let posicionCamara = vec3.fromValues(0, alturaCamara, this.alejamiento);
+            let posicionCamara = vec3.fromValues(0, alturaCamara*this.alejamiento, this.alejamiento);
             vec3.add(posicionCamara, posicionCamara, this.posEstanteria);
             mat4.lookAt(vista, posicionCamara, vec3.fromValues(this.posEstanteria[0], 0, this.posEstanteria[2]), vec3.fromValues(0, 1, 0));
 
