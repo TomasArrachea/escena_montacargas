@@ -163,8 +163,6 @@
                 vec3 totalSpotLight = calculateSpotlight(Spot1) + calculateSpotlight(Spot2) + calculateSpotlight(Spot3) + calculateSpotlight(Spot4) + calculateSpotlight(Spot5) + calculateSpotlight(Spot6);
                 vec3 totalPointLight = calculatePointLight(uPosPoint1) + calculatePointLight(uPosPoint2) + calculatePointLight(uPosPoint3) + calculatePointLight(uPosPoint4);
                 
-                gl_FragColor = vec4(vNormal, 1);
-                //return;
                 gl_FragColor = vec4( totalSpotLight + totalPointLight, 1.0);
 
             }
