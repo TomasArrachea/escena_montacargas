@@ -6,7 +6,7 @@ import { Barra } from "./Barra.js";
 import { ImpresionBarrido } from "./ImpresionBarrido.js";
 import { ImpresionRevolucion } from "./ImpresionRevolucion.js";
 import { RGB_DARK_GREY } from '../common/colors.js';
-import { PRINTER } from '../common/textures.js';
+import { BaseImpresora } from './BaseImpresora.js';
 
 export class Impresora extends Objeto3D {
     constructor(padre) {
@@ -16,17 +16,14 @@ export class Impresora extends Objeto3D {
 
         var radio = 1;
         this.alturaBase = 1.2;
-        var rueda = new Rueda(this, radio, this.alturaBase);
-        rueda.setRotacion(-Math.PI / 2, Math.PI / 2, 0);
-        rueda.initTextures(PRINTER);
-        rueda.setShininess(1);
-        this.agregarHijo(rueda);
+        var base = new BaseImpresora(this, radio, this.alturaBase);
+        base.setRotacion(-Math.PI / 2, Math.PI / 2, 0);
+        this.agregarHijo(base);
 
-        this.zBarra = radio * 4 / 5;
+        this.zBarra = radio * 4.4 / 5;
         var barra = new Barra(this);
         barra.setPosicion(0, this.alturaBase, this.zBarra);
         barra.setColor(RGB_DARK_GREY);
-        barra.setShininess(1);
         this.agregarHijo(barra);
 
         this.baseCabezal = this.alturaBase + barra.largo * 1 / 10; // a ojo para que llegue casi a tocar la base de la impresora

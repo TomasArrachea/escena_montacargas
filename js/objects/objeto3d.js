@@ -22,7 +22,6 @@ export class Objeto3D {
         this.image = null;
         this.texture = null;
         this.shininess = 0;
-        this.textureScale = vec2.fromValues(1, 1);
     }
 
     setShininess(shininess) {
@@ -33,6 +32,7 @@ export class Objeto3D {
     }
 
     generarColor() {
+        gl.uniform1f(gl.getUniformLocation(glProgram, 'isCubeMap'), false);
         if (this.texture != null) {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.texture);
@@ -67,15 +67,12 @@ export class Objeto3D {
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
             }
+            gl.bindTexture(gl.TEXTURE_2D, null);
+
         }
         image.src = path;
         this.image = image;
         this.texture = texture;
-    }
-
-    setTextureScale(x, y) {
-        this.textureScale[0] = x; // usar la escala de la textura para modificar las coordenadas de la textura vs uvBuffer para que se repita
-        this.textureScale[1] = y;
     }
 
     actualizarMatrizModelado() {
@@ -141,7 +138,7 @@ export class Objeto3D {
 
         this.setLights();
         if (this.vertexBuffer && this.indexBuffer) {
-            this.generarColor();
+            this.generarColor(); // bind texture
             this.initShaders();
             if (this.strip) {
                 gl.drawElements(gl.TRIANGLE_STRIP, this.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
@@ -153,7 +150,7 @@ export class Objeto3D {
         for (var i = 0; i < this.hijos.length; i++) {
             this.hijos[i].dibujar(modelado);
         }
-        gl.bindTexture(gl.TEXTURE_2D, null); // tengo que agregar esta linea para que no aplique la textura de un objeto a todos
+        gl.bindTexture(gl.TEXTURE_2D, null); // unbind texture
     }
 
     setGeometria(buffers) {

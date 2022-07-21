@@ -7,5 +7,6 @@ export class Barra extends Objeto3D {
         super(padre);
         this.largo = largo;
         this.setGeometria(generarSuperficie(new Cilindro(radio, this.largo)));
+        this.setShininess(1);
     }
 }
