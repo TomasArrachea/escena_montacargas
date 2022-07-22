@@ -1,5 +1,5 @@
 class SupRevolucion {
-    constructor(curva, filas = 10, columnas = 20) {
+    constructor(curva, filas = 25, columnas = 25) {
         this.puntos = curva.puntos;
         this.topePuntos = this.puntos.length / 2 - 1;
         this.normales = curva.normales;

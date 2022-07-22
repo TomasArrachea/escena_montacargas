@@ -1,7 +1,7 @@
 import { mat4, vec3 } from 'https://cdn.skypack.dev/gl-matrix';
 
 class SupBarrido {
-    constructor(curva, altura, torsion = 0, esImpresion = false, filas = 20, columnas = 20) {
+    constructor(curva, altura, torsion = 0, esImpresion = false, filas = 25, columnas = 25) {
         this.puntos = curva.puntos;
         this.topePuntos = this.puntos.length / 2 - 1;
         this.normales = curva.normales;

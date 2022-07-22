@@ -7,16 +7,20 @@ export class ImpresionBarrido extends Objeto3D {
     constructor(padre, tipoCurva, textura, altura, torsion) {
         super(padre);
         this.initTextures('maps/' + textura);
-        var curva;
+        var escalaUv = 5;
+        if (textura == 'patron1.png')
+            escalaUv = 1;
+        var columnas = 25;
         if (tipoCurva == 'B1')
             curva = generarB1();
-        else if (tipoCurva == 'B2')
+        else if (tipoCurva == 'B2') {
             curva = generarB2();
-        else if (tipoCurva == 'B3')
+            columnas = 60;
+        } else if (tipoCurva == 'B3')
             curva = generarB3();
         else if (tipoCurva == 'B4')
             curva = generarB4();
-        this.setGeometria(generarSuperficie(new SupBarrido(curva, altura, torsion, true)));
+        this.setGeometria(generarSuperficie(new SupBarrido(curva, altura, torsion, true, 25, 50), escalaUv));
         this.setShininess(1);
     }
 }

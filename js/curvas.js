@@ -61,7 +61,7 @@ class Curva {
         return punto;
     }
 
-    agregarSegmento(p0, p1, deltaU = 1) {
+    agregarSegmento(p0, p1, deltaU = 0.1) {
         for (var u = 0; u <= 1.001; u = u + deltaU) {
             var punto = this.#curvaLineal(u, p0, p1);
             this.puntos.push(punto.x);
@@ -74,7 +74,7 @@ class Curva {
     }
 
     agregarCurvaCuadratica(p0, p1, p2) {
-        var deltaU = 0.01;
+        var deltaU = 0.1;
         for (var u = 0; u <= 1.001; u = u + deltaU) {
             var punto = this.#curvaCuadratica(u, p0, p1, p2);
             this.puntos.push(punto.x);
@@ -87,7 +87,7 @@ class Curva {
     }
 
     agregarCurvaCubica(p0, p1, p2, p3) {
-        var deltaU = 0.01;
+        var deltaU = 0.1;
         for (var u = 0; u <= 1.001; u = u + deltaU) {
             var punto = this.#curvaCubica(u, p0, p1, p2, p3);
             this.puntos.push(punto.x);
@@ -102,10 +102,10 @@ class Curva {
 
 
 function generarB1() {
-    var puntos = [[-0.29, -0.5], [-0.29, 0.5], [0.57, 0], [-0.29, -0.5]]; // triangulo con centro en 0,0
+    var puntos = [[-0.23, -0.4], [-0.23, 0.4], [0.45, 0], [-0.23, -0.4]]; // triangulo con centro en 0,0
 
     var curva = new Curva();
-    for (var i = puntos.length -1; i > 0; i--) {
+    for (var i = puntos.length - 1; i > 0; i--) {
         curva.agregarSegmento(puntos[i], puntos[i - 1]);
     }
     return curva;
@@ -240,10 +240,8 @@ function generarB4() {
     var curva = new Curva();
 
     // dibujar lado derecho
-    curva.agregarCurvaCubica(
+    curva.agregarSegmento(
         [centro[0] + ancho / 2, centro[1] - altura / 2],
-        [centro[0] + ancho / 2, centro[1]],
-        [centro[0] + ancho / 2, centro[1]],
         [centro[0] + ancho / 2, centro[1] + altura / 2]
     );
 
@@ -262,11 +260,9 @@ function generarB4() {
     );
 
     // lado izquierdo
-    curva.agregarCurvaCubica(
+    curva.agregarSegmento(
+        [centro[0] - ancho / 2, centro[1] + altura / 2],
         [centro[0] - ancho / 2, centro[1] - altura / 2],
-        [centro[0] - ancho / 2, centro[1]],
-        [centro[0] - ancho / 2, centro[1]],
-        [centro[0] - ancho / 2, centro[1] + altura / 2]
     );
 
     // semicirculo de abajo
@@ -286,89 +282,174 @@ function generarB4() {
 }
 
 
-function generarA1() {
-    var inicio = [0, 0];
+function generarA1(altura) {
     var curva = new Curva();
+    const ancho = 0.8;
 
     // segmento horizontal
     curva.agregarSegmento(
-        inicio,
-        [inicio[0] - 1.2, inicio[1]]
+        [0, 0],
+        [ancho * 1, 0]
     );
     // segmento vertical 
     curva.agregarSegmento(
-        [inicio[0] - 1.2, inicio[1]],
-        [inicio[0] - 1.2, inicio[1] - 0.5]
+        [ancho * 1, 0],
+        [ancho * 1, altura * 0.5]
     );
     // curva interna
     curva.agregarCurvaCubica(
-        [inicio[0] - 1.2, inicio[1] - 0.5],
-        [inicio[0] - 1, inicio[1] - 0.7],
-        [inicio[0] - 0.2, inicio[1] - 0.7],
-        [inicio[0] - 0.4, inicio[1] - 0.9]
+        [ancho * 1, altura * 0.5],
+        [ancho * 1, altura * 0.7],
+        [ancho * 0.2, altura * 0.7],
+        [ancho * 0.4, altura * 1]
     );
     // curva 
     curva.agregarCurvaCubica(
-        [inicio[0] - 0.4, inicio[1] - 0.90],
-        [inicio[0] - 1.20, inicio[1] - 1.50],
-        [inicio[0] - 1.20, inicio[1] - 2.10],
-        [inicio[0] - 0.40, inicio[1] - 2.70]
+        [ancho * 0.4, altura * 1],
+        [ancho * 1, altura * 1.5],
+        [ancho * 1, altura * 2.1],
+        [ancho * 0.4, altura * 2.6]
     );
     // segunda curva interna
     curva.agregarCurvaCubica(
-        [inicio[0] - 0.40, inicio[1] - 2.70],
-        [inicio[0] - 0.20, inicio[1] - 2.90],
-        [inicio[0] - 1, inicio[1] - 2.90],
-        [inicio[0] - 1.20, inicio[1] - 3.10],
+        [ancho * 0.4, altura * 2.6],
+        [ancho * 0.2, altura * 2.9],
+        [ancho * 1, altura * 2.9],
+        [ancho * 1, altura * 3.1],
     );
     // segmento vertical
     curva.agregarSegmento(
-        [inicio[0] - 1.20, inicio[1] - 3.10],
-        [inicio[0] - 1.20, inicio[1] - 3.60]
+        [ancho * 1, altura * 3.1],
+        [ancho * 1, altura * 3.6]
     );
     // segmento horizontal
     curva.agregarSegmento(
-        [inicio[0] - 1.20, inicio[1] - 3.60],
-        [inicio[0], inicio[1] - 3.60]
+        [ancho * 1, altura * 3.6],
+        [ancho * 0, altura * 3.6]
     );
     return curva;
 }
 
 
-function generarA2() {
-    var inicio = [0, 0];
+function generarA2(altura) {
     var curva = new Curva();
-
+    var ancho = 0.6;
     curva.agregarCurvaCubica(
-        [inicio[0], inicio[1]],
-        [inicio[0] - 1, inicio[1]],
-        [inicio[0] - 0.20, inicio[1] - 0.70],
-        [inicio[0] - 0.25, inicio[1] - 0.90]
+        [0, 0],
+        [-ancho * 1, 0],
+        [-ancho * 0.2, -altura * 0.7],
+        [-ancho * 0.25, -altura * 0.9]
     );
     // curva 
     curva.agregarCurvaCubica(
-        [inicio[0] - 0.25, inicio[1] - 0.90],
-        [inicio[0] - 0.40, inicio[1] - 1.50],
-        [inicio[0] - 0.80, inicio[1] - 2.10],
-        [inicio[0] - 0.40, inicio[1] - 2.20]
+        [-ancho * 0.25, -altura * 0.9],
+        [-ancho * 0.4, -altura * 1.5],
+        [-ancho * 0.8, -altura * 2.1],
+        [-ancho * 0.4, -altura * 2.2]
     );
     // segunda curva interna
     curva.agregarCurvaCubica(
-        [inicio[0] - 0.40, inicio[1] - 2.20],
-        [inicio[0] - 0.40, inicio[1] - 2.30],
-        [inicio[0] - 0.40, inicio[1] - 2.35],
-        [inicio[0] - 0.50, inicio[1] - 2.40]
+        [-ancho * 0.4, -altura * 2.2],
+        [-ancho * 0.4, -altura * 2.3],
+        [-ancho * 0.4, -altura * 2.35],
+        [-ancho * 0.45, -altura * 2.4]
     );
     return curva;
 }
 
-function generarA3() {
+function generarA3(altura) {
     var curva = new Curva();
+    const ancho = 0.003;
+    altura *= 0.005;
+    // segmento horizontal
+    curva.agregarSegmento(
+        [0, 0],
+        [ancho * 120, 0]
+    );
+    // segmento diagonal 
+    curva.agregarSegmento(
+        [ancho * 120, 0],
+        [ancho * 40, altura * 40]
+    );
+    // segmento vertical
+    curva.agregarSegmento(
+        [ancho * 40, altura * 40],
+        [ancho * 40, altura * 60]
+    );
+    // curva
+    curva.agregarCurvaCubica(
+        [ancho * 40, altura * 60],
+        [ancho * 90, altura * 80],
+        [ancho * 100, altura * 90],
+        [ancho * 100, altura * 110],
+    );
+    // segmento vertical
+    curva.agregarSegmento(
+        [ancho * 100, altura * 110],
+        [ancho * 100, altura * 130]
+    );
+    // curva 
+    curva.agregarCurvaCubica(
+        [ancho * 100, altura * 130],
+        [ancho * 100, altura * 160],
+        [ancho * 80, altura * 170],
+        [ancho * 60, altura * 170],
+    );
+    // segunda curva interna
+    curva.agregarCurvaCubica(
+        [ancho * 60, altura * 170],
+        [ancho * 40, altura * 170],
+        [ancho * 40, altura * 180],
+        [ancho * 35, altura * 190],
+    );
     return curva;
 }
 
-function generarA4() {
+function generarA4(altura) {
     var curva = new Curva();
+    const ancho = 0.008;
+    altura *= 0.008;
+
+    curva.agregarSegmento(
+        [0, 0],
+        [ancho * 25, 0]
+    );
+    // curva
+    curva.agregarCurvaCubica(
+        [ancho * 25, 0],
+        [ancho * 40, 0],
+        [ancho * 50, 40 * altura],
+        [ancho * 20, 50 * altura],
+    );
+    // curva 
+    curva.agregarCurvaCubica(
+        [ancho * 20, 50 * altura],
+        [ancho * 12, 55 * altura],
+        [ancho * 10, 60 * altura],
+        [ancho * 10, 80 * altura],
+    );
+    // segunda curva interna
+    curva.agregarCurvaCubica(
+        [ancho * 10, 80 * altura],
+        [ancho * 10, 90 * altura],
+        [ancho * 30, 98 * altura],
+        [ancho * 45, 100 * altura],
+    );
+    // segunda curva interna
+    curva.agregarCurvaCubica(
+        [ancho * 45, 100 * altura],
+        [ancho * 30, 102 * altura],
+        [ancho * 20, 110 * altura],
+        [ancho * 20, 120 * altura],
+    );
+
+    curva.agregarCurvaCubica(
+        [ancho * 20, 120 * altura],
+        [ancho * 20, 140 * altura],
+        [ancho * 10, 150 * altura],
+        [0, 150 * altura],
+    );
+
     return curva;
 }
 
