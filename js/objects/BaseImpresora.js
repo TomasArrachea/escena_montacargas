@@ -1,5 +1,5 @@
 import { SupRevolucion } from '../supRevolucion.js';
-import { generarCurvaRueda } from '../curvas.js';
+import { generarCurvaImpresora } from '../curvas.js';
 import { Objeto3D, generarSuperficie } from './objeto3d.js';
 import { SupCubo } from '../superficies.js';
 // import { PRINTER_FACES } from '../common/textures.js';
@@ -7,8 +7,7 @@ import { SupCubo } from '../superficies.js';
 export class BaseImpresora extends Objeto3D {
     constructor(padre, radio, ancho) {
         super(padre);
-        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaRueda(radio, ancho))));
-        // this.setGeometria(SupCubo.generarSuperficie(radio, radio, ancho));
+        this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaImpresora(radio, ancho))));
         this.setRotacion(0, 0, Math.PI / 2);
         this.setShininess(1);
         this.initTextures();

@@ -86,8 +86,9 @@ class Curva {
         }
     }
 
-    agregarCurvaCubica(p0, p1, p2, p3) {
-        var deltaU = 0.1;
+    agregarCurvaCubica(p0, p1, p2, p3, deltaU = 0.1) {
+        // todo: el deltaU deberia ser proporcional al largo del tramo, al igual que la cantidad de filas/columnas, para que se vea suave y las texturas no se estiren.
+        // idem para el resto de las curvas.
         for (var u = 0; u <= 1.001; u = u + deltaU) {
             var punto = this.#curvaCubica(u, p0, p1, p2, p3);
             this.puntos.push(punto.x);
@@ -106,7 +107,7 @@ function generarB1() {
 
     var curva = new Curva();
     for (var i = puntos.length - 1; i > 0; i--) {
-        curva.agregarSegmento(puntos[i], puntos[i - 1], 1);
+        curva.agregarSegmento(puntos[i], puntos[i - 1], 0.1);
     }
     return curva;
 }
@@ -289,12 +290,13 @@ function generarA1(altura) {
     // segmento horizontal
     curva.agregarSegmento(
         [0, 0],
-        [ancho * 1, 0]
+        [ancho * 1, 0],
     );
     // segmento vertical 
     curva.agregarSegmento(
         [ancho * 1, 0],
-        [ancho * 1, altura * 0.5]
+        [ancho * 1, altura * 0.5],
+        0.5
     );
     // curva interna
     curva.agregarCurvaCubica(
@@ -320,7 +322,8 @@ function generarA1(altura) {
     // segmento vertical
     curva.agregarSegmento(
         [ancho * 1, altura * 3.1],
-        [ancho * 1, altura * 3.6]
+        [ancho * 1, altura * 3.6],
+        0.5
     );
     // segmento horizontal
     curva.agregarSegmento(
@@ -352,7 +355,8 @@ function generarA2(altura) {
         [-ancho * 0.4, -altura * 2.2],
         [-ancho * 0.4, -altura * 2.3],
         [-ancho * 0.4, -altura * 2.35],
-        [-ancho * 0.45, -altura * 2.4]
+        [-ancho * 0.45, -altura * 2.4],
+        0.5
     );
     return curva;
 }
@@ -374,7 +378,8 @@ function generarA3(altura) {
     // segmento vertical
     curva.agregarSegmento(
         [ancho * 40, altura * 40],
-        [ancho * 40, altura * 60]
+        [ancho * 40, altura * 60],
+        0.2
     );
     // curva
     curva.agregarCurvaCubica(
@@ -386,7 +391,8 @@ function generarA3(altura) {
     // segmento vertical
     curva.agregarSegmento(
         [ancho * 100, altura * 110],
-        [ancho * 100, altura * 130]
+        [ancho * 100, altura * 130],
+        0.5
     );
     // curva 
     curva.agregarCurvaCubica(
@@ -420,6 +426,7 @@ function generarA4(altura) {
         [ancho * 40, 0],
         [ancho * 50, 40 * altura],
         [ancho * 20, 50 * altura],
+        0.05
     );
     // curva 
     curva.agregarCurvaCubica(
@@ -488,6 +495,52 @@ function generarCurvaRueda(radio, ancho) {
     return curva;
 }
 
+function generarCurvaImpresora(radio, ancho) {
+    var curva = new Curva();
+    var inicio = [0, 0];
+    var radio = radio;
+    var desnivel_tapa = radio / 10;
+    var ancho_goma = radio / 4;
+    var ancho_desnivel = radio / 10;
+    const deltaU = 0.5;
+    // tapa inferior
+    curva.agregarSegmento(
+        inicio,
+        [inicio[0] + radio, inicio[1]],
+        deltaU
+    );
+    // borde 
+    curva.agregarSegmento(
+        [inicio[0] + radio, inicio[1]],
+        [inicio[0] + radio, inicio[1] + ancho - desnivel_tapa],
+        deltaU
+    );
+    // diagonal externa 
+    curva.agregarSegmento(
+        [inicio[0] + radio, inicio[1] + ancho - desnivel_tapa],
+        [inicio[0] + radio - ancho_desnivel, inicio[1] + ancho],
+        deltaU
+    );
+    // borde recto
+    curva.agregarSegmento(
+        [inicio[0] + radio - ancho_desnivel, inicio[1] + ancho],
+        [inicio[0] + radio - ancho_goma, inicio[1] + ancho],
+        deltaU
+    );
+    // diagonal interna
+    curva.agregarSegmento(
+        [inicio[0] + radio - ancho_goma, inicio[1] + ancho],
+        [inicio[0] + radio - ancho_goma - ancho_desnivel, inicio[1] + ancho - desnivel_tapa],
+        deltaU
+    );
+    // tapa superior
+    curva.agregarSegmento(
+        [inicio[0] + radio - ancho_goma - ancho_desnivel, inicio[1] + ancho - desnivel_tapa],
+        [inicio[0], inicio[1] + ancho - desnivel_tapa],
+        deltaU
+    );
+    return curva;
+}
 
 function generarCurvaGalpon(alto, ancho) {
     var curva = new Curva();
@@ -577,4 +630,4 @@ function generarTrapecio(base1, base2, largo) {
     return curva;
 }
 
-export { generarA1, generarA2, generarA3, generarA4, generarB1, generarB2, generarB3, generarB4, generarCurvaChasis, generarCurvaGalpon, generarCurvaRueda, generarTrapecio };
+export { generarA1, generarA2, generarA3, generarA4, generarB1, generarB2, generarB3, generarB4, generarCurvaChasis, generarCurvaGalpon, generarCurvaRueda, generarCurvaImpresora, generarTrapecio };

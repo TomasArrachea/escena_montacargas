@@ -62,7 +62,6 @@ class SupBarrido {
     }
 
     getNormal(u, v) {
-        // ver como se resuelve en revolucion
         if (!this.esImpresion) {
             if (v == 0) {
                 return [0, -1, 0];
