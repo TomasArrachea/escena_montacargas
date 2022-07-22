@@ -614,18 +614,22 @@ function generarTrapecio(base1, base2, largo) {
     curva.agregarSegmento(
         [0, 0],
         [base2, 0],
+        0.5
     );
     curva.agregarSegmento(
         [base2, 0],
         [base1, largo],
+        0.5
     );
     curva.agregarSegmento(
         [base1, largo],
         [0, largo],
+        0.5
     );
     curva.agregarSegmento(
         [0, largo],
         [0, 0],
+        0.5
     );
 
     return curva;
