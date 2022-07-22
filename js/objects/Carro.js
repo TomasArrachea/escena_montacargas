@@ -20,22 +20,27 @@ export class Carro extends Objeto3D {
         chasis.setPosicion(0, 0.5 + alto / 2, 0);
         this.agregarHijo(chasis);
 
+        this.ruedas = [];
         var rueda = new Rueda(this);
         rueda.setPosicion(ancho / 2, 1, ancho / 2);
         rueda.setRotacion(0, Math.PI, 0);
+        this.ruedas.push(rueda);
         this.agregarHijo(rueda);
 
         var rueda = new Rueda(this);
         rueda.setPosicion(-ancho / 2, 1, ancho / 2);
+        this.ruedas.push(rueda);
         this.agregarHijo(rueda);
 
         var rueda = new Rueda(this);
         rueda.setPosicion(ancho / 2, 1, -ancho / 2);
         rueda.setRotacion(0, Math.PI, 0);
+        this.ruedas.push(rueda);
         this.agregarHijo(rueda);
 
         var rueda = new Rueda(this);
         rueda.setPosicion(-ancho / 2, 1, -ancho / 2);
+        this.ruedas.push(rueda);
         this.agregarHijo(rueda);
 
         var asiento = new Asiento(this);
@@ -65,10 +70,19 @@ export class Carro extends Objeto3D {
 
     setVelGiro(v) {
         this.velGiro = v;
+        // ruedas de izquierda giran hacia un lado
+        v *= 2.2;
+        this.ruedas[0].setVelGiro(-v);
+        this.ruedas[2].setVelGiro(-v);
+
+        // ruedas de derecha giran hacia el otro
+        this.ruedas[1].setVelGiro(v);
+        this.ruedas[3].setVelGiro(v);
     }
 
     setVelX(v) {
         this.velX = v;
+        this.ruedas.forEach(r => r.setVelGiro(v));
     }
 
     setVelY(v) {
