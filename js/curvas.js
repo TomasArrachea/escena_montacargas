@@ -554,6 +554,7 @@ function generarCurvaGalpon(alto, ancho) {
         [centro[0] + ancho / 2 - radio * cte_circunferencia, centro[1] + alto + radio * cte_circunferencia],
         [centro[0] - ancho / 2 + radio * cte_circunferencia, centro[1] + alto + radio * cte_circunferencia],
         [centro[0] - ancho / 2, centro[1] + alto],
+        0.1
     );
     return curva;
 }

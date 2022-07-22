@@ -19,7 +19,7 @@ export class Galpon extends Objeto3D {
 
         let galpon = new Objeto3D(this);
         let superficie = new SupBarrido(generarCurvaGalpon(this.alto, ancho), 50, 0, false, filas, columnas)
-        galpon.setGeometria(generarSuperficie(superficie, 10));
+        galpon.setGeometria(generarSuperficie(superficie, 25));
         galpon.setRotacion(Math.PI / 2, Math.PI, 0);
         galpon.initTextures(WALL);
         this.agregarHijo(galpon);
