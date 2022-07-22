@@ -106,7 +106,7 @@ function generarB1() {
 
     var curva = new Curva();
     for (var i = puntos.length - 1; i > 0; i--) {
-        curva.agregarSegmento(puntos[i], puntos[i - 1]);
+        curva.agregarSegmento(puntos[i], puntos[i - 1], 1);
     }
     return curva;
 }
