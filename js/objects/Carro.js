@@ -71,7 +71,7 @@ export class Carro extends Objeto3D {
     setVelGiro(v) {
         this.velGiro = v;
         // ruedas de izquierda giran hacia un lado
-        v *= 2.2;
+        v *= 2.7;
         this.ruedas[0].setVelGiro(-v);
         this.ruedas[2].setVelGiro(-v);
 
@@ -82,7 +82,7 @@ export class Carro extends Objeto3D {
 
     setVelX(v) {
         this.velX = v;
-        this.ruedas.forEach(r => r.setVelGiro(v));
+        this.ruedas.forEach(r => r.setVelAvance(v));
     }
 
     setVelY(v) {

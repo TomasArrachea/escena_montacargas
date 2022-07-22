@@ -13,15 +13,29 @@ export class Rueda extends Objeto3D {
         this.initTextures(WHEEL);
         this.matrizRotacion = mat4.create();
         this.velGiro = 0;
+        this.velAvance = 0;
     }
 
     setVelGiro(velGiro) {
         this.velGiro = velGiro;
     }
 
+    setVelAvance(velAvance) {
+        this.velAvance = velAvance;
+    }
+
     actualizarMatrizModelado() {
         // rotar segun la velocidad de giro
-        this.rotacion[0] += this.velGiro;
+        if (this.velAvance == 0) {
+            this.rotacion[0] += this.velGiro;
+        } else {
+            if (this.velGiro == 0)
+                this.rotacion[0] += this.velAvance;
+            else if (this.velGiro > 0)
+                this.rotacion[0] += this.velAvance;
+            else
+                this.rotacion[0] += this.velGiro + this.velAvance;
+        }
 
         //Reset matriz de modelado.
         mat4.identity(this.matrizModelado);
