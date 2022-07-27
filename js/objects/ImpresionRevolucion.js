@@ -8,7 +8,7 @@ export class ImpresionRevolucion extends Objeto3D {
         super(padre);
         this.initTextures('maps/' + textura);
         var escalaUv = 15;
-        var filas = 25;
+        var filas = 40;
         var columnas = 25;
         var curva;
 
@@ -17,6 +17,7 @@ export class ImpresionRevolucion extends Objeto3D {
         if (tipoCurva == 'A1') {
             curva = generarA1(altura);
             this.setEscala(0.5, 0.3, 0.5);
+            filas = 50;
         } else if (tipoCurva == 'A2') {
             curva = generarA2(altura);
             this.setRotacion(0, 0, Math.PI);
@@ -25,9 +26,8 @@ export class ImpresionRevolucion extends Objeto3D {
             curva = generarA3(altura);
         } else if (tipoCurva == 'A4') {
             curva = generarA4(altura);
-            filas = 40;
         }
         this.setGeometria(generarSuperficie(new SupRevolucion(curva, filas, columnas), escalaUv));
-        this.setShininess(0.1);
+        this.setShininess(100);
     }
 }

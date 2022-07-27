@@ -7,7 +7,7 @@ export class BaseImpresora extends Objeto3D {
         super(padre);
         this.setGeometria(generarSuperficie(new SupRevolucion(generarCurvaImpresora(radio, ancho))));
         this.setRotacion(0, 0, Math.PI / 2);
-        this.setShininess(1);
+        this.setShininess(50);
         this.initTextures();
     }
 

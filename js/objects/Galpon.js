@@ -34,12 +34,12 @@ export class Galpon extends Objeto3D {
         this.agregarHijo(paredDer);
 
         this.posLamparas = [
-            vec3.fromValues(-7, this.alto + 3, 0),
-            vec3.fromValues(7, this.alto + 3, 0),
-            vec3.fromValues(-7, this.alto + 3, 13),
-            vec3.fromValues(7, this.alto + 3, 13),
-            vec3.fromValues(-7, this.alto + 3, -13),
-            vec3.fromValues(7, this.alto + 3, -13)
+            vec3.fromValues(-5, this.alto + 3, 0),
+            vec3.fromValues(5, this.alto + 3, 0),
+            vec3.fromValues(-5, this.alto + 3, 10),
+            vec3.fromValues(5, this.alto + 3, 10),
+            vec3.fromValues(-5, this.alto + 3, -10),
+            vec3.fromValues(5, this.alto + 3, -10)
         ]
         for (let i = 0; i < this.posLamparas.length; i++) {
             let lampara = new Barra(this, 0.2, 0.2);
@@ -59,11 +59,11 @@ export class Galpon extends Objeto3D {
 
     setSpotLight(id, posicionSpot, direccionSpot) {
         gl.uniform4fv(gl.getUniformLocation(glProgram, "Spot" + id + ".position"), vec4.fromValues(posicionSpot[0], posicionSpot[1], posicionSpot[2], 1));
-        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".intensityA"), 0.07);
-        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".intensityD"), 0.8);
-        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".intensityS"), 0.2);
+        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".intensityA"), 0.05);
+        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".intensityD"), 1.0);
+        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".intensityS"), 0.8);
         gl.uniform3fv(gl.getUniformLocation(glProgram, "Spot" + id + ".direction"), vec3.fromValues(direccionSpot[0], direccionSpot[1], direccionSpot[2]));
-        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".exponent"), 15.0);
-        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".cutoff"), 30);
+        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".exponent"), 25.0);
+        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".cutoff"), 35);
     }
 }

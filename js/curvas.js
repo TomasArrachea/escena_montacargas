@@ -303,14 +303,16 @@ function generarA1(altura) {
         [ancho * 1, altura * 0.5],
         [ancho * 1, altura * 0.7],
         [ancho * 0.2, altura * 0.7],
-        [ancho * 0.4, altura * 1]
+        [ancho * 0.4, altura * 1],
+        0.05
     );
     // curva 
     curva.agregarCurvaCubica(
         [ancho * 0.4, altura * 1],
         [ancho * 1, altura * 1.5],
         [ancho * 1, altura * 2.1],
-        [ancho * 0.4, altura * 2.6]
+        [ancho * 0.4, altura * 2.6],
+        0.05
     );
     // segunda curva interna
     curva.agregarCurvaCubica(
@@ -318,6 +320,7 @@ function generarA1(altura) {
         [ancho * 0.2, altura * 2.9],
         [ancho * 1, altura * 2.9],
         [ancho * 1, altura * 3.1],
+        0.05
     );
     // segmento vertical
     curva.agregarSegmento(

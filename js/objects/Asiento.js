@@ -14,5 +14,6 @@ export class Asiento extends Objeto3D {
         this.setGeometria(generarSuperficie(new SupBarrido(sup, 2)));
         this.setRotacion(-Math.PI / 2, 0, -Math.PI / 2);
         this.setColor(RGB_DARK_GREY);
+        this.setShininess(100);
     }
 }

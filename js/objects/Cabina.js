@@ -8,5 +8,6 @@ export class Cabina extends Objeto3D {
         super(padre);
         this.setGeometria(generarSuperficie(new SupBarrido(generarTrapecio(), 20)));
         this.setColor(RGB_GREY)
+        this.setShininess(100);
     }
 }

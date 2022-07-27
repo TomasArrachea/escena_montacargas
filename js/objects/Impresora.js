@@ -26,7 +26,7 @@ export class Impresora extends Objeto3D {
         this.agregarHijo(barra);
 
         this.baseCabezal = this.alturaBase + barra.largo * 1 / 10; // a ojo para que llegue casi a tocar la base de la impresora
-        this.topeCabezal = this.alturaBase + barra.largo * 4 / 5;
+        this.topeCabezal = this.alturaBase + barra.largo * 3.5 / 5;
         this.velCabezal = 0;
         this.alturaCabezal = this.topeCabezal;
         this.cabezal = new Cabezal(this);

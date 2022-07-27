@@ -9,6 +9,8 @@ export class Cabezal extends Objeto3D {
     constructor(padre) {
         super(padre);
         // objeto vacio
+        this.setShininess(0);
+        
         var agarreBarra = new Cubo(this, 0.4, 0.2, 0.3);
         agarreBarra.setPosicion(0, 0, 0);
         agarreBarra.setColor(RGB_GREEN);
@@ -70,6 +72,6 @@ export class Cabezal extends Objeto3D {
     }
 
     setPointLight(id, posicionSpot) {
-        gl.uniform4fv(gl.getUniformLocation(glProgram, "uPosPoint" + id), vec4.fromValues(posicionSpot[0], posicionSpot[1], posicionSpot[2], 1));
+        gl.uniform3fv(gl.getUniformLocation(glProgram, "uPosPoint" + id), posicionSpot);
     }
 }

@@ -197,4 +197,12 @@ class SupEsfera {
 }
 
 
-export { Cilindro, SupCubo, SupPiso, SupEsfera };
+class SupEsferaInversa extends SupEsfera {
+    getNormal(u, v) {
+        var pos = this.getPos(u, v);
+        var len = Math.sqrt(pos[0] ** 2 + pos[1] ** 2 + pos[2] ** 2);
+        return [-pos[0] / len, -pos[1] / len, -pos[2] / len];
+    }
+}
+
+export { Cilindro, SupCubo, SupPiso, SupEsfera, SupEsferaInversa };
