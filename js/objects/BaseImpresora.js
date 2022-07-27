@@ -1,8 +1,6 @@
 import { SupRevolucion } from '../supRevolucion.js';
 import { generarCurvaImpresora } from '../curvas.js';
 import { Objeto3D, generarSuperficie } from './objeto3d.js';
-import { SupCubo } from '../superficies.js';
-// import { PRINTER_FACES } from '../common/textures.js';
 
 export class BaseImpresora extends Objeto3D {
     constructor(padre, radio, ancho) {
@@ -17,11 +15,11 @@ export class BaseImpresora extends Objeto3D {
         const PRINTER_FACES = [
             {
                 target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
-                path: 'maps/greyRoom1_front.jpg',
+                path: 'maps/greyRoom1_left.jpg',
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
-                path: 'maps/greyRoom1_back.jpg',
+                path: 'maps/greyRoom1_right.jpg',
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
@@ -33,11 +31,11 @@ export class BaseImpresora extends Objeto3D {
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
-                path: 'maps/greyRoom1_left.jpg',
+                path: 'maps/greyRoom1_front.jpg',
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
-                path: 'maps/greyRoom1_right.jpg',
+                path: 'maps/greyRoom1_back.jpg',
             },
         ];
 
@@ -77,8 +75,8 @@ export class BaseImpresora extends Objeto3D {
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);
         gl.uniform1f(gl.getUniformLocation(glProgram, 'uShininess'), this.shininess);
-        gl.uniform1f(gl.getUniformLocation(glProgram, 'hasTexture'), true);
-        gl.uniform1f(gl.getUniformLocation(glProgram, 'isCubeMap'), true);
+        gl.uniform1i(gl.getUniformLocation(glProgram, 'hasTexture'), true);
+        gl.uniform1i(gl.getUniformLocation(glProgram, 'isCubeMap'), true);
         gl.uniform1i(gl.getUniformLocation(glProgram, 'uCubeSampler'), 1);
     }
 

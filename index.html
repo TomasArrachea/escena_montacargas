@@ -315,8 +315,9 @@
 
         function drawScene() {
             setupVertexShaderMatrix();
-            camaraMatrix = camara.getCameraMatrix();
-            gl.uniformMatrix4fv(gl.getUniformLocation(glProgram, "viewMatrix"), false, camaraMatrix);
+            camaraInfo = camara.getCameraMatrix();
+            gl.uniformMatrix4fv(gl.getUniformLocation(glProgram, "viewMatrix"), false, camaraInfo.viewMatrix);
+            gl.uniform3fv(gl.getUniformLocation(glProgram, "uCameraPos"), camaraInfo.posCamara);
 
             escena.dibujar(mat4.create());
         }

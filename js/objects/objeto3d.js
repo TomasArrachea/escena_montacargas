@@ -38,12 +38,12 @@ export class Objeto3D {
             gl.bindTexture(gl.TEXTURE_2D, this.texture);
             gl.uniform1i(gl.getUniformLocation(glProgram, 'uSampler'), 0);
             gl.uniform1f(gl.getUniformLocation(glProgram, 'uShininess'), this.shininess);
-            gl.uniform1f(gl.getUniformLocation(glProgram, 'hasTexture'), true);
+            gl.uniform1i(gl.getUniformLocation(glProgram, 'hasTexture'), true);
 
         } else if(this.color != null) {
             let colorVecUniform = gl.getUniformLocation(glProgram, "uColor");
             gl.uniform3fv(colorVecUniform, this.color);
-            gl.uniform1f(gl.getUniformLocation(glProgram, 'hasTexture'), false);
+            gl.uniform1i(gl.getUniformLocation(glProgram, 'hasTexture'), false);
         }
     }
 

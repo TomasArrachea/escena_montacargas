@@ -1,5 +1,4 @@
 import { mat4 } from 'https://cdn.skypack.dev/gl-matrix';
-import { Rueda } from './Rueda.js';
 import { Objeto3D } from './objeto3d.js';
 import { Cabezal } from "./Cabezal.js";
 import { Barra } from "./Barra.js";
@@ -20,7 +19,7 @@ export class Impresora extends Objeto3D {
         base.setRotacion(-Math.PI / 2, Math.PI / 2, 0);
         this.agregarHijo(base);
 
-        this.zBarra = radio * 4.4 / 5;
+        this.zBarra = radio * 4.09 / 5;
         var barra = new Barra(this);
         barra.setPosicion(0, this.alturaBase, this.zBarra);
         barra.setColor(RGB_DARK_GREY);
