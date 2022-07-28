@@ -59,7 +59,7 @@ export class Galpon extends Objeto3D {
 
     setSpotLight(id, posicionSpot, direccionSpot) {
         gl.uniform4fv(gl.getUniformLocation(glProgram, "Spot" + id + ".position"), vec4.fromValues(posicionSpot[0], posicionSpot[1], posicionSpot[2], 1));
-        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".intensityA"), 0.05);
+        gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".intensityA"), 0.06);
         gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".intensityD"), 1.0);
         gl.uniform1f(gl.getUniformLocation(glProgram, "Spot" + id + ".intensityS"), 0.8);
         gl.uniform3fv(gl.getUniformLocation(glProgram, "Spot" + id + ".direction"), vec3.fromValues(direccionSpot[0], direccionSpot[1], direccionSpot[2]));
