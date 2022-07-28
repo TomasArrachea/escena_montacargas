@@ -7,5 +7,6 @@ export class Piso extends Objeto3D {
         super(padre);
         this.initTextures(texturePath);
         this.setGeometria(generarSuperficie(new SupPiso(alto, ancho), textureScale));
+        this.setShininess(1000);
     }
 }
