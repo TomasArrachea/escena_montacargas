@@ -16,6 +16,32 @@
         textarea {
             background-color: black;
         }
+
+        .wrapper {
+            display: flex;
+            flex-flow: row;
+        }
+
+        .wrapper>* {
+            flex: 1 100%;
+        }
+
+        @media all and (min-width: 600px) {
+            .aside {
+                flex: 1 auto;
+                padding: 5px;
+            }
+        }
+
+        .aside-1 {
+            width: 20px;
+            height: 300px;
+            overflow: hidden;
+            background-color: #202020;
+            color: #E8E8E8;
+            border-radius: 10px;
+
+        }
     </style>
     <script src="js/dat.gui/dat.gui.min.js"></script>
     <script src="js/glmatrix/gl-matrix.js"></script>
@@ -23,13 +49,54 @@
 
 <body>
 
-    <div style="overflow: hidden;">
-        <center>
+    <div class="wrapper">
+        <aside class="aside aside-1">
+            <p>
+                <b>Comandos:</b>
+            <ul>
+                <li>
+                    <b>w s</b> - avanzar y retroceder
+                </li>
+                <li>
+                    <b>a d</b> - girar a la izquierda y derecha
+                </li>
+                <li>
+                    <b>q e</b> - elevar o bajar la pala del montacargas
+                </li>
+                <li>
+                    <b>g</b> - tomar un objeto de la impresora o dejarlo en un casillero libre de la estantería
+                </li>
+                <li>
+                    <b>mouse</b> - arrastrar para desplazar la cámara
+                </li>
+                <li>
+                    <b>1</b> - cámara en el centro de la escena
+                </li>
+                <li>
+                    <b>2</b> - cámara centrada en la estantería
+                </li>
+                <li>
+                    <b>3</b> - cámara centrada en la impresora
+                </li>
+                <li>
+                    <b>4</b> - cámara de conductor
+                </li>
+                <li>
+                    <b>5</b> - cámara trasera del montacargas
+                </li>
+                <li>
+                    <b>6</b> - cámara lateral del montacargas
+                </li>
+            </ul>
+            </p>
+        </aside>
+        <aside class="aside aside-2">
             <canvas id="my-canvas" width="1000" height="800">
                 Your browser does not support the HTML5 canvas element.
             </canvas>
-        </center>
+        </aside>
     </div>
+
 
     <script type="text/javascript" src="js/glmatrix/gl-matrix.js"></script>
 
