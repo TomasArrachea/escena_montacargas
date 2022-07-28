@@ -23,7 +23,7 @@ export class BaseImpresora extends Objeto3D {
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
-                path: 'maps/greyRoom1_top.jpg',
+                path: 'maps/impresora_top.png',
             },
             {
                 target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
