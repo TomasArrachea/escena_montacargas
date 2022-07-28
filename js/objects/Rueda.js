@@ -4,7 +4,7 @@ import { generarCurvaRueda } from '../curvas.js';
 import { Objeto3D, generarSuperficie } from './objeto3d.js';
 import { WHEEL } from '../common/textures.js';
 
-let FACTOR_INERCIA = 0.3;
+let FACTOR_INERCIA = 0.1;
 
 export class Rueda extends Objeto3D {
     constructor(padre, radio = 1, ancho = 0.4) {

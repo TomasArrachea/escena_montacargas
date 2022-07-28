@@ -4,9 +4,9 @@ import { Objeto3D } from './objeto3d.js';
 import { Elevador } from "./Elevador.js";
 import { Asiento } from "./Asiento.js";
 import { Rueda } from "./Rueda.js";
-import { RGB_DARK_GREY, RGB_GREY } from '../common/colors.js';
+import { RGB_DARK_GREY } from '../common/colors.js';
 
-let FACTOR_INERCIA=0.3;
+let FACTOR_INERCIA = 0.1;
 
 export class Carro extends Objeto3D {
     constructor(padre, estanteria, impresora) {
@@ -119,7 +119,7 @@ export class Carro extends Objeto3D {
         mat4.mul(modeladoPala, this.elevador.matrizModelado, this.elevador.pala.matrizModelado);
         var posPala = vec3.create();
         vec4.transformMat4(posPala, [0, 0, 0, 1], modeladoPala);
-        posPala[1] += this.elevador.altoPala/2;
+        posPala[1] += this.elevador.altoPala / 2;
         return posPala;
     }
 
