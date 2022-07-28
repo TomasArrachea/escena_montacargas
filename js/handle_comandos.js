@@ -5,9 +5,9 @@
 // OP para acercar o alejar la camara
 // 1,2,3,4,5,6 para cambiar el objetivo de la camara
 
-const VEL_TRASLACION = 0.1;  // velocidad de traslacion 
+const VEL_TRASLACION = 0.2;  // velocidad de traslacion 
 const VEL_PALA = 0.1;
-const VEL_GIRO = 0.02;        // velocidad de giro
+const VEL_GIRO = 0.04;        // velocidad de giro
 const DELTA_ZOOM = 0.55;
 const FACTOR_ZOOM_MOUSE = 0.02;
 const VEL_ROTACION_CAMARA = 0.01;
