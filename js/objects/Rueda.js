@@ -4,6 +4,7 @@ import { generarCurvaRueda } from '../curvas.js';
 import { Objeto3D, generarSuperficie } from './objeto3d.js';
 import { WHEEL } from '../common/textures.js';
 
+let FACTOR_INERCIA = 0.3;
 
 export class Rueda extends Objeto3D {
     constructor(padre, radio = 1, ancho = 0.4) {
@@ -14,6 +15,7 @@ export class Rueda extends Objeto3D {
         this.matrizRotacion = mat4.create();
         this.velGiro = 0;
         this.velAvance = 0;
+        this.velAvanceInercial = 0;
     }
 
     setVelGiro(velGiro) {
@@ -26,15 +28,17 @@ export class Rueda extends Objeto3D {
 
     actualizarMatrizModelado() {
         // rotar segun la velocidad de giro
+        this.velAvanceInercial = this.velAvanceInercial + (this.velAvance - this.velAvanceInercial) * FACTOR_INERCIA;
+
         if (this.velAvance == 0) {
-            this.rotacion[0] += this.velGiro;
+            this.rotacion[0] += this.velAvanceInercial + this.velGiro;
         } else {
             if (this.velGiro == 0)
-                this.rotacion[0] += this.velAvance;
+                this.rotacion[0] += this.velAvanceInercial;
             else if (this.velGiro > 0)
-                this.rotacion[0] += this.velAvance;
+                this.rotacion[0] += this.velAvanceInercial;
             else
-                this.rotacion[0] += this.velGiro + this.velAvance;
+                this.rotacion[0] += this.velGiro + this.velAvanceInercial;
         }
 
         //Reset matriz de modelado.

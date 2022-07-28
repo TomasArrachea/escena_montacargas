@@ -6,6 +6,8 @@ import { Asiento } from "./Asiento.js";
 import { Rueda } from "./Rueda.js";
 import { RGB_DARK_GREY, RGB_GREY } from '../common/colors.js';
 
+let FACTOR_INERCIA=0.3;
+
 export class Carro extends Objeto3D {
     constructor(padre, estanteria, impresora) {
         super(padre);
@@ -62,6 +64,7 @@ export class Carro extends Objeto3D {
 
         this.velGiro = 0;
         this.velX = 0;
+        this.velXInercial = 0;
         this.carga = null;
         this.impresora = impresora;
         this.estanteria = estanteria;
@@ -127,8 +130,10 @@ export class Carro extends Objeto3D {
             this.carga.setPosicion(p[0], p[1], p[2]);
         }
         // Actualiza la posicion segun el giro del carro
+        this.velXInercial = this.velXInercial + (this.velX - this.velXInercial) * FACTOR_INERCIA;
+
         this.rotacion[1] += this.velGiro;
-        var avance = vec3.fromValues(0, 0, this.velX);
+        var avance = vec3.fromValues(0, 0, this.velXInercial);
 
         mat4.rotate(this.matrizRotacion, this.matrizRotacion, this.velGiro, vec3.fromValues(0, 1, 0));
         vec3.transformMat4(avance, avance, this.matrizRotacion);
